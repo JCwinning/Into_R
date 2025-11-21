@@ -1,0 +1,12 @@
+{
+  "hash": "fdbe36fcaf67681d655a0978bbe28ce5",
+  "result": {
+    "engine": "jupyter",
+    "markdown": "---\ntitle: \"Shiny in Python\"\nauthor: \"Tony Duan\"\n\nexecute:\n  warning: false\n  error: false\n  eval: false\nformat:\n  html:\n    toc: true\n    toc-location: right\n    code-fold: show\n    code-tools: true\n    number-sections: true\n    code-block-bg: true\n    code-block-border-left: \"#31BAE9\"\n    \nfilters:\n  - shinylive\n  \n---\n\n\n\n# step 1 add quarto extension in project root folder\n\n```{bash}\n#| eval: false\nquarto add quarto-ext/shinylive\n```\n\n# step 2 add in header\n\n```yaml\n---\n\nfilters:\n  - shinylive\n  \n---\n```\n\n# step 3 make shiny app \n\n\n\n\n```{shinylive-python}\n#| standalone: true\n#| viewerHeight: 600\n#| components: [editor, viewer]\n\nfrom shiny import *\n\napp_ui = ui.page_fluid(\n    ui.input_slider(\"n\", \"N\", 0, 100, 40),\n    ui.output_text_verbatim(\"txt\"),\n)\n\ndef server(input, output, session):\n    @output\n    @render.text\n    def txt():\n        return f\"The value of n*2 is {input.n() * 2}\"\n\napp = App(app_ui, server)\n```\n\n",
+    "supporting": [
+      "4 shiny in python_files"
+    ],
+    "filters": [],
+    "includes": {}
+  }
+}

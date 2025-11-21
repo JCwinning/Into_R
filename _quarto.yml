@@ -1,0 +1,88 @@
+project:
+  type: website
+  output-dir: docs
+  render:
+    - "*.qmd"
+    - "!CLAUDE.md"
+    - "!README.md"
+    - "!_README_CN.md"
+
+language: 
+  search-box-placeholder: Search
+
+format:
+  html:
+    theme: cosmo
+    fontsize: 1.2em
+    css: styles.css
+    toc: true
+    grid:
+      sidebar-width: 300px
+      body-width: 1000px
+      margin-width: 200px
+      gutter-width: 1rem
+
+website:
+  back-to-top-navigation: true
+  reader-mode: true
+  title: "R Handbook"
+  favicon: "Rlogo.png"
+  twitter-card: true
+  navbar:
+    logo: "Rlogo.png"
+    left:
+      
+      - text: "Home"
+        file: index.qmd
+      - sidebar:intro
+      - sidebar:bar0
+      - sidebar:bar1
+      - sidebar:bar2
+      - sidebar:bar7
+  
+  sidebar:
+    - id: intro
+      title: "intro"
+      style: "floating"
+      background: light
+      collapse-level: 2
+      contents: intro
+
+    - id: bar0
+      title: "Data"
+      style: "floating"
+      background: light
+      collapse-level: 2
+      contents: data manipulation   
+
+    - id: bar1
+      title: "Ploting"
+      style: "floating"
+      background: light
+      collapse-level: 2
+      contents: Plot   
+
+    - id: bar2
+      title: "Publishing"
+      style: "floating"
+      background: light
+      collapse-level: 2
+      contents: Publish   
+
+    - id: bar7
+      title: "Other"
+      style: "floating"
+      background: light
+      collapse-level: 3
+      contents: other
+
+  page-footer:
+    right: "This website is built with ❤️ and [Quarto](https://quarto.org/)."
+
+
+execute:
+  freeze: auto
+
+filters:
+  - foldableCodeBlcok.lua
+  

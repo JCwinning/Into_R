@@ -1,0 +1,273 @@
+---
+title: "Input & Output in R"
+author: "Tony D"
+execute:
+  warning: false
+  error: false
+format:
+  html:
+    toc: true
+    toc-location: right
+    code-fold: show
+    code-tools: true
+    number-sections: false
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-copy: true
+---
+
+This document provides a comprehensive guide to reading data into R (input) and writing data out of R (output). We will cover a wide variety of common file formats, from traditional text files to modern, high-performance formats.
+
+![](images/1_-OQi5hp-uoL_KdIydr4hew.gif){width="500"}
+
+```{r}
+#| eval: false
+pak::pak(c('tidyverse', 'openxlsx', 'arrow', 'readxl','tabulapdf'))
+```
+
+
+```{r}
+# Load common packages for I/O operations
+library(tidyverse)
+library(openxlsx)
+library(arrow)
+library(readxl)
+```
+
+# 1. Input
+
+## 1.1. Reading CSV, TXT)
+
+### Reading CSV Files
+
+Comma-Separated Values (CSV) are one of the most common formats for storing tabular data. The `readr` package (part of the `tidyverse`) provides the `read_csv()` function, which is fast and efficient.
+
+```{r}
+# Create a sample data frame to write to a CSV
+sample_df <- tibble(
+  id = 1:5,
+  name = c("Alice", "Bob", "Charlie", "David", "Eve"),
+  score = c(95, 82, 78, 91, 88)
+)
+
+write_csv(sample_df, "data/sample_data.csv")
+
+# Read the CSV file back into R
+data_from_csv <- read_csv("data/sample_data.csv")
+head(data_from_csv)
+```
+
+### Reading Delimited Files
+
+For text files that use delimiters other than commas (like tabs or semicolons), you can use `read_delim()`.
+
+```{r}
+# Write a tab-delimited file
+write_delim(sample_df, "data/sample_data.txt", delim = "\t")
+
+# Read the tab-delimited file
+data_from_txt <- read_delim("data/sample_data.txt", delim = "\t")
+head(data_from_txt)
+```
+
+## 1.2. Reading Excel
+
+The `readxl` package is excellent for reading `.xls` and `.xlsx` files. The `openxlsx` package can be used for both reading and writing.
+
+```{r}
+# Write the sample data to an Excel file
+write.xlsx(sample_df, "data/sample_data.xlsx")
+
+# Read the data from the Excel file
+data_from_excel <- read_excel("data/sample_data.xlsx")
+head(data_from_excel)
+```
+
+## 1.3. Reading Parquet Feather
+
+For large datasets, text-based formats are inefficient. Binary formats like Parquet and Feather are much faster to read and write and take up less disk space.
+
+### Reading Parquet Files
+
+Parquet is a columnar storage format optimized for big data processing. The `arrow` package provides the interface to work with Parquet files.
+
+```{r}
+# Write data to a Parquet file
+write_parquet(sample_df, "data/sample_data.parquet")
+
+# Read data from the Parquet file
+data_from_parquet <- read_parquet("data/sample_data.parquet")
+head(data_from_parquet)
+```
+
+### Reading Feather Files
+
+Feather is a fast, lightweight binary format designed for sharing data between R and Python.
+
+```{r}
+# Write data to a Feather file
+write_feather(sample_df, "data/sample_data.feather")
+
+# Read data from the Feather file
+data_from_feather <- read_feather("data/sample_data.feather")
+head(data_from_feather)
+```
+
+## 1.4. R-Specific Formats (.Rds, .RData)
+
+R has its own native formats for saving any R object.
+
+-   `.Rds`: Saves a **single** R object.
+-   `.RData`: Saves **multiple** R objects and can save the entire workspace.
+
+### Reading an .Rds File
+
+```{r}
+# Save a single object (our data frame)
+saveRDS(sample_df, "data/sample_df.rds")
+
+# Read the object back
+data_from_rds <- readRDS("data/sample_df.rds")
+head(data_from_rds)
+```
+
+### Loading an .RData File
+
+```{r}
+# Save multiple objects to one file
+save(sample_df, mtcars, file = "data/multiple_objects.RData")
+
+# Clear the objects from the environment to show they are loaded
+rm(sample_df, mtcars)
+
+# Load the objects back into the workspace
+load("data/multiple_objects.RData")
+
+# Check that they exist again
+head(sample_df)
+```
+
+## 1.5. Reading from a Database
+
+Connecting to databases is covered in detail in a separate guide (`6 SQL database.qmd`), but here is a quick example using SQLite.
+
+```{r}
+library(DBI)
+library(RSQLite)
+
+# Create an in-memory SQLite database and write mtcars to it
+con <- dbConnect(RSQLite::SQLite(), ":memory:")
+dbWriteTable(con, "mtcars_table", mtcars)
+
+# Read the full table back into an R data frame
+mtcars_from_db <- dbReadTable(con, "mtcars_table")
+dbDisconnect(con)
+
+head(mtcars_from_db)
+```
+
+
+
+
+## 1.6 Read .docx (Word) file
+
+```{r}
+library(officer)
+# docx = read_docx("data/example03.docx")
+# docx_summary(docx)
+```
+
+
+
+## 1.7 Read PDF Tables
+
+```{r}
+library(tabulapdf)
+# out <- extract_tables('data/60870-By-the-Numbers.pdf')
+# out[[1]]
+```
+
+
+
+# 2. Output
+
+Writing data is the reverse of reading. The functions are generally named `write_*()`.
+
+## 2.1. Write to CSV
+
+```{r}
+# The `write_csv` function from readr is a great choice
+write_csv(mtcars, "data/mtcars_output.csv")
+```
+
+## 2.2. Write to Excel
+
+```{r}
+# The `write.xlsx` function from openxlsx is very convenient
+write.xlsx(iris, "data/iris_output.xlsx")
+```
+
+## 2.3. Write to Parquet
+
+```{r}
+# Use the arrow package for high-performance writing
+write_parquet(airquality, "data/airquality_output.parquet")
+```
+
+## 2.4. Write to Feather
+
+```{r}
+# Ideal for R-to-Python data exchange
+write_feather(diamonds, "data/diamonds_output.feather")
+```
+
+## 2.5. Write to R-Specific Formats
+
+```{r}
+# Save a single model object
+my_model <- lm(mpg ~ hp, data = mtcars)
+saveRDS(my_model, "data/linear_model.rds")
+
+# Save the entire current workspace
+# save.image(file = "data/my_full_workspace.RData")
+```
+
+## 2.6. Write to a Database
+
+```{r}
+# Establish a connection
+con <- dbConnect(RSQLite::SQLite(), "data/my_output_database.sqlite")
+
+# Write the iris dataset to a new table named 'iris_table'
+# `overwrite = TRUE` will replace the table if it already exists
+dbWriteTable(con, "iris_table", iris, overwrite = TRUE)
+
+# List tables to confirm it was created
+print(dbListTables(con))
+
+# Clean up
+dbDisconnect(con)
+```
+
+
+## 2.7 Write to Google Sheets
+
+You can write a data frame to a new or existing Google Sheet. This requires authentication.
+
+```{r}
+#| eval: false
+library(googlesheets4)
+
+# Create a data frame to write
+my_data_to_write <- data.frame(
+  Name = c("Ada Lovelace", "Grace Hopper"),
+  Contribution = c("First algorithm", "COBOL")
+)
+
+# Write the data to a new Google Sheet file named 'R-Sheet-Output'
+ss <- write_sheet(my_data_to_write, ss = "R-Sheet-Output", sheet = "Sheet1")
+
+# The returned object `ss` contains the URL of the new sheet
+print(ss)
+```
+

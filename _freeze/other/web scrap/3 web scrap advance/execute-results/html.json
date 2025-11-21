@@ -1,0 +1,12 @@
+{
+  "hash": "0438152ebc4283770053ed502c9108b9",
+  "result": {
+    "engine": "jupyter",
+    "markdown": "---\ntitle: \"web scrap with advance\"\nauthor: \"Tony D\"\n\nexecute:\n  warning: false\n  error: false\n  eval: false\n\nformat:\n  html:\n    toc: true\n    toc-location: right\n    code-fold: show\n    code-tools: true\n    number-sections: true\n    code-block-bg: true\n    code-block-border-left: \"#31BAE9\"\n---\n\n::: {#c678f20a .cell execution_count=1}\n``` {.python .cell-code}\nfrom seleniumbase import SB\n\nwith SB(test=True, uc=True) as sb:\n    sb.open(\"https://google.com/ncr\")\n    sb.type('[title=\"Search\"]', \"SeleniumBase GitHub page\\n\")\n    sb.click('[href*=\"github.com/seleniumbase/\"]')\n    sb.save_screenshot_to_logs()  # ./latest_logs/\n    print(sb.get_page_title())\n```\n:::\n\n\n::: {#22fe57d5 .cell execution_count=2}\n``` {.python .cell-code}\nfrom seleniumbase import SB\n\nwith SB(test=True, uc=True) as sb:\n    sb.open(\"https://www.whiskybase.com/whiskies/\")\n    #sb.type('[title=\"Search\"]', \"SeleniumBase GitHub page\\n\")\n    #sb.click('[href*=\"github.com/seleniumbase/\"]')\n    sb.save_screenshot_to_logs()  # ./latest_logs/\n    print(sb.get_page_title())\n```\n:::\n\n\n::: {#1dd18a43 .cell execution_count=3}\n``` {.python .cell-code}\nfrom seleniumbase import Driver\nclass Scraper(BaseCase):\ndef test_bypass_bot_protection(self):\ndriver = Driver(uc=True)\ndriver.open(\"https://www.whiskybase.com/whiskies/whisky/268484/2009-ud\")\ndriver.uc_gui_click_captcha()\npage_html = driver.get_page_source()\nprint(page_html)\ndriver.quit()\n```\n:::\n\n\n::: {#48d6b5ed .cell execution_count=4}\n``` {.python .cell-code}\nfrom bs4 import BeautifulSoup\nsoup = BeautifulSoup(page_html, 'html.parser')\nprint(soup.prettify())\n```\n:::\n\n\n::: {#9a2236d1 .cell execution_count=5}\n``` {.python .cell-code}\nprint(soup.get_text())\n```\n:::\n\n\n::: {#7b188039 .cell execution_count=6}\n``` {.python .cell-code}\nsoup.select(\".votes-rating-current\").text\n```\n:::\n\n\nh1\n\n# Reference:\n\nhttps://github.com/seleniumbase/SeleniumBase\n\nhttps://medium.com/@datajournal/web-scraping-with-seleniumbase-e3ead6aebe7f\n\nhttps://github.com/ultrafunkamsterdam/undetected-chromedriver\n\n",
+    "supporting": [
+      "3 web scrap advance_files/figure-html"
+    ],
+    "filters": [],
+    "includes": {}
+  }
+}

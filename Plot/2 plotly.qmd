@@ -1,0 +1,500 @@
+---
+title: "Plotly in R"
+author: "Tony D"
+
+execute:
+  warning: false
+  error: false
+format:
+  html:
+    toc: true
+    toc-location: right
+    code-fold: show
+    code-tools: true
+    number-sections: false
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-copy: true
+---
+
+![](images/Plotly-logo.png){width="800"}
+
+This document provides a comprehensive guide to creating interactive visualizations in R using the `plotly` package. Plotly is a powerful graphing library that allows you to create a wide range of interactive plots, including scatter plots, line plots, histograms, bar charts, box plots, and more. These plots are rendered as HTML widgets, which means they can be easily embedded in web pages and R Markdown documents, and they offer interactive features like tooltips, zooming, and panning right out of the box.
+
+We will cover various types of plots and their customization options, demonstrating how to leverage Plotly's capabilities for effective data visualization.
+
+```{r}
+# Load necessary libraries
+library(gapminder)
+library(plotly)
+library(reshape2)
+library(ggplot2)
+library(dplyr)
+
+# It's good practice to check the version of the package you are using.
+packageVersion("plotly")
+```
+
+# 1. The `plot_ly()` Function: The Core of Plotly
+
+The `plot_ly()` function is the main function for creating Plotly graphs. It takes a `data` frame as input and you specify the mappings from variables in the data to the visual properties of the plot using the `x`, `y`, `color`, `size`, etc. arguments. The tilde (`~`) is used to indicate that the variable is from the specified `data` frame.
+
+## Scatter Plots
+
+Scatter plots are used to display the relationship between two continuous variables. Each point on the plot represents an observation, and its position is determined by its values for the two variables.
+
+```{r}
+# Load the tips dataset
+data(tips)
+head(tips)
+```
+
+Here, we create a basic scatter plot of `total_bill` versus `tip` from the `tips` dataset.
+
+```{r}
+fig <- plot_ly(data = tips, x = ~total_bill, y = ~tip, type = 'scatter', mode = 'markers')
+fig
+```
+
+### Color by Group
+
+You can easily add a third variable to the scatter plot by mapping it to the `color` aesthetic. This helps in visualizing relationships within different categories.
+
+```{r}
+fig <- plot_ly(data = tips, x = ~total_bill, y = ~tip, color = ~sex, type = 'scatter', mode = 'markers')
+fig
+```
+
+### Size by Group
+
+Similarly, a fourth variable can be mapped to the `size` of the points, providing another dimension for data exploration.
+
+```{r}
+fig <- plot_ly(data = tips, x = ~total_bill, y = ~tip, color = ~sex, size = ~size, type = 'scatter', mode = 'markers')
+fig
+```
+
+# 2. Basic Plot Types
+
+## Line Plots
+
+Line plots are ideal for visualizing trends over time or across ordered categories.
+
+First, we prepare some aggregated data from the `gapminder` dataset to show population trends by continent.
+
+```{r}
+data001 = gapminder
+data002 = data001 %>% group_by(continent, year) %>% summarise(pop = sum(pop))
+```
+
+Here, we create a line plot for the population of Asia over the years. The `mode = 'lines'` argument specifies that the points should be connected by lines.
+
+```{r}
+fig <- plot_ly(data = data002 %>% filter(continent == 'Asia'), x = ~year, y = ~pop, type = 'scatter', mode = 'lines')
+fig
+```
+
+### Line Width and Color
+
+You can customize the appearance of the lines, such as their color and width, using the `line` argument within `plot_ly()`.
+
+```{r}
+fig <- plot_ly(data = data002 %>% filter(continent == 'Asia'), x = ~year, y = ~pop, type = 'scatter', mode = 'lines', line = list(color = 'rgb(205, 12, 24)', width = 8))
+fig
+```
+
+### Color by Group
+
+To display multiple lines, one for each group, you can map a categorical variable to the `color` argument.
+
+```{r}
+fig <- plot_ly(data = data002, x = ~year, y = ~pop, color = ~continent, type = 'scatter', mode = 'lines')
+fig
+```
+
+## Histograms
+
+Histograms are used to visualize the distribution of a single continuous variable. They show the frequency of data points falling into specified bins.
+
+```{r}
+fig <- plot_ly(data = tips, x = ~total_bill, type = "histogram")
+fig
+```
+
+### Set Bin Number
+
+You can control the number of bins in a histogram using the `nbinsx` argument, which affects the granularity of the distribution visualization.
+
+```{r}
+fig <- plot_ly(data = tips, x = ~total_bill, type = "histogram", nbinsx = 5)
+fig
+```
+
+### Color by Group
+
+Similar to scatter plots, you can color histogram bars by a categorical variable to compare distributions across different groups.
+
+```{r}
+fig <- plot_ly(data = tips, x = ~total_bill, color = ~sex, type = "histogram")
+fig
+```
+
+## Bar Charts
+
+Bar charts are used to compare categorical data. The length of each bar represents the value of a category.
+
+First, we aggregate the `tips` data to get the total bill for each sex.
+
+```{r}
+tips2 = tips %>% group_by(sex) %>% summarise(total_bill = sum(total_bill))
+```
+
+Here, we create a bar chart showing the total bill for each sex.
+
+```{r}
+fig <- plot_ly(data = tips2, x = ~sex, y = ~total_bill, color = ~sex, type = "bar")
+fig
+```
+
+### Show Numbers on Bars
+
+You can display the exact values on top of the bars using the `text` argument.
+
+```{r}
+fig <- plot_ly(data = tips2, x = ~sex, y = ~total_bill, text = ~total_bill, type = "bar")
+fig
+```
+
+### Horizontal Bar Plot
+
+To create a horizontal bar chart, simply swap the `x` and `y` arguments.
+
+```{r}
+fig <- plot_ly(data = tips2, y = ~sex, x = ~total_bill, color = ~sex, type = "bar", orientation = 'h')
+fig
+```
+
+### Bar Chart Order
+
+You can control the order of categories on the x-axis using `layout(xaxis = list(categoryorder = ...))`. Options include `"total ascending"` and `"total descending"`.
+
+```{r}
+fig <- plot_ly(data = tips2, x = ~sex, y = ~total_bill, color = ~sex, type = "bar") %>% 
+  layout(xaxis = list(categoryorder = "total ascending"))
+fig
+```
+
+```{r}
+fig <- plot_ly(data = tips2, x = ~sex, y = ~total_bill, color = ~sex, type = "bar") %>% 
+  layout(xaxis = list(categoryorder = "total descending"))
+fig
+```
+
+## Box Plots
+
+Box plots are useful for visualizing the distribution of a continuous variable and identifying potential outliers. They display the median, quartiles, and range of the data.
+
+```{r}
+fig <- plot_ly(data = tips, y = ~total_bill, type = "box")
+fig
+```
+
+### Color by Group
+
+You can create separate box plots for different groups by mapping a categorical variable to the x-axis and coloring by it.
+
+```{r}
+fig <- plot_ly(data = tips, x = ~sex, y = ~total_bill, color = ~sex, type = "box")
+fig
+```
+
+# 3. Integrating with ggplot2
+
+Plotly can convert `ggplot2` objects into interactive Plotly graphs using the `ggplotly()` function. This is a powerful feature that allows you to leverage the familiar syntax of `ggplot2` to create interactive plots.
+
+## Strip Plots
+
+Strip plots (or jitter plots) display individual data points, often used to show the distribution of a continuous variable for different categories.
+
+```{r}
+p = ggplot(tips, aes(day, tip)) + geom_jitter(width = 0.1)
+ggplotly(p)
+```
+
+### Color by Group
+
+```{r}
+p = ggplot(tips, aes(day, tip, color = sex)) + geom_jitter(position = position_jitterdodge())
+ggplotly(p)
+```
+
+## Facet Plots
+
+Facet plots (or small multiples) create a grid of plots, with each plot showing a subset of the data. `ggplotly()` can also handle faceted `ggplot2` plots.
+
+```{r}
+p = ggplot(tips, aes(tip, total_bill)) + geom_point(aes(color = sex)) + facet_wrap(~day)
+ggplotly(p)
+```
+
+# 4. Customizing Plots: The `layout()` Function
+
+Plotly provides extensive options for customizing the appearance of your plots using the `layout()` function. You can pipe your `plot_ly` object to the `layout()` function to add titles, change axis labels, and much more.
+
+## Add Title
+
+```{r}
+fig <- plot_ly(data = tips, x = ~total_bill, color = ~sex, type = "histogram") %>% layout(title = 'Distribution of Total Bill by Sex')
+fig
+```
+
+## Adjust Size
+
+Control the width and height of the plot using the `width` and `height` arguments in `plot_ly()`.
+
+```{r}
+fig <- plot_ly(data = tips, x = ~total_bill, color = ~sex, type = "histogram", width = 500, height = 300)
+fig
+```
+
+## Change Axis Labels
+
+Customize the labels for the x and y axes using `layout(xaxis = list(title = ...), yaxis = list(title = ...))`.
+
+```{r}
+fig <- plot_ly(data = tips, x = ~total_bill, color = ~sex, type = "histogram") %>% 
+  layout(title = 'Distribution of Total Bill by Sex',
+         xaxis = list(title = 'Total Bill'),
+         yaxis = list(title = 'Frequency'))
+fig
+```
+
+## Change Axis Range
+
+You can set specific ranges for the x and y axes using the `range` argument within the `xaxis` and `yaxis` lists.
+
+```{r}
+fig <- plot_ly(data = tips, x = ~total_bill, color = ~sex, type = "histogram") %>% 
+  layout(title = 'Distribution of Total Bill by Sex',
+         xaxis = list(title = 'Total Bill', range = c(0, 60)),
+         yaxis = list(title = 'Frequency', range = c(0, 50)))
+fig
+```
+
+## Add Footnote
+
+Footnotes can be added using the `annotations` argument within `layout()`, allowing you to include additional descriptive text.
+
+```{r}
+fig %>% layout(annotations = 
+               list(x = 1, y = -0.1, 
+                    text = "Source: reshape2 package", 
+                    showarrow = F, 
+                    xref = 'paper', 
+                    yref = 'paper', 
+                    xanchor = 'right', 
+                    yanchor = 'auto', 
+                    xshift = 0, 
+                    yshift = 0))
+```
+
+## Legend Customization
+
+### Hide Legend
+
+You can hide the legend by setting `showlegend = FALSE` in the `layout()` function.
+
+```{r}
+fig <- plot_ly(data = data002, x = ~year, y = ~pop, color = ~continent, mode = 'lines') %>% layout(showlegend = FALSE)
+fig
+```
+
+### Show Legend and Change Legend Name
+
+To explicitly show the legend and customize the name of a trace, use the `name` argument within `plot_ly()` and ensure `showlegend = TRUE`.
+
+```{r}
+fig <- plot_ly(data = data002 %>% filter(continent == 'Asia'), x = ~year, y = ~pop, color = ~continent, mode = 'lines', name = 'Asia Population') %>% layout(showlegend = TRUE)
+fig
+```
+
+### Change Legend Position and Orientation
+
+You can adjust the legend's position and orientation (e.g., horizontal) using the `legend` argument within `layout()`.
+
+```{r}
+fig <- plot_ly(data = data002, x = ~year, y = ~pop, color = ~continent, mode = 'lines') %>% layout(legend = list(orientation = 'h', x = 0.1, y = 1.1))
+fig
+```
+
+# 5. Advanced Features
+
+## Adding Images
+
+You can embed images directly into your Plotly graphs, either from a URL or a local file.
+
+### Add Online Image
+
+To add an image from a URL, specify the `source` and its position using `xref`, `yref`, `x`, `y`, `sizex`, `sizey`, and `xanchor`.
+
+```{r}
+fig <- plot_ly(data = data002, x = ~year, y = ~pop, color = ~continent, mode = 'lines') %>% layout(
+    images = list(  
+      list(  
+        source =  "https://raw.githubusercontent.com/cldougl/plot_images/add_r_img/vox.png",
+        xref = "paper",
+        yref = "paper", 
+        x = 0.1,
+        y = 0.9,
+        sizex = 0.2, 
+        sizey = 0.2,
+        xanchor = "left",
+        yanchor = "top"
+      )  
+    )
+)
+fig
+```
+
+### Add Local Image
+
+For local images, you need to convert them to a base64 data URI using `base64enc::dataURI()`. You can also control the layer of the image (e.g., `layer = "below"` to place it behind the plot elements).
+
+```{r}
+# Note: You need a local image file named "bee.png" in your working directory for this code to run.
+if (file.exists("images/bee.png")) {
+  fig <- plot_ly(data = data002, x = ~year, y = ~pop, color = ~continent, mode = 'lines') %>% layout(
+      images = list(  
+        list(  
+          source = base64enc::dataURI(file = "images/bee.png"),
+          xref = "paper",
+          yref = "paper", 
+          x = 0.5,
+          y = 0.5,
+          sizex = 0.2, 
+          sizey = 0.2,
+          xanchor = "center",
+          yanchor = "middle",
+          layer = "below"
+        )  
+      )
+  )
+  fig
+}
+```
+
+## Applying Themes with `ggplotly()`
+
+When converting `ggplot2` plots to Plotly, you can apply `ggplot2` themes to control the overall aesthetic of the plot.
+
+::: {.panel-tabset .nav-pills}
+
+## theme_bw()
+
+The `theme_bw()` provides a black and white theme, often preferred for publications.
+
+```{r}
+p = ggplot(tips, aes(tip, total_bill, color = sex)) + geom_point() + scale_x_continuous(name = "new x name") + scale_y_continuous(name = "new y name")
+ggplotly(p + theme_bw())
+```
+
+## theme_light()
+
+The `theme_light()` offers a light theme with a subtle gray background.
+
+```{r}
+ggplotly(p + theme_light())
+```
+
+## theme_economist()
+
+The `theme_economist()` from the `ggthemes` package mimics the style of plots found in *The Economist* magazine.
+
+```{r}
+library("ggthemes")
+ggplotly(p + theme_economist())
+```
+
+:::
+
+## Saving Plots
+
+To save Plotly plots as static image files (e.g., PNG, JPEG, SVG), you need to install `orca`, a command-line utility developed by Plotly. You can also save them as interactive HTML files.
+
+**Saving as an HTML file:**
+
+```{r, eval=FALSE}
+library(htmlwidgets)
+saveWidget(fig, "my_interactive_plot.html")
+```
+
+**Saving as a static image:**
+
+Install `orca` from its GitHub repository: [https://github.com/plotly/orca#installation](https://github.com/plotly/orca#installation)
+
+A common way to install it is via conda:
+`conda install -c plotly plotly-orca`
+
+You might also need the `processx` R package for `orca` to work correctly.
+
+```{r, eval=FALSE}
+#install.packages('processx')
+# orca(fig, "my_static_plot.png") # Assuming 'fig' is your plotly object
+```
+
+## Animated Plots
+
+Plotly allows you to create animated plots, which are excellent for visualizing changes over time or across different states of data. The `frame` argument in `plot_ly()` is key for defining the animation variable.
+
+```{r}
+fig <- plot_ly(data = gapminder, x = ~gdpPercap, y = ~lifeExp, color = ~continent, type = "scatter", mode = "markers", frame = ~year, text = ~country)
+
+fig %>% animation_opts(
+    1000, easing = "elastic", redraw = FALSE
+  )
+```
+
+## Subplots
+
+You can combine multiple Plotly graphs into a single figure using the `subplot()` function. This is useful for displaying related visualizations together for comparison.
+
+```{r}
+# Prepare data for two different plots
+data_scatter <- tips
+data_bar <- tips %>% group_by(sex) %>% summarise(total_bill = sum(total_bill))
+
+# Create the first plot (scatter plot)
+p1 <- plot_ly(data = data_scatter, x = ~total_bill, y = ~tip, type = "scatter", mode = "markers", name = "Scatter Plot") %>%
+  layout(title = "Total Bill vs. Tip")
+
+# Create the second plot (bar chart)
+p2 <- plot_ly(data = data_bar, x = ~sex, y = ~total_bill, type = "bar", name = "Bar Chart") %>%
+  layout(title = "Total Bill by Sex")
+
+# Combine the plots into a subplot
+subplot(p1, p2, nrows = 1, shareX = FALSE, shareY = FALSE) %>% 
+  layout(title = "Combined Plots: Scatter and Bar Chart")
+```
+
+# 6. Conclusion and Further Resources
+
+This document has provided a comprehensive overview of the `plotly` package in R. You have learned how to create a variety of interactive plots, customize their appearance, and use advanced features like animations and subplots.
+
+For more information and examples, please refer to the official Plotly R documentation:
+
+## Official Documentation
+-   [Plotly R Library](https://plotly.com/r/)
+-   [Plotly R Figure Reference](https://plotly.com/r/reference/)
+-   [Plotly R GitHub](https://github.com/plotly/plotly.R)
+
+## Tutorials and Guides
+-   [Getting Started with Plotly in R](https://plotly.com/r/getting-started/)
+-   [Plotly for R Book](https://plotly-r.com/)
+-   [Interactive Web-Based Data Visualization with R](https://plotly-r.com/overview.html)
+
+## Integration with Other Tools
+-   [Using Plotly with Shiny](https://plotly.com/r/shiny-tutorial/)
+-   [ggplot2 to Plotly](https://plotly.com/ggplot2/)
+-   [Plotly Dash for R](https://dashr.plotly.com/)
+
+

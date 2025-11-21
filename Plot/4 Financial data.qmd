@@ -1,0 +1,126 @@
+---
+title: "Plot Financial data"
+subtitle: "with quantmod"
+
+author: "Tony D"
+
+execute:
+  warning: false
+  error: false
+
+format:
+  html:
+    toc: true
+    toc-location: right
+    code-fold: show
+    code-tools: true
+    number-sections: false
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-copy: true
+---
+
+
+This document provides a guide to sourcing and analyzing financial data in R. We will explore several packages that provide access to financial data from various sources, including Yahoo Finance and Quandl. We will also demonstrate how to use these packages to retrieve stock prices and financial statements, and how to visualize the data using `plotly`.
+
+
+```{r}
+#| eval: false
+pak::pak(c("Quandl"))
+```
+
+
+```{r}
+# Load necessary libraries
+library(quantmod)
+library(tidyverse)
+library(yahoofinancer)
+library(Quandl)
+library(plotly)
+#library(finreportr)
+library(rvest)
+library(chromote)
+library(httr)
+library(janitor)
+library(knitr)
+```
+
+# 1. Retrieving Stock Prices
+
+There are several packages available for retrieving stock price data in R. We will explore two popular options: `quantmod` and `yahoofinancer`.
+
+## Using `yahoofinancer`
+
+The `yahoofinancer` package provides a simple and intuitive interface for retrieving data from Yahoo Finance.
+
+### Retrieving Index Data
+
+Here, we retrieve the historical data for the NIFTY 50 index (`^NSEI`). We then normalize the adjusted close price to compare its performance with other assets.
+
+```{r}
+nifty_50 <- Index$new('^NSEI')
+
+data001 = nifty_50$get_history(start = '2023-01-01', interval = '1d') %>% unnest(cols = adj_close)
+
+a = head(data001$adj_close, 1)[[1]]
+
+data001b = data001 %>% mutate(adj_close2 = adj_close / a)
+```
+
+### Retrieving Stock Data
+
+Similarly, we can retrieve the historical data for an individual stock, such as Apple Inc. (`AAPL`).
+
+```{r}
+aapl <- Ticker$new('aapl')
+
+data002 = aapl$get_history(start = '2023-01-01', interval = '1d') %>% mutate(adj_close = as.numeric(adj_close))
+
+a = head(data002$adj_close, 1)[[1]]
+
+data002b = data002 %>% mutate(adj_close2 = adj_close / a)
+```
+
+### Visualizing Stock Prices
+
+We can use `plotly` to create an interactive chart comparing the normalized performance of the NIFTY 50 and Apple stock.
+
+```{r}
+# Initialize plot
+fig <- plot_ly()
+
+# Add data from the first dataframe
+fig <- fig %>%
+    add_lines(data = data001b, name = "NSEI50", x = ~date, y = ~adj_close2)
+
+# Add data from the second dataframe
+fig <- fig %>%
+    add_lines(data = data002b, name = "Apple", x = ~date, y = ~adj_close2)
+
+# Show figure
+fig
+```
+
+# 2. Other Packages for Financial Data
+
+## `quantmod`
+
+The `quantmod` package is another popular choice for financial data analysis in R. It provides a wide range of functions for retrieving, analyzing, and visualizing financial data.
+
+## `finreportr`
+
+The `finreportr` package provides functions for retrieving financial reports from the SEC's EDGAR database.
+
+## `Quandl`
+
+The `Quandl` package provides access to a vast collection of financial and economic data from the Quandl platform.
+
+# 3. Conclusion and Further Resources
+
+This document has provided an overview of how to source and analyze financial data in R using various packages. By leveraging these tools, you can easily retrieve and analyze a wide range of financial data to inform your investment decisions.
+
+For more information, please refer to the following resources:
+
+-   [`yahoofinancer` GitHub Repository](https://github.com/rsquaredacademy/yahoofinancer)
+-   [`finreportr` GitHub Repository](https://github.com/sewardlee337/finreportr)
+-   [Web Scraping in R with `rvest`](https://www.youtube.com/watch?v=uVHGgSXtQmE)

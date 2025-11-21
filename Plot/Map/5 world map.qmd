@@ -1,0 +1,110 @@
+---
+title: "World map with GPD per capita"
+subtitle: "with leaflet"
+author: "Tony D"
+
+execute:
+  warning: false
+  error: false
+
+format:
+  html:
+    toc: true
+    toc-location: right
+    code-fold: show
+    code-tools: true
+    number-sections: true
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-copy: true
+---
+
+# Download data
+
+```{r}
+library(tidyverse)
+library(rvest)
+library(chromote)
+library(janitor)
+library(tidygeocoder)
+library(leaflet)
+library(sf)
+```
+
+
+world geojson
+
+```{r}
+# From http://data.okfn.org/data/datasets/geo-boundaries-world-110m
+#countries <- sf::read_sf("https://rstudio.github.io/leaflet/json/countries.geojson")
+countries <- sf::read_sf("https://raw.githubusercontent.com/johan/world.geo.json/refs/heads/master/countries.geo.json")
+
+
+```
+
+world gpd per capita data
+
+```{r}
+world_gdp_per_capita=read.csv("https://gist.githubusercontent.com/vr-23/d6a4a0aadcf3a2640091ca43c25e1955/raw/57b9cb74b24dc87b489c74cc4e11209cd5720642/world-data-2023.csv")
+```
+
+
+```{r}
+# data source: https://data.worldbank.org/
+download.file("https://api.worldbank.org/v2/en/indicator/NY.GDP.PCAP.CD?downloadformat=csv",destfile='world_data.zip')
+```
+```{r}
+unzip('world_data.zip')
+```
+
+```{r}
+world_gdp_per_capita=read.csv("API_NY.GDP.PCAP.CD_DS2_en_csv_v2_76317.csv",skip = 3) |> clean_names()
+```
+
+
+
+```{r}
+data001=countries |> left_join(world_gdp_per_capita,by = join_by(id ==country_code))
+```
+
+
+
+```{r}
+pal <- colorNumeric(palette = c('red','orange','yellow','pink','blue', 'green'),
+                    domain = data001$x2023
+  )
+
+
+
+m <- leaflet(data001) %>%
+   # Add default OpenStreetMap map tiles
+  addTiles() %>%  
+   addPolygons(smoothFactor = 0.3, fillOpacity = 0.5,weight = 1,
+    fillColor = ~ pal(x2023)
+    ,color = ~pal(x2023)
+   #color = ~binpal(x2023)
+    ,popup = ~ paste0(
+      "地区：", name, "<br/>",
+      "<hr/>",
+      "人均gpd：", x2023, "（美元）", "<br/>"
+      
+    )
+     ,label = lapply(paste0(
+      "地区：", "<b>", data001$country_name, "</b>", "<br/>",
+      "人均gpd 美元：", round(data001$x2023), " USD<br/>"
+     # , "总gpd 美元：", round(data001$total_2022_usd), "M <br/>"
+
+    ), htmltools::HTML)
+    )%>% addLegend(
+    position = "bottomright", title = "人均gpd(美元)",
+    pal = pal, values = ~x2023, opacity = 1.0
+    )
+```
+
+
+```{r}
+m  |>  setView(lng = -10, lat = 45, zoom = 2)
+```
+
+# resouce:
+

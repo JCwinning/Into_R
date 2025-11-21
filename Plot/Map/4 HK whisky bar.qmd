@@ -1,0 +1,137 @@
+---
+title: "Mapping Hong Kong Whisky Bars"
+subtitle: "with leaflet"
+author: "Tony D"
+
+execute:
+  warning: false
+  error: false
+
+format:
+  html:
+    toc: true
+    toc-location: right
+    code-fold: show
+    code-tools: true
+    number-sections: true
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-copy: true
+---
+
+This document demonstrates how to create an interactive map of whisky bars in Hong Kong using the `leaflet` and `tidygeocoder` packages in R. We will start by creating a dataset of whisky bars, then geocode their addresses to obtain latitude and longitude coordinates, and finally create a map with custom markers, popups, and labels.
+
+# Data and Libraries
+
+First, we load the necessary R libraries and create a tibble containing the names, addresses, and logo URLs for a few whisky bars in Hong Kong.
+
+```{r}
+# Load necessary libraries
+library(tidyverse)    # For data manipulation
+library(rvest)        # For web scraping (not used here, but good to have)
+library(chromote)     # For controlling headless Chrome (not used here)
+library(janitor)      # For data cleaning
+library(tidygeocoder) # For geocoding addresses
+library(leaflet)      # For creating interactive maps
+library(sf)           # For working with spatial data
+```
+
+```{r}
+# Create vectors for bar names, addresses, and logo URLs
+bar_name=c('Maltcask@太子','House Welley@中環','Casky@灣仔')
+bar_address=c('169 Sai Yeung Choi St N, Mong Kok,Hongkong','97 Wellington St, Central,Hongkong','20-24 Lockhart Road, Wan Chai,Hongkong')
+bar_logo=c('https://img.shoplineapp.com/media/image_clips/62f16f8d7df01b0025a82bad/original.png','https://static.wixstatic.com/media/2d390e_27d0b3da21a94459bccf741600782591~mv2.jpg/v1/fill/w_160,h_160,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/Grey.jpg','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsSelY2PRVxaxyU_Ydf9CHgtUrClzpxpqJ2g&s')
+
+# Create a tibble (a modern data frame)
+data001=tibble(bar_name,bar_address,bar_logo)
+```
+
+
+# Geocoding Addresses
+
+To place the bars on a map, we need their geographical coordinates. The `tidygeocoder` package provides a convenient way to convert addresses into latitude and longitude using services like OpenStreetMap (osm).
+
+```{r}
+# Use the geocode function to find coordinates for the addresses
+data002 =data001 %>% 
+  geocode(bar_address, method = 'osm', lat = latitude , long = longitude)
+
+# Display the structure of the resulting data frame
+glimpse(data002)
+```
+
+
+# Creating the Map
+
+Now that we have the coordinates, we can create an interactive map using the `leaflet` package. We will explore three different ways to mark the locations on the map.
+
+## Map 1: Markers with Custom Icons
+
+We can use the bar logos as custom icons for the markers on the map.
+
+```{r}
+# Create a list of custom icons from the logo URLs
+leafIcons <- icons(data002$bar_logo, iconWidth = 60, iconHeight = 50)
+
+# Create the leaflet map
+m <- leaflet() %>%
+   # Add default OpenStreetMap map tiles
+  addTiles() %>%  
+  # Add markers to the map using the custom icons
+  addMarkers(lng=data002$longitude, lat=data002$latitude, icon = leafIcons)
+ 
+# Display the map
+m  
+```
+
+## Map 2: Markers with Popups
+
+Popups are useful for displaying information when a user clicks on a marker.
+
+```{r}
+# Create a leaflet map
+m <- leaflet(height=2000, width=2000) %>%
+   # Add default OpenStreetMap map tiles
+  addTiles() %>%  
+  # Add popups that appear on click, showing the bar's name
+  addPopups(lng=data002$longitude, lat=data002$latitude, data002$bar_name,
+             options = popupOptions(closeButton = FALSE) # Optionally remove the close button
+            )
+ 
+# Display the map
+m  
+```
+
+## Map 3: Markers with Permanent Labels
+
+Unlike popups, labels can be configured to be always visible, which is great for labeling a small number of locations directly on the map.
+
+```{r}
+# Create a leaflet map
+m <- leaflet(height=2500, width=2000) %>%
+   # Add default OpenStreetMap map tiles
+  addTiles() %>%  
+  # Add markers with labels
+  addMarkers(
+    lng=data002$longitude, lat=data002$latitude,
+    label = data002$bar_name, # Set the label text
+    # Configure label options
+    labelOptions = labelOptions(noHide = TRUE, direction = "bottom", # Make label permanently visible below the marker
+      style = list( # Apply custom CSS styling to the label
+        "color" = "red",
+        "font-family" = "serif",
+        "font-style" = "italic",
+        "box-shadow" = "2px 2px rgba(0,0,0,0.25)",
+        "font-size" = "12px",
+        "border-color" = "rgba(0,0,0,0.5)"
+      )))
+
+# Display the map
+m  
+```
+
+# Resource
+
+- [Leaflet for R](https://rstudio.github.io/leaflet/)
+- [Tidygeocoder Vignette](https://cran.r-project.org/web/packages/tidygeocoder/vignettes/tidygeocoder.html)
+

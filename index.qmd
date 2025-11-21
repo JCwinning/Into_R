@@ -1,0 +1,42 @@
+---
+title: "About"
+author: "Tony D"
+format:
+  html:
+    code-copy: true
+---
+
+This project is a comprehensive guide to the R programming language, built with Quarto. It covers a wide range of topics, from the fundamentals of R to advanced applications in data manipulation, visualization, and publishing.
+
+### Key Sections:
+
+*   **Intro to R:**
+    *   **Basic R:** Covers fundamental concepts like working with files, handling errors, using conditional statements (if/else), loops (`for`, `while`, `map`), creating functions, managing packages, and using version control with `renv`. It also touches on interacting with Python using `reticulate`.
+    *   **Probability:** Explores concepts like random numbers, permutations, combinations, conditional probability, the derangement problem, and key probability distributions (Binomial, Normal). It also demonstrates how to check for normality using histograms, Q-Q plots, and the Shapiro-Wilk test.
+    *   **Statistics:** Introduces basic statistical concepts, including different types of variables, measures of centrality and spread, covariance, and correlation.
+    *   **Error Handling:** Provides practical tips for troubleshooting common issues, such as Python version conflicts with `reticulate`.
+
+*   **Data Manipulation:**
+    *   **I/O:** Reading and writing data from various formats.
+    *   **Data Structures:** Understanding and working with R's data structures (vectors, lists, data frames, etc.).
+    *   **Tidyverse:** A deep dive into the `tidyverse` ecosystem for data manipulation and wrangling.
+    *   **data.table:** High-performance data manipulation using the `data.table` package.
+    *   **Recipes:** Preprocessing data for modeling using the `recipes` package.
+    *   **Resampling:** Techniques for creating training and testing sets for model validation.
+    *   **SQL Databases:** Interacting with SQL databases from within R.
+    *   **Data Management:** Best practices for organizing and managing data in your projects.
+
+*   **Plotting:**
+    *   **ggplot2:** Creating a wide variety of static visualizations.
+    *   **plotly:** Building interactive plots.
+    *   **Image Processing:** Basic image manipulation and analysis.
+    *   **Financial Data:** Visualizing financial time-series data.
+    *   **Mapping:** Creating maps and spatial visualizations.
+
+*   **Publishing:**
+    *   **Shiny:** Building interactive web applications.
+    *   **Quarto:** Creating dynamic documents, presentations, and websites.
+    *   **Dashboards:** Designing and building data dashboards.
+    *   **Email:** Sending emails from R, potentially with embedded reports or plots.
+    *   **Git:** Using Git for version control and collaboration.
+

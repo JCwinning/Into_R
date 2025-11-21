@@ -1,0 +1,457 @@
+---
+title: "Data Manipulation with tidyverse"
+execute:
+  warning: false
+  error: false
+format:
+  html:
+    toc: true
+    toc-location: right
+    code-fold: show
+    code-tools: true
+    number-sections: false
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-copy: true
+---
+
+The `tidyverse` is an opinionated collection of R packages designed for data science. All packages share an underlying design philosophy, grammar, and data structures. This guide focuses on `dplyr`, `tidyr`, `stringr`, and `lubridate`, the core packages for data manipulation.
+
+![](images/ggplot_hive.jpg){width="600"}
+
+# 1. `dplyr`: A Grammar of Data Manipulation
+
+`dplyr` provides a consistent and intuitive grammar for data manipulation. Its functions, or "verbs," are easy to read and can be chained together using the pipe operator (`%>%`), which passes the result of one function as the first argument to the next.
+
+![](images/logo.png){width="231"}
+
+## Load Packages and Data
+
+First, we load the `tidyverse` suite of packages.
+
+```{r}
+library(tidyverse)
+```
+
+We will use the built-in `mtcars` dataset. For clarity, we convert the row names to a proper column called `car_name`.
+
+```{r}
+data(mtcars)
+
+small_mtcars <- mtcars %>% 
+  select(cyl, mpg, hp) %>% 
+  head()
+
+small_mtcars <- rownames_to_column(small_mtcars, var = "car_name")
+
+mtcars_df <- mtcars %>% 
+  rownames_to_column(var = "car_name") %>% 
+  as_tibble() # Convert to a tibble for better printing
+
+head(mtcars_df)
+```
+
+## Get Column Names
+
+The `names()` function returns a character vector of the column names in a data frame.
+
+```{r}
+names(mtcars_df)
+```
+
+
+
+## `select()`: Pick columns by name
+
+`select()` allows you to subset your data by choosing specific columns.
+
+```{r}
+# Select a few specific columns
+mtcars_df %>% select(car_name, mpg, hp, cyl)
+```
+
+Use helper functions like `starts_with()`, `ends_with()`, and `contains()` for powerful selections.
+
+```{r}
+# Select all columns that start with the letter "d"
+mtcars_df %>% select(starts_with("d"))
+```
+
+Use the `-` sign to deselect or drop columns.
+
+```{r}
+# Select all columns except `vs` and `am`
+mtcars_df %>% select(-vs, -am)
+```
+
+## Select by Index
+
+You can also select columns by their position.
+
+```{r}
+mtcars_df %>% select(1, 2) 
+```
+
+## Drop Columns
+
+Use the `-` sign to deselect or drop columns.
+
+```{r}
+mtcars_df %>% select(-cyl)
+```
+
+## Rename Columns
+
+The `rename()` verb changes the name of a column.
+
+```{r}
+mtcars_df %>% rename(new_cyl = cyl)
+```
+
+
+## `filter()`: Pick rows by condition
+
+`filter()` subsets rows based on logical conditions. Only rows where the condition is `TRUE` are kept.
+
+```{r}
+# Filter for cars with 8 cylinders
+mtcars_df %>% filter(cyl == 8)
+```
+
+Combine conditions with logical operators:
+-   `,` or `&` for AND
+-   `|` for OR
+-   `!` for NOT
+
+```{r}
+# Filter for 8-cylinder cars with more than 200 horsepower
+mtcars_df %>% filter(cyl == 8 & hp > 200)
+
+# Filter for cars that are either 8-cylinder OR have more than 300 horsepower
+mtcars_df %>% filter(cyl == 8 | hp > 300)
+```
+
+## `arrange()`: Reorder rows
+
+`arrange()` sorts the rows of a data frame by one or more columns.
+
+```{r}
+# Sort cars by miles per gallon (mpg) in ascending order (the default)
+mtcars_df %>% arrange(mpg)
+```
+
+Use `desc()` to sort in descending order.
+
+```{r}
+# Sort by cylinder count (desc) and then by mpg (desc) for tie-breaking
+mtcars_df %>% arrange(desc(cyl), desc(mpg))
+```
+
+## `mutate()`: Create new columns
+
+`mutate()` adds new columns or transforms existing ones, while keeping all existing columns.
+
+```{r}
+# Create a new column for horsepower-to-weight ratio
+mtcars_df %>% mutate(hp_per_wt = hp / wt)
+```
+
+Use `case_when()` for complex conditional logic, which is like a more powerful version of an if-else statement.
+
+```{r}
+# Create a column for cylinder category
+mtcars_df %>% mutate(cyl_group = case_when(
+    cyl == 4 ~ "Four-Cylinder",
+    cyl == 6 ~ "Six-Cylinder",
+    cyl == 8 ~ "Eight-Cylinder",
+    TRUE ~ "Other" # Fallback for any other case
+  ))
+```
+
+## `summarise()` and `group_by()`: Collapse rows to a summary
+
+This is one of the most powerful combinations in `dplyr`. `group_by()` groups the data by one or more variables. Subsequent operations are then performed on each group independently. `summarise()` then collapses each group into a single-row summary.
+
+```{r}
+# Calculate summary statistics for each cylinder group
+mtcars_df %>% 
+  group_by(cyl) %>% 
+  summarise(
+    avg_mpg = mean(mpg, na.rm = TRUE),
+    median_hp = median(hp, na.rm = TRUE),
+    min_wt = min(wt, na.rm = TRUE),
+    max_wt = max(wt, na.rm = TRUE),
+    car_count = n() # n() counts the number of rows in the group
+  )
+```
+
+## Joining Tables
+
+`dplyr` provides a family of join functions to combine data from different tables.
+
+```{r}
+band_members_df <- tribble(
+  ~name,     ~band, 
+  "Mick",    "Stones",
+  "John",    "Beatles",
+  "Paul",    "Beatles"
+)
+
+band_instruments_df <- tribble(
+  ~name,     ~plays, 
+  "Mick",    "vocals",
+  "John",    "guitar",
+  "Keith",   "guitar"
+)
+```
+
+-   `inner_join()`: Returns only the rows where the key exists in both tables.
+-   `left_join()`: Returns all rows from the left table, and matching rows from the right table.
+-   `full_join()`: Returns all rows from both tables.
+-   `anti_join()`: Returns all rows from the left table that do not have a match in the right table.
+
+```{r}
+# Left join to keep all members and see who plays an instrument
+left_join(band_members_df, band_instruments_df, by = "name")
+
+# Anti join to find which members are not in the instruments table
+anti_join(band_members_df, band_instruments_df, by = "name")
+```
+
+
+
+
+
+# 2. `tidyr`: Tidy Your Data
+
+`tidyr` provides tools for reshaping data. The goal is to create "tidy" data, which has a specific structure:
+1.  Every column is a variable.
+2.  Every row is an observation.
+3.  Every cell is a single value.
+
+```{r}
+# Create a sample wide-format (untidy) dataset
+wide_data <- read.table(header = TRUE, text = '
+ subject sex control cond1 cond2
+       1   M     7.9  12.3  10.7
+       2   F     6.3  10.6  11.1
+')
+```
+
+### `pivot_longer()`: Wide to Long
+
+`pivot_longer()` makes data "longer" by gathering multiple columns into key-value pairs. This is often the first step to making data "tidy."
+
+```{r}
+long_data <- wide_data %>% 
+  pivot_longer(
+    cols = c(control, cond1, cond2), # The columns to pivot
+    names_to = 'condition',         # New column for the old column names
+    values_to = 'measurement'       # New column for the old cell values
+  )
+
+long_data
+```
+
+### `pivot_wider()`: Long to Wide
+
+`pivot_wider()` does the opposite, making data "wider" by spreading a key-value pair into multiple columns.
+
+```{r}
+long_data %>% 
+  pivot_wider(
+    names_from = condition,   # Column to get new column names from
+    values_from = measurement # Column to get cell values from
+  )
+```
+
+# 3. `stringr`: String Manipulation
+
+`stringr` provides a consistent and user-friendly interface for common string operations, built on top of the `stringi` package.
+
+![](images/logo-01.png)
+
+```{r}
+text_vector <- c("apple", "banana", "pear", "pineapple")
+```
+
+-   `str_detect()`: Check for the presence of a pattern.
+-   `str_replace()`: Replace the first match of a pattern.
+-   `str_extract()`: Extract the first match of a pattern.
+-   `str_split()`: Split a string into pieces.
+
+```{r}
+# Find elements containing "apple"
+str_detect(text_vector, "apple")
+
+# Extract numbers from a string using a regular expression
+# \d+ is a regex for one or more digits
+str_extract("Order_ID_12345", "\\d+") 
+
+# Split a string by a delimiter
+str_split("a-b-c", "-")
+```
+
+# 4. `lubridate`: Date and Time Manipulation
+
+`lubridate` simplifies working with dates and times in R, which can otherwise be quite complex.
+
+![](images/logo-02.png)
+
+```{r}
+library(lubridate)
+```
+
+
+## Today
+
+```{r}
+today()
+```
+
+
+-   **Parsing:** `ymd()`, `mdy()`, `dmy()` parse strings into dates reliably, automatically handling different separators.
+-   **Component Extraction:** `year()`, `month()`, `day()`, `wday()` extract parts of a date.
+-   **Arithmetic:** Perform calculations with date and time objects using `duration` and `period` objects.
+
+```{r}
+# Parse a date
+date_obj <- ymd("2023-10-27")
+
+# Get the day of the week
+wday(date_obj, label = TRUE, abbr = FALSE)
+
+# Add 15 days to the date
+date_obj + days(15)
+
+# Calculate the time difference between two dates
+new_year <- ymd("2024-01-01")
+interval(date_obj, new_year) / days(1)
+```
+
+
+# 5. Window Functions
+
+Window functions are functions that operate on a "window" of data (e.g., within a group) but, unlike `summarise()`, they return a value for every row.
+
+## Ranking with `row_number`
+
+`row_number()` assigns a unique rank to each row within a group.
+
+```{r}
+small_mtcars %>% 
+  group_by(cyl) %>% 
+  mutate(rank = row_number(desc(mpg))) %>% 
+  select(cyl, mpg, rank)
+```
+
+## Accessing Previous/Next Values with `lag` and `lead`
+
+`lag()` and `lead()` are useful for comparing a value to its predecessor or successor.
+
+```{r}
+small_mtcars %>% 
+  select(cyl, mpg) %>% 
+  mutate(mpg_previous = lag(mpg, n = 1))
+```
+
+## Cumulative Summaries
+
+`cumsum()` calculates the cumulative sum.
+
+```{r}
+small_mtcars %>% 
+  select(cyl, mpg) %>% 
+  mutate(mpg_running_total = cumsum(mpg))
+```
+
+## Order Rows
+
+`arrange()` sorts the rows of a data frame by one or more columns.
+
+```{r}
+small_mtcars %>% arrange(cyl) 
+```
+
+Sort in descending order using `desc()`.
+
+```{r}
+small_mtcars %>% arrange(desc(cyl))
+```
+
+
+# 6. Handle Missing Data
+
+Let's create a sample data frame with missing values (`NA`).
+
+```{r}
+missing_df <- data.frame(
+  x = c(1, 2, NA, 4),
+  y = c("a", NA, "c", "d")
+)
+```
+
+## Find Missing Data
+
+`is.na()` returns a logical vector indicating which values are missing.
+
+```{r}
+is.na(missing_df)
+```
+
+## Filter Out Missing Data
+
+You can use `filter()` with `!is.na()` to remove rows with missing values in a specific column.
+
+```{r}
+missing_df %>% filter(!is.na(y))
+```
+
+`tidyr::drop_na()` removes rows with any missing values.
+
+```{r}
+missing_df %>% drop_na()
+```
+
+# 7. Dataframe to Other Data Formats
+
+## Dataframe to Vector
+
+```{r}
+data <- small_mtcars$cyl
+data
+```
+
+```{r}
+class(data)
+```
+
+## Dataframe to Matrix
+
+```{r}
+data=data.matrix(small_mtcars)
+data
+```
+
+```{r}
+class(data)
+```
+
+## Dataframe to List
+
+```{r}
+data=as.list(small_mtcars)
+data
+```
+
+```{r}
+class(data)
+```
+
+# 8. References
+
+-   [R for Data Science, 2nd Edition](https://r4ds.hadley.nz/)
+-   [dplyr Documentation](https://dplyr.tidyverse.org/)
+-   [tidyr Documentation](https://tidyr.tidyverse.org/)
+-   [stringr Documentation](https://stringr.tidyverse.org/)
+-   [lubridate Documentation](https://lubridate.tidyverse.org/)

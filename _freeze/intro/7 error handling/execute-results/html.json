@@ -1,0 +1,12 @@
+{
+  "hash": "2fa3b5060035ce3faeb8209acc157312",
+  "result": {
+    "engine": "jupyter",
+    "markdown": "---\ntitle: \"Error handling\"\nauthor: \"Tony D\"\n\nexecute:\n  warning: false\n  error: false\nformat:\n  html:\n    toc: true\n    toc-location: right\n    code-fold: show\n    code-tools: true\n    number-sections: true\n    code-block-bg: true\n    code-block-border-left: \"#31BAE9\"\n    code-copy: true\n---\n\n---\n\n\nThis guide provides solutions to common errors encountered when working with R, particularly focusing on Python integration issues with the `reticulate` package.\n\n# Python Version Issues with Reticulate\n\n## if can not location python version\n\nError message:\n```\ncan not find Python specified in RETICULATE_PYTHON (/Library/Frameworks/Python.framework/Versions/3.12/bin/python3)\n```\n\n### find current python version \n\n```{bash}\nwhich -a python python3\n```\n\n### change python version in `.Renviron` under home folder\n\ngo to home folder by Command-Shift-H\n\n```{bash}\nRETICULATE_PYTHON=\"/Library/Frameworks/Python.framework/Versions/3.13/bin/python3\"\n```\n\n# Common R Errors and Solutions\n\n## Package Installation Errors\n\n### Solution: Update R and packages\n```r\n# Update all packages\nupdate.packages(ask = FALSE, checkBuilt = TRUE)\n```\n\n## Memory Issues\n\n### Solution: Increase memory limit\n```r\n# Check current memory limit\nmemory.limit()\n\n# Increase memory limit (Windows only)\nmemory.limit(size = 56000)\n```\n\n# References\n\n## Troubleshooting Guides\n- [RStudio Support](https://support.posit.co/)\n- [R FAQ](https://cran.r-project.org/doc/FAQ/R-FAQ.html)\n- [Common R Errors and Solutions](https://www.burns-stat.com/documents/tutorials/top-20-r-errors/)\n\n## reticulate Documentation\n- [reticulate Package Guide](https://rstudio.github.io/reticulate/)\n- [Python Version Configuration](https://rstudio.github.io/reticulate/articles/versions.html)\n\n## Community Help\n- [Stack Overflow - R](https://stackoverflow.com/questions/tagged/r)\n- [RStudio Community](https://community.rstudio.com/)\n\n",
+    "supporting": [
+      "7 error handling_files/figure-html"
+    ],
+    "filters": [],
+    "includes": {}
+  }
+}

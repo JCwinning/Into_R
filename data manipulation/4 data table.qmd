@@ -1,0 +1,221 @@
+---
+title: "Data Tables in R"
+author: "Tony D"
+execute:
+  warning: false
+  error: false
+format:
+  html:
+    toc: true
+    toc-location: right
+    code-fold: show
+    code-tools: true
+    number-sections: true
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-copy: true
+---
+
+This document provides a comprehensive guide to creating a wide variety of tables in R, from simple static tables to complex, interactive, and publication-ready displays. We will explore several powerful packages, each with its own strengths.
+
+# 1. `gt`: For Beautiful, Presentation-Ready Tables
+
+![](https://gt.rstudio.com/reference/figures/logo.svg){width="200"}
+
+The `gt` package is designed for creating beautiful and highly customizable tables. It follows a "grammar of tables" philosophy, allowing you to build a table layer by layer, from the data to the header, footer, and cell formatting. This makes it ideal for tables in reports, presentations, and publications where appearance and clarity are paramount.
+
+![](https://gt.rstudio.com/reference/figures/gt_parts_of_a_table.svg)
+
+This example demonstrates how to create a rich, informative table from the `sp500` dataset included with `gt`.
+
+```{r}
+library(gt)
+library(tidyverse)
+library(glue)
+
+# Define the start and end dates for the data range
+start_date <- "2010-06-07"
+end_date <- "2010-06-14"
+
+# Create a gt table from preprocessed sp500 data
+sp500 |>
+  filter(date >= start_date & date <= end_date) |>
+  select(-adj_close) |>
+  gt() |>
+  # Add a title and subtitle using markdown for formatting
+  tab_header(
+    title = md("**S&P 500 Daily Prices**"),
+    subtitle = glue("Data from {start_date} to {end_date}")
+  ) |>
+  # Format columns for currency, dates, and large numbers
+  fmt_currency(columns = c(open, high, low, close)) |>
+  fmt_date(columns = date, date_style = "wd_m_day_year") |>
+  fmt_number(columns = volume, suffixing = TRUE) |>
+  # Add a source note with a link
+  tab_source_note(
+    source_note = html("Source: <a href='https://www.spglobal.com/'>S&P Global</a>")
+  ) |>
+  # Center-align all columns
+  cols_align(
+    align = "center",
+    columns = everything()
+  ) |>
+  # Add a color scale to the `close` column to highlight values
+  data_color(
+    columns = close,
+    colors = scales::col_numeric(
+      palette = c("#FEEBDB", "#FDD8B0", "#FDC686", "#FDB35B", "#FD9F2C"),
+      domain = range(sp500$close)
+    )
+  )
+```
+
+# 2. `DT`: For Interactive Data Exploration
+
+The `DT` package provides an R interface to the powerful JavaScript library DataTables. It turns a standard R data frame into an interactive HTML table that supports live filtering, pagination, sorting, and exporting. It is perfect for data exploration in R Markdown documents and Shiny apps.
+
+![](images/clipboard-141935303.png){width="212"}
+
+```{r}
+library(DT)
+```
+
+This is a basic example of an interactive table using the `iris` dataset.
+
+```{r}
+iris |> datatable(options = list(pageLength = 5, scrollX = TRUE))
+```
+
+### Advanced Formatting and Styling
+
+`DT` allows for extensive styling using the `format*()` family of functions. You can add color bars, conditional formatting, and more.
+
+```{r}
+# Take a sample of the iris dataset for a cleaner look
+sample_iris <- iris[c(1:5, 51:55, 101:105), ]
+
+sample_iris |> 
+  datatable(options = list(pageLength = 5)) %>% 
+  # Bold the Sepal.Length for values > 5
+  formatStyle('Sepal.Length', fontWeight = styleInterval(5, c('normal', 'bold'))) %>% 
+  # Apply conditional colors to Sepal.Width
+  formatStyle(
+    'Sepal.Width',
+    color = styleInterval(c(3.0, 3.5), c('red', 'orange', 'green')),
+    backgroundColor = styleInterval(3.0, c('lightgray', 'lightyellow'))
+  ) %>% 
+  # Add a background color bar to Petal.Length
+  formatStyle(
+    'Petal.Length',
+    background = styleColorBar(range(iris$Petal.Length), 'steelblue'),
+    backgroundSize = '100% 90%',
+    backgroundRepeat = 'no-repeat',
+    backgroundPosition = 'center'
+  ) %>% 
+  # Style the Species column
+  formatStyle(
+    'Species',
+    backgroundColor = styleEqual(
+      unique(iris$Species), c('lightblue', 'lightgreen', 'lightpink')
+    )
+  )
+```
+
+### Table Export Buttons
+
+The `Buttons` extension adds buttons to the table for exporting the data to formats like CSV, Excel, and PDF, or for copying to the clipboard.
+
+```{r}
+iris |> datatable(
+  extensions = 'Buttons', 
+  options = list(
+    dom = 'Bfrtip', # Defines the layout, B is for buttons
+    buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
+    pageLength = 5
+  )
+)
+```
+
+# 3. `reactable`: For Modern and Feature-Rich Interactive Tables
+
+`reactable` is another excellent package for creating interactive tables, known for its modern look, rich feature set, and ease of use. It supports sorting, filtering, grouping, and aggregation out of the box.
+
+```{r}
+library(reactable)
+library(reactablefmtr)
+
+mtcars %>% 
+  rownames_to_column("car_name") %>% 
+  select(car_name, mpg, cyl, hp, gear) %>% 
+  reactable(
+    filterable = TRUE, # Add column filters
+    searchable = TRUE,   # Add a global search box
+    groupBy = "cyl",     # Group by number of cylinders
+    columns = list(
+      hp = colDef(aggregate = "mean", format = colFormat(digits = 1)), # Show mean HP for each group
+      gear = colDef(aggregate = "max"), # Show max gears for each group
+      # Custom cell rendering to add a bar chart for mpg
+      mpg = colDef(cell = data_bars(., text_position = "above", box_shadow = TRUE))
+    ),
+    defaultPageSize = 10
+  ) %>% 
+  add_title(title = 'MTCars Dataset Summary') %>% 
+  add_subtitle(subtitle = 'Grouped by Cylinders', font_weight = 'normal')
+```
+
+# 4. `knitr::kable`: For Simple, Static Tables
+
+`knitr::kable()` is a simple and lightweight function for creating clean, static tables in various formats like HTML, LaTeX, and Markdown. It's perfect for quick reports and documents where interactivity is not needed. The `kableExtra` package adds many styling options.
+
+```{r}
+library(knitr)
+library(kableExtra)
+
+mtcars %>% 
+  head() %>% 
+  kable(caption = "A Simple Static Table with kable") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F)
+```
+
+For longer tables, `rmarkdown::paged_table()` creates a scrollable, paged version, which is more user-friendly than a very long static table.
+
+```{r}
+library(rmarkdown)
+mtcars %>% paged_table()
+```
+
+# 5. `flextable`: For Publication-Ready Tables in Office Documents
+
+The `flextable` package is designed to create tables for reporting, with a focus on producing high-quality output for Microsoft Word, PowerPoint, and HTML documents. It offers a high degree of control over formatting, including cell merging, borders, and fonts.
+
+```{r}
+library(flextable)
+
+# Create a basic flextable
+ft <- flextable(head(mtcars))
+
+# Apply formatting
+ft <- ft %>% 
+  set_header_labels(mpg = "Miles per Gallon", cyl = "Cylinders") %>% 
+  theme_booktabs() %>% 
+  autofit() %>% 
+  set_caption("A Publication-Ready Table with flextable") %>% 
+  color(j = ~ mpg, color = "red") %>% 
+  bold(j = ~ cyl, bold = TRUE)
+
+ft
+```
+
+# 6. Conclusion: Which Package Should You Use?
+
+-   **For beautiful, static reports and publications:** Use `gt`.
+-   **For interactive data exploration in R Markdown or Shiny:** Use `DT` or `reactable`. `reactable` has a more modern feel and powerful grouping features, while `DT` is very mature and has a rich ecosystem of extensions.
+-   **For quick, simple static tables:** Use `knitr::kable` with `kableExtra` for styling.
+-   **For reports destined for Microsoft Office (Word, PowerPoint):** Use `flextable`.
+
+# 7. References
+
+-   [gt Package](https://gt.rstudio.com/)
+-   [DT Package](https://rstudio.github.io/DT/)
+-   [reactable Package](https://glin.github.io/reactable/)
+-   [flextable Package](https://davidgohel.github.io/flextable/)

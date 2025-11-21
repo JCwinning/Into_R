@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Tony D">
+
+<title>US State GDP Map – R Handbook</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../Rlogo.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-8116483b35b7c59d831d40773437fcbf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+<meta name="twitter:title" content="US State GDP Map – R Handbook">
+<meta name="twitter:description" content="with leaflet">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../Rlogo.png" alt="" class="navbar-logo light-content">
+    <img src="../../Rlogo.png" alt="" class="navbar-logo dark-content">
+    </a>
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">R Handbook</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../../index.html" aria-current="page"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-intro" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">intro</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-intro">    
+        <li class="dropdown-header">
+ Intro</li>
+        <li>
+    <a class="dropdown-item" href="../../intro/1 basic R.html">
+ <span class="dropdown-text">Basic R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../intro/2 probability.html">
+ <span class="dropdown-text">Probability</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../intro/3 Statistics.html">
+ <span class="dropdown-text">Statistics</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../intro/5 R book.html">
+ <span class="dropdown-text">R Books</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../intro/6 data analytic in R book.html">
+ <span class="dropdown-text">Data Analytics in R - Recommended Books</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../intro/7 error handling.html">
+ <span class="dropdown-text">Error handling</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-data" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Data</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-data">    
+        <li class="dropdown-header">
+ data manipulation</li>
+        <li>
+    <a class="dropdown-item" href="../../data manipulation/1 input output.html">
+ <span class="dropdown-text">Input &amp; Output in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../data manipulation/2 data_structure.html">
+ <span class="dropdown-text">Data Structures in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../data manipulation/3 data manipulation with tidyverse.html">
+ <span class="dropdown-text">Data Manipulation with tidyverse</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../data manipulation/4 data table.html">
+ <span class="dropdown-text">Data Tables in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../data manipulation/5 recipe.html">
+ <span class="dropdown-text">Recipe in tidymodels</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../data manipulation/6 resample.html">
+ <span class="dropdown-text">Resampling Methods in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../data manipulation/7 SQL database.html">
+ <span class="dropdown-text">Working with SQL Databases in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../data manipulation/8 data management.html">
+ <span class="dropdown-text">Data management</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-ploting" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Ploting</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-ploting">    
+        <li class="dropdown-header">
+ Plot</li>
+        <li>
+    <a class="dropdown-item" href="../../Plot/1 ggplot2.html">
+ <span class="dropdown-text">ggplot2 in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Plot/2 plotly.html">
+ <span class="dropdown-text">Plotly in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Plot/3 image processing.html">
+ <span class="dropdown-text">image processing</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Plot/4 Financial data.html">
+ <span class="dropdown-text">Plot Financial data</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Plot/Map/1 leaflet.html">
+ <span class="dropdown-text">Map</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-publishing" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Publishing</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-publishing">    
+        <li class="dropdown-header">
+ Publish</li>
+        <li>
+    <a class="dropdown-item" href="../../Publish/email/email.html">
+ <span class="dropdown-text">Email</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Publish/git/git.html">
+ <span class="dropdown-text">Git</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Publish/quarto/1 quarto intro.html">
+ <span class="dropdown-text">Quarto</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Publish/Shiny/1 shiny weight tracking.html">
+ <span class="dropdown-text">Shiny</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-other" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Other</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-other">    
+        <li class="dropdown-header">
+ Other</li>
+        <li>
+    <a class="dropdown-item" href="../../other/google analytics/1 google analytics.html">
+ <span class="dropdown-text">google analytics</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../other/other/1 chromote.html">
+ <span class="dropdown-text">Other</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../other/web scrap/1 web scrap with rvest.html">
+ <span class="dropdown-text">web scrap</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../Plot/1 ggplot2.html">Plot</a></li><li class="breadcrumb-item"><a href="../../Plot/Map/1 leaflet.html">Map</a></li><li class="breadcrumb-item"><a href="../../Plot/Map/3 leaflet US.html">US State GDP Map</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="../../index.html" class="sidebar-logo-link">
+      </a>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Plot</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Plot/1 ggplot2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">ggplot2 in R</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Plot/2 plotly.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Plotly in R</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Plot/3 image processing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">image processing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Plot/4 Financial data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Plot Financial data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Map</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Plot/Map/1 leaflet.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Interactive Maps with Leaflet in R</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Plot/Map/2 China accident map with mapview.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">China accident map</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Plot/Map/3 leaflet US.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">US State GDP Map</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Plot/Map/4 HK whisky bar.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Mapping Hong Kong Whisky Bars</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Plot/Map/5 world map.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">World map with GPD per capita</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#data-loading-and-preparation" id="toc-data-loading-and-preparation" class="nav-link active" data-scroll-target="#data-loading-and-preparation"><span class="header-section-number">1</span> Data Loading and Preparation</a>
+  <ul class="collapse">
+  <li><a href="#loading-geospatial-and-gdp-data" id="toc-loading-geospatial-and-gdp-data" class="nav-link" data-scroll-target="#loading-geospatial-and-gdp-data"><span class="header-section-number">1.1</span> Loading Geospatial and GDP Data</a></li>
+  </ul></li>
+  <li><a href="#read-the-us-state-gdp-data-from-an-excel-file-and-clean-up-the-state-names." id="toc-read-the-us-state-gdp-data-from-an-excel-file-and-clean-up-the-state-names." class="nav-link" data-scroll-target="#read-the-us-state-gdp-data-from-an-excel-file-and-clean-up-the-state-names."><span class="header-section-number">2</span> Read the US state GDP data from an Excel file and clean up the state names.</a>
+  <ul class="collapse">
+  <li><a href="#merging-and-preparing-the-data" id="toc-merging-and-preparing-the-data" class="nav-link" data-scroll-target="#merging-and-preparing-the-data"><span class="header-section-number">2.1</span> Merging and Preparing the Data</a></li>
+  </ul></li>
+  <li><a href="#creating-the-choropleth-map" id="toc-creating-the-choropleth-map" class="nav-link" data-scroll-target="#creating-the-choropleth-map"><span class="header-section-number">3</span> Creating the Choropleth Map</a></li>
+  <li><a href="#create-a-color-bin-palette-for-the-map." id="toc-create-a-color-bin-palette-for-the-map." class="nav-link" data-scroll-target="#create-a-color-bin-palette-for-the-map."><span class="header-section-number">4</span> Create a color bin palette for the map.</a></li>
+  <li><a href="#create-the-leaflet-map." id="toc-create-the-leaflet-map." class="nav-link" data-scroll-target="#create-the-leaflet-map."><span class="header-section-number">5</span> Create the leaflet map.</a></li>
+  <li><a href="#display-the-map." id="toc-display-the-map." class="nav-link" data-scroll-target="#display-the-map."><span class="header-section-number">6</span> Display the map.</a>
+  <ul class="collapse">
+  <li><a href="#loading-geospatial-and-gdp-data-1" id="toc-loading-geospatial-and-gdp-data-1" class="nav-link" data-scroll-target="#loading-geospatial-and-gdp-data-1"><span class="header-section-number">6.1</span> Loading Geospatial and GDP Data</a></li>
+  </ul></li>
+  <li><a href="#read-the-us-state-gdp-data-from-an-excel-file-and-clean-up-the-state-names.-1" id="toc-read-the-us-state-gdp-data-from-an-excel-file-and-clean-up-the-state-names.-1" class="nav-link" data-scroll-target="#read-the-us-state-gdp-data-from-an-excel-file-and-clean-up-the-state-names.-1"><span class="header-section-number">7</span> Read the US state GDP data from an Excel file and clean up the state names.</a>
+  <ul class="collapse">
+  <li><a href="#merging-and-preparing-the-data-1" id="toc-merging-and-preparing-the-data-1" class="nav-link" data-scroll-target="#merging-and-preparing-the-data-1"><span class="header-section-number">7.1</span> Merging and Preparing the Data</a></li>
+  </ul></li>
+  <li><a href="#creating-the-choropleth-map-1" id="toc-creating-the-choropleth-map-1" class="nav-link" data-scroll-target="#creating-the-choropleth-map-1"><span class="header-section-number">8</span> Creating the Choropleth Map</a></li>
+  <li><a href="#create-a-color-bin-palette-for-the-map.-1" id="toc-create-a-color-bin-palette-for-the-map.-1" class="nav-link" data-scroll-target="#create-a-color-bin-palette-for-the-map.-1"><span class="header-section-number">9</span> Create a color bin palette for the map.</a></li>
+  <li><a href="#create-the-leaflet-map.-1" id="toc-create-the-leaflet-map.-1" class="nav-link" data-scroll-target="#create-the-leaflet-map.-1"><span class="header-section-number">10</span> Create the leaflet map.</a></li>
+  <li><a href="#display-the-map.-1" id="toc-display-the-map.-1" class="nav-link" data-scroll-target="#display-the-map.-1"><span class="header-section-number">11</span> Display the map.</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../Plot/1 ggplot2.html">Plot</a></li><li class="breadcrumb-item"><a href="../../Plot/Map/1 leaflet.html">Map</a></li><li class="breadcrumb-item"><a href="../../Plot/Map/3 leaflet US.html">US State GDP Map</a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">US State GDP Map</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<p class="subtitle lead">with leaflet</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Tony D </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>This document demonstrates how to create a choropleth map of the United States, where each state is colored based on its per capita GDP in 2022. We will use the <code>leaflet</code> package in R to create the interactive map.</p>
+<section id="data-loading-and-preparation" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Data Loading and Preparation</h1>
+<p>First, we load the necessary R libraries for data manipulation, visualization, and working with geospatial data.</p>
+<p><code>{ r} # Load the tidyverse package for data manipulation and visualization. library(tidyverse) # Load the rvest package for web scraping. library(rvest) # Load the chromote package for controlling a headless Chrome browser. library(chromote) # Load the janitor package for data cleaning. library(janitor) # Load the tidygeocoder package for geocoding. library(tidygeocoder) # Load the leaflet package for creating interactive maps. library(leaflet) # Load the sf package for working with simple features. library(sf)</code></p>
+<section id="loading-geospatial-and-gdp-data" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="loading-geospatial-and-gdp-data"><span class="header-section-number">1.1</span> Loading Geospatial and GDP Data</h2>
+<p>We will load the US states geospatial data from a GeoJSON file and the GDP data from an Excel file.</p>
+<p><code>{ r} # Load the US states map data from the maps package. library(maps) mapStates = map("state", fill = TRUE, plot = FALSE)</code></p>
+<p>US location data: <code>{ r} # Read the US states GeoJSON file. json_data=read_sf("us-states.json")</code></p>
+<p><code>{ r} # Convert the sf object to a data frame. map_df &lt;- as.data.frame(json_data)</code></p>
+<p><code>{ r} # Get a glimpse of the mapStates data. glimpse(mapStates)</code></p>
+<p>US 2022 GDP data:</p>
+<p>```{ r} # Load the openxlsx and readxl packages for reading Excel files. library(openxlsx) library(readxl)</p>
+</section>
+</section>
+<section id="read-the-us-state-gdp-data-from-an-excel-file-and-clean-up-the-state-names." class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Read the US state GDP data from an Excel file and clean up the state names.</h1>
+<p>per_gdp_usd=read_excel(‘US state gpd 2022.xlsx’) %&gt;% mutate(names=str_replace(names,‘*’,’’) %&gt;% str_trim() )</p>
+<pre><code>
+```{
+r}
+# Get a glimpse of the GDP data.
+glimpse(per_gdp_usd)</code></pre>
+<section id="merging-and-preparing-the-data" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="merging-and-preparing-the-data"><span class="header-section-number">2.1</span> Merging and Preparing the Data</h2>
+<p>We will merge the geospatial data with the GDP data.</p>
+<p><code>{ r} # Merge the map data with the GDP data by state name. map_df002 &lt;- merge(map_df, per_gdp_usd, by.x = "name", by.y = "names")</code></p>
+<p><code>{ r} # Get a glimpse of the merged data. glimpse(map_df002)</code></p>
+<p><code>{ r} # Convert the merged data frame back to an sf object. map_sf002 &lt;- sf::st_as_sf(map_df002, sf_column_name = "geometry")</code></p>
+</section>
+</section>
+<section id="creating-the-choropleth-map" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Creating the Choropleth Map</h1>
+<p>Now we can create the choropleth map of the US states.</p>
+<p>```{ r} # Create a color palette for the map. pal &lt;- colorNumeric( palette = “Blues”, domain = map_df002$per_gdp_usd )</p>
+</section>
+<section id="create-a-color-bin-palette-for-the-map." class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Create a color bin palette for the map.</h1>
+<p>binpal &lt;- colorBin(“Blues”,map_df002$per_gdp_usd, 20, pretty = FALSE)</p>
+</section>
+<section id="create-the-leaflet-map." class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Create the leaflet map.</h1>
+m &lt;- leaflet(map_sf002) %&gt;% # Add default OpenStreetMap map tiles. addTiles() %&gt;%<br>
+# Add polygons for the states. addPolygons(smoothFactor = 0.3, fillOpacity = 0.5,weight = 1, # Set the fill color based on the per capita GDP. color = ~binpal(per_2022_usd), # Create a popup with information about the state. popup = ~ paste0( “地区：”, name, “<br>”, “
+<hr>
+<p>“,”人均gpd：“, per_2022_usd,”（千 美元）“,”<br>” ), # Create a label with more detailed information. label = lapply(paste0( “地区：”, “<b>”, map_sf002<span class="math inline">\(name, "&lt;/b&gt;", "&lt;br/&gt;",
+      "人均gpd 美元：", round(map_sf002\)</span>per_2022_usd/1000), “K <br>”, “总gpd 美元：”, round(map_sf002$total_2022_usd), “M <br>” ), htmltools::HTML) ) %&gt;% # Add a legend to the map. addLegend( position = “bottomright”, title = “人均gpd(美元)”, pal = pal, values = ~per_2022_usd, opacity = 1.0 )</b></p><b>
+</b></section><b>
+<section id="display-the-map." class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> Display the map.</h1>
+<p>m</p>
+<pre><code>
+# Resources
+
+Here are some useful resources for learning more about the data and tools used in this document.
+
+https://www.gunviolencearchive.org/reports/mass-shooting?page=8&amp;year=2023
+
+
+
+
+
+:::{#quarto-navigation-envelope .hidden}
+[Ploting]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1zaWRlYmFyLXRpdGxl"}
+[R Handbook]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXItdGl0bGU="}
+[Mapping Hong Kong Whisky Bars]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uZXh0"}
+[China accident map]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1wcmV2"}
+[Plot]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1zaWRlYmFyOnF1YXJ0by1zaWRlYmFyLXNlY3Rpb24tMQ=="}
+[ggplot2 in R]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1zaWRlYmFyOi9QbG90LzEgZ2dwbG90Mi5odG1sZ2dwbG90Mi1pbi1S"}
+[Plotly in R]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1zaWRlYmFyOi9QbG90LzIgcGxvdGx5Lmh0bWxQbG90bHktaW4tUg=="}
+[image processing]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1zaWRlYmFyOi9QbG90LzMgaW1hZ2UgcHJvY2Vzc2luZy5odG1saW1hZ2UtcHJvY2Vzc2luZw=="}
+[Plot Financial data]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1zaWRlYmFyOi9QbG90LzQgRmluYW5jaWFsIGRhdGEuaHRtbFBsb3QtRmluYW5jaWFsLWRhdGE="}
+[Map]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1zaWRlYmFyOnF1YXJ0by1zaWRlYmFyLXNlY3Rpb24tMg=="}
+[Interactive Maps with Leaflet in R]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1zaWRlYmFyOi9QbG90L01hcC8xIGxlYWZsZXQuaHRtbEludGVyYWN0aXZlLU1hcHMtd2l0aC1MZWFmbGV0LWluLVI="}
+[China accident map]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1zaWRlYmFyOi9QbG90L01hcC8yIENoaW5hIGFjY2lkZW50IG1hcCB3aXRoIG1hcHZpZXcuaHRtbENoaW5hLWFjY2lkZW50LW1hcA=="}
+[US State GDP Map]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1zaWRlYmFyOi9QbG90L01hcC8zIGxlYWZsZXQgVVMuaHRtbFVTLVN0YXRlLUdEUC1NYXA="}
+[Mapping Hong Kong Whisky Bars]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1zaWRlYmFyOi9QbG90L01hcC80IEhLIHdoaXNreSBiYXIuaHRtbE1hcHBpbmctSG9uZy1Lb25nLVdoaXNreS1CYXJz"}
+[World map with GPD per capita]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1zaWRlYmFyOi9QbG90L01hcC81IHdvcmxkIG1hcC5odG1sV29ybGQtbWFwLXdpdGgtR1BELXBlci1jYXBpdGE="}
+[Home]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6SG9tZQ=="}
+[/index.html]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6L2luZGV4Lmh0bWw="}
+[intro]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6aW50cm8="}
+[Intro]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6SW50cm8="}
+[Basic R]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6QmFzaWMgUg=="}
+[/intro/1 basic R.html]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6L2ludHJvLzEgYmFzaWMgUi5odG1s"}
+[Probability]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6UHJvYmFiaWxpdHk="}
+[/intro/2 probability.html]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6L2ludHJvLzIgcHJvYmFiaWxpdHkuaHRtbA=="}
+[Statistics]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6U3RhdGlzdGljcw=="}
+[/intro/3 Statistics.html]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6L2ludHJvLzMgU3RhdGlzdGljcy5odG1s"}
+[R Books]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6UiBCb29rcw=="}
+[/intro/5 R book.html]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6L2ludHJvLzUgUiBib29rLmh0bWw="}
+[Data Analytics in R - Recommended Books]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6RGF0YSBBbmFseXRpY3MgaW4gUiAtIFJlY29tbWVuZGVkIEJvb2tz"}
+[/intro/6 data analytic in R book.html]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6L2ludHJvLzYgZGF0YSBhbmFseXRpYyBpbiBSIGJvb2suaHRtbA=="}
+[Error handling]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6RXJyb3IgaGFuZGxpbmc="}
+[/intro/7 error handling.html]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6L2ludHJvLzcgZXJyb3IgaGFuZGxpbmcuaHRtbA=="}
+[Data]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6RGF0YQ=="}
+[data manipulation]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6ZGF0YSBtYW5pcHVsYXRpb24="}
+[Input &amp; Output in R]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6SW5wdXQgJiBPdXRwdXQgaW4gUg=="}
+[/data manipulation/1 input output.html]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6L2RhdGEgbWFuaXB1bGF0aW9uLzEgaW5wdXQgb3V0cHV0Lmh0bWw="}
+[Data Structures in R]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6RGF0YSBTdHJ1Y3R1cmVzIGluIFI="}
+[/data manipulation/2 data_structure.html]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6L2RhdGEgbWFuaXB1bGF0aW9uLzIgZGF0YV9zdHJ1Y3R1cmUuaHRtbA=="}
+[Data Manipulation with tidyverse]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6RGF0YSBNYW5pcHVsYXRpb24gd2l0aCB0aWR5dmVyc2U="}
+[/data manipulation/3 data manipulation with tidyverse.html]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6L2RhdGEgbWFuaXB1bGF0aW9uLzMgZGF0YSBtYW5pcHVsYXRpb24gd2l0aCB0aWR5dmVyc2UuaHRtbA=="}
+[Data Tables in R]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6RGF0YSBUYWJsZXMgaW4gUg=="}
+[/data manipulation/4 data table.html]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6L2RhdGEgbWFuaXB1bGF0aW9uLzQgZGF0YSB0YWJsZS5odG1s"}
+[Recipe in tidymodels]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6UmVjaXBlIGluIHRpZHltb2RlbHM="}
+[/data manipulation/5 recipe.html]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6L2RhdGEgbWFuaXB1bGF0aW9uLzUgcmVjaXBlLmh0bWw="}
+[Resampling Methods in R]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6UmVzYW1wbGluZyBNZXRob2RzIGluIFI="}
+[/data manipulation/6 resample.html]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6L2RhdGEgbWFuaXB1bGF0aW9uLzYgcmVzYW1wbGUuaHRtbA=="}
+[Working with SQL Databases in R]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6V29ya2luZyB3aXRoIFNRTCBEYXRhYmFzZXMgaW4gUg=="}
+[/data manipulation/7 SQL database.html]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6L2RhdGEgbWFuaXB1bGF0aW9uLzcgU1FMIGRhdGFiYXNlLmh0bWw="}
+[Data management]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6RGF0YSBtYW5hZ2VtZW50"}
+[/data manipulation/8 data management.html]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6L2RhdGEgbWFuaXB1bGF0aW9uLzggZGF0YSBtYW5hZ2VtZW50Lmh0bWw="}
+[Ploting]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6UGxvdGluZw=="}
+[Plot]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6UGxvdA=="}
+[ggplot2 in R]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6Z2dwbG90MiBpbiBS"}
+[/Plot/1 ggplot2.html]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6L1Bsb3QvMSBnZ3Bsb3QyLmh0bWw="}
+[Plotly in R]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6UGxvdGx5IGluIFI="}
+[/Plot/2 plotly.html]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6L1Bsb3QvMiBwbG90bHkuaHRtbA=="}
+[image processing]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6aW1hZ2UgcHJvY2Vzc2luZw=="}
+[/Plot/3 image processing.html]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6L1Bsb3QvMyBpbWFnZSBwcm9jZXNzaW5nLmh0bWw="}
+[Plot Financial data]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6UGxvdCBGaW5hbmNpYWwgZGF0YQ=="}
+[/Plot/4 Financial data.html]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6L1Bsb3QvNCBGaW5hbmNpYWwgZGF0YS5odG1s"}
+[Map]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6TWFw"}
+[/Plot/Map/1 leaflet.html]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6L1Bsb3QvTWFwLzEgbGVhZmxldC5odG1s"}
+[Publishing]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6UHVibGlzaGluZw=="}
+[Publish]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6UHVibGlzaA=="}
+[Email]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6RW1haWw="}
+[/Publish/email/email.html]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6L1B1Ymxpc2gvZW1haWwvZW1haWwuaHRtbA=="}
+[Git]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6R2l0"}
+[/Publish/git/git.html]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6L1B1Ymxpc2gvZ2l0L2dpdC5odG1s"}
+[Quarto]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6UXVhcnRv"}
+[/Publish/quarto/1 quarto intro.html]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6L1B1Ymxpc2gvcXVhcnRvLzEgcXVhcnRvIGludHJvLmh0bWw="}
+[Shiny]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6U2hpbnk="}
+[/Publish/Shiny/1 shiny weight tracking.html]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6L1B1Ymxpc2gvU2hpbnkvMSBzaGlueSB3ZWlnaHQgdHJhY2tpbmcuaHRtbA=="}
+[Other]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6T3RoZXI="}
+[google analytics]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6Z29vZ2xlIGFuYWx5dGljcw=="}
+[/other/google analytics/1 google analytics.html]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6L290aGVyL2dvb2dsZSBhbmFseXRpY3MvMSBnb29nbGUgYW5hbHl0aWNzLmh0bWw="}
+[/other/other/1 chromote.html]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6L290aGVyL290aGVyLzEgY2hyb21vdGUuaHRtbA=="}
+[web scrap]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6d2ViIHNjcmFw"}
+[/other/web scrap/1 web scrap with rvest.html]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWludC1uYXZiYXI6L290aGVyL3dlYiBzY3JhcC8xIHdlYiBzY3JhcCB3aXRoIHJ2ZXN0Lmh0bWw="}
+[Plot]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWJyZWFkY3J1bWJzLVBsb3Q="}
+[Map]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWJyZWFkY3J1bWJzLU1hcA=="}
+[US State GDP Map]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLWJyZWFkY3J1bWJzLVVTLVN0YXRlLUdEUC1NYXA="}
+
+:::{.hidden .quarto-markdown-envelope-contents render-id="Zm9vdGVyLXJpZ2h0"}
+This website is built with ❤️ and [Quarto](https://quarto.org/).
+:::
+
+:::
+
+
+
+:::{#quarto-meta-markdown .hidden}
+[US State GDP Map – R Handbook]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLW1ldGF0aXRsZQ=="}
+[US State GDP Map – R Handbook]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLXR3aXR0ZXJjYXJkdGl0bGU="}
+[US State GDP Map – R Handbook]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLW9nY2FyZHRpdGxl"}
+[R Handbook]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLW1ldGFzaXRlbmFtZQ=="}
+[with leaflet]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLXR3aXR0ZXJjYXJkZGVzYw=="}
+[with leaflet]{.hidden .quarto-markdown-envelope-contents render-id="cXVhcnRvLW9nY2FyZGRkZXNj"}
+:::
+
+
+
+
+&lt;!-- --&gt;
+
+::: {.quarto-embedded-source-code}
+```````````````````{.markdown shortcodes="false"}
+---
+title: "US State GDP Map"
+subtitle: "with leaflet"
+author: "Tony D"
+
+execute:
+  warning: false
+  error: false
+
+format:
+  html:
+    toc: true
+    toc-location: right
+    code-fold: show
+    code-tools: true
+    number-sections: true
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-copy: true
+---
+
+
+This document demonstrates how to create a choropleth map of the United States, where each state is colored based on its per capita GDP in 2022. We will use the `leaflet` package in R to create the interactive map.
+
+# Data Loading and Preparation
+
+First, we load the necessary R libraries for data manipulation, visualization, and working with geospatial data.
+
+```{
+r}
+# Load the tidyverse package for data manipulation and visualization.
+library(tidyverse)
+# Load the rvest package for web scraping.
+library(rvest)
+# Load the chromote package for controlling a headless Chrome browser.
+library(chromote)
+# Load the janitor package for data cleaning.
+library(janitor)
+# Load the tidygeocoder package for geocoding.
+library(tidygeocoder)
+# Load the leaflet package for creating interactive maps.
+library(leaflet)
+# Load the sf package for working with simple features.
+library(sf)</code></pre>
+<section id="loading-geospatial-and-gdp-data-1" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="loading-geospatial-and-gdp-data-1"><span class="header-section-number">6.1</span> Loading Geospatial and GDP Data</h2>
+<p>We will load the US states geospatial data from a GeoJSON file and the GDP data from an Excel file.</p>
+<p><code>{ r} # Load the US states map data from the maps package. library(maps) mapStates = map("state", fill = TRUE, plot = FALSE)</code></p>
+<p>US location data: <code>{ r} # Read the US states GeoJSON file. json_data=read_sf("us-states.json")</code></p>
+<p><code>{ r} # Convert the sf object to a data frame. map_df &lt;- as.data.frame(json_data)</code></p>
+<p><code>{ r} # Get a glimpse of the mapStates data. glimpse(mapStates)</code></p>
+<p>US 2022 GDP data:</p>
+<p>```{ r} # Load the openxlsx and readxl packages for reading Excel files. library(openxlsx) library(readxl)</p>
+</section>
+</section>
+<section id="read-the-us-state-gdp-data-from-an-excel-file-and-clean-up-the-state-names.-1" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> Read the US state GDP data from an Excel file and clean up the state names.</h1>
+<p>per_gdp_usd=read_excel(‘US state gpd 2022.xlsx’) %&gt;% mutate(names=str_replace(names,‘*’,’’) %&gt;% str_trim() )</p>
+<pre><code>
+```{
+r}
+# Get a glimpse of the GDP data.
+glimpse(per_gdp_usd)</code></pre>
+<section id="merging-and-preparing-the-data-1" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="merging-and-preparing-the-data-1"><span class="header-section-number">7.1</span> Merging and Preparing the Data</h2>
+<p>We will merge the geospatial data with the GDP data.</p>
+<p><code>{ r} # Merge the map data with the GDP data by state name. map_df002 &lt;- merge(map_df, per_gdp_usd, by.x = "name", by.y = "names")</code></p>
+<p><code>{ r} # Get a glimpse of the merged data. glimpse(map_df002)</code></p>
+<p><code>{ r} # Convert the merged data frame back to an sf object. map_sf002 &lt;- sf::st_as_sf(map_df002, sf_column_name = "geometry")</code></p>
+</section>
+</section>
+<section id="creating-the-choropleth-map-1" class="level1" data-number="8">
+<h1 data-number="8"><span class="header-section-number">8</span> Creating the Choropleth Map</h1>
+<p>Now we can create the choropleth map of the US states.</p>
+<p>```{ r} # Create a color palette for the map. pal &lt;- colorNumeric( palette = “Blues”, domain = map_df002$per_gdp_usd )</p>
+</section>
+<section id="create-a-color-bin-palette-for-the-map.-1" class="level1" data-number="9">
+<h1 data-number="9"><span class="header-section-number">9</span> Create a color bin palette for the map.</h1>
+<p>binpal &lt;- colorBin(“Blues”,map_df002$per_gdp_usd, 20, pretty = FALSE)</p>
+</section>
+<section id="create-the-leaflet-map.-1" class="level1" data-number="10">
+<h1 data-number="10"><span class="header-section-number">10</span> Create the leaflet map.</h1>
+m &lt;- leaflet(map_sf002) %&gt;% # Add default OpenStreetMap map tiles. addTiles() %&gt;%<br>
+# Add polygons for the states. addPolygons(smoothFactor = 0.3, fillOpacity = 0.5,weight = 1, # Set the fill color based on the per capita GDP. color = ~binpal(per_2022_usd), # Create a popup with information about the state. popup = ~ paste0( “地区：”, name, “<br>”, “
+<hr>
+<p>“,”人均gpd：“, per_2022_usd,”（千 美元）“,”<br>” ), # Create a label with more detailed information. label = lapply(paste0( “地区：”, “<b>”, map_sf002<span class="math inline">\(name, "&lt;/b&gt;", "&lt;br/&gt;",
+      "人均gpd 美元：", round(map_sf002\)</span>per_2022_usd/1000), “K <br>”, “总gpd 美元：”, round(map_sf002$total_2022_usd), “M <br>” ), htmltools::HTML) ) %&gt;% # Add a legend to the map. addLegend( position = “bottomright”, title = “人均gpd(美元)”, pal = pal, values = ~per_2022_usd, opacity = 1.0 )</b></p><b>
+</b></section><b>
+<section id="display-the-map.-1" class="level1" data-number="11">
+<h1 data-number="11"><span class="header-section-number">11</span> Display the map.</h1>
+<p>m</p>
+<pre><code>
+# Resources
+
+Here are some useful resources for learning more about the data and tools used in this document.
+
+https://www.gunviolencearchive.org/reports/mass-shooting?page=8&amp;year=2023
+</code></pre>
+<p>:::</p>
+</section>
+
+</b></b><a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main><b><b> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</b></b></div><b><b> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+      <div class="footer-contents">This website is built with ❤️ and [Quarto](https://quarto.org/).</div>  
+    </div>
+  </div>
+</footer>
+
+
+
+
+</b></b></body></html>

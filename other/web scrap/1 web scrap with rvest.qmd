@@ -1,0 +1,125 @@
+---
+title: "web scrap with rvest"
+
+author: "Tony D"
+
+execute:
+  warning: false
+  error: false
+  eval: false
+format:
+  html:
+    toc: true
+    toc-location: right
+    code-fold: show
+    code-tools: true
+    number-sections: true
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+---
+
+
+# loal pacakge
+
+```{r}
+library(rvest)
+library(tidyverse)
+```
+
+
+
+# read html
+
+```{r}
+url='https://www.r-project.org/'
+page=read_html(url)
+```
+
+
+# get HTML text
+
+
+```{r}
+page %>%html_element(css = "h1") |> html_text(trim = TRUE)
+```
+
+
+# get HTML link
+
+
+```{r}
+page %>%html_element(css = "strong a") |> html_text(trim = TRUE)
+```
+
+
+```{r}
+page %>%html_element(css = "strong a") |> html_attr("href")
+```
+
+# get table
+
+
+```{r}
+url='https://en.wikipedia.org/wiki/List_of_Formula_One_drivers'
+page=read_html(url)
+```
+
+
+## get 3rd table
+
+find table xpath
+
+```{r}
+table=page %>%html_element(xpath = '//*[@id="mw-content-text"]/div[1]/table[3]') |> html_table()
+table |> head()
+```
+
+## get 4th table
+
+find table xpath
+
+```{r}
+table=page %>%html_element(xpath = '//*[@id="mw-content-text"]/div[1]/table[4]') |> html_table()
+table |> head()
+```
+
+
+
+```{r, attr.output='.details summary="sessionInfo()"'}
+sessionInfo()
+```
+
+
+# using read_html_live() with more advance web scraping
+
+```{r}
+library(rvest)
+library(tidyverse)
+```
+
+
+```{r}
+url="https://www.whiskybase.com/whiskies/"
+web <- read_html_live(url)
+```
+
+
+```{r}
+#| eval: false
+web$view()
+```
+
+```{r}
+intro_text=web %>% html_elements(".widget-article-content") |> html_text(trim = TRUE) 
+intro_text
+```
+
+
+
+# Reference
+
+
+https://r4ds.hadley.nz/webscraping.html
+
+https://rvest.tidyverse.org/reference/read_html_live.html
+

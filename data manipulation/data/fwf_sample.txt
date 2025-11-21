@@ -1,0 +1,4 @@
+ID  NAME      SCORE
+1   Alice     95   
+2   Bob       82   
+3   Charlie   78   

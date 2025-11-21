@@ -1,0 +1,81 @@
+---
+title: "Error handling"
+author: "Tony D"
+
+execute:
+  warning: false
+  error: false
+format:
+  html:
+    toc: true
+    toc-location: right
+    code-fold: show
+    code-tools: true
+    number-sections: true
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-copy: true
+---
+---
+
+
+This guide provides solutions to common errors encountered when working with R, particularly focusing on Python integration issues with the `reticulate` package.
+
+# Python Version Issues with Reticulate
+
+## if can not location python version
+
+Error message:
+```
+can not find Python specified in RETICULATE_PYTHON (/Library/Frameworks/Python.framework/Versions/3.12/bin/python3)
+```
+
+### find current python version 
+
+```{bash}
+which -a python python3
+```
+
+### change python version in `.Renviron` under home folder
+
+go to home folder by Command-Shift-H
+
+```{bash}
+RETICULATE_PYTHON="/Library/Frameworks/Python.framework/Versions/3.13/bin/python3"
+```
+
+# Common R Errors and Solutions
+
+## Package Installation Errors
+
+### Solution: Update R and packages
+```r
+# Update all packages
+update.packages(ask = FALSE, checkBuilt = TRUE)
+```
+
+## Memory Issues
+
+### Solution: Increase memory limit
+```r
+# Check current memory limit
+memory.limit()
+
+# Increase memory limit (Windows only)
+memory.limit(size = 56000)
+```
+
+# References
+
+## Troubleshooting Guides
+- [RStudio Support](https://support.posit.co/)
+- [R FAQ](https://cran.r-project.org/doc/FAQ/R-FAQ.html)
+- [Common R Errors and Solutions](https://www.burns-stat.com/documents/tutorials/top-20-r-errors/)
+
+## reticulate Documentation
+- [reticulate Package Guide](https://rstudio.github.io/reticulate/)
+- [Python Version Configuration](https://rstudio.github.io/reticulate/articles/versions.html)
+
+## Community Help
+- [Stack Overflow - R](https://stackoverflow.com/questions/tagged/r)
+- [RStudio Community](https://community.rstudio.com/)

@@ -1,0 +1,10 @@
+file: mtcars_data.rds
+file_size: 1310
+pin_hash: 9365e6319e0c842c
+type: rds
+title: 'mtcars_data: a pinned 32 x 12 data frame'
+description: ~
+tags: ~
+urls: ~
+created: 20251121T073000Z
+api_version: 1

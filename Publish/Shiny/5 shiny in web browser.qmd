@@ -1,0 +1,122 @@
+---
+title: "Shiny in web browser"
+author: "Tony D"
+
+execute:
+  warning: false
+  error: false
+
+format:
+  html:
+    toc: true
+    toc-location: right
+    code-fold: show
+    code-tools: true
+    number-sections: true
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    
+
+filters:
+  - shinylive
+---
+
+
+# option 1: create shiny in quarto doc
+
+
+## step 1 add quarto extension in project root folder
+
+```{bash}
+#| eval: false
+quarto add quarto-ext/shinylive
+```
+
+## step 2 add in header
+
+```yaml
+---
+
+filters:
+  - shinylive
+  
+---
+```
+
+## step 3 make shiny app 
+
+```{shinylive-r}
+#| standalone: true
+#| viewerHeight: 600
+#| components: [editor, viewer]
+library(shiny)
+library(bslib)
+
+ui <- page_fluid(
+  h2("Simple Histogram App"),
+  layout_sidebar(
+    sidebar = sidebar(
+      sliderInput("n", "Number of observations:", min = 10, max = 100, value = 30)
+    ),
+    plotOutput("hist")
+  )
+)
+
+server <- function(input, output) {
+  output$hist <- renderPlot({
+    hist(rnorm(input$n), main = "Random Normal Data", col = "skyblue")
+  })
+}
+
+shinyApp(ui, server)
+
+```
+
+
+# option 2 convert shiny to html
+
+![](images/my%20screenshots%201.png)
+
+
+::: panel-tabset
+
+
+## R
+```{r}
+#| eval: false
+shinylive::export(app_dir="my_shiny_app",output_dir="shiny_web")
+https::run_app("shiny_web")
+```
+
+
+## Python
+
+```{bash}
+#| eval: false
+shinylive export my_shiny_app shiny_web
+cd site
+python -m http.server 8000
+```
+
+
+:::
+
+# option 3 upload to shinylive.io
+
+using Shinylive.io
+
+::: panel-tabset
+
+
+## R
+
+shinylive.io/r/
+
+## Python
+
+shinylive.io/py/
+
+:::
+
+
+

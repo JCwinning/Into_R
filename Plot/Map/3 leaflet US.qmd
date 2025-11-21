@@ -1,0 +1,168 @@
+---
+title: "US State GDP Map"
+subtitle: "with leaflet"
+author: "Tony D"
+
+execute:
+  warning: false
+  error: false
+
+format:
+  html:
+    toc: true
+    toc-location: right
+    code-fold: show
+    code-tools: true
+    number-sections: true
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-copy: true
+---
+
+
+This document demonstrates how to create a choropleth map of the United States, where each state is colored based on its per capita GDP in 2022. We will use the `leaflet` package in R to create the interactive map.
+
+# Data Loading and Preparation
+
+First, we load the necessary R libraries for data manipulation, visualization, and working with geospatial data.
+
+```{
+r}
+# Load the tidyverse package for data manipulation and visualization.
+library(tidyverse)
+# Load the rvest package for web scraping.
+library(rvest)
+# Load the chromote package for controlling a headless Chrome browser.
+library(chromote)
+# Load the janitor package for data cleaning.
+library(janitor)
+# Load the tidygeocoder package for geocoding.
+library(tidygeocoder)
+# Load the leaflet package for creating interactive maps.
+library(leaflet)
+# Load the sf package for working with simple features.
+library(sf)
+```
+
+## Loading Geospatial and GDP Data
+
+We will load the US states geospatial data from a GeoJSON file and the GDP data from an Excel file.
+
+```{
+r}
+# Load the US states map data from the maps package.
+library(maps)
+mapStates = map("state", fill = TRUE, plot = FALSE)
+```
+
+US location data:
+```{
+r}
+# Read the US states GeoJSON file.
+json_data=read_sf("us-states.json")
+```
+
+```{
+r}
+# Convert the sf object to a data frame.
+map_df <- as.data.frame(json_data)
+```
+
+```{
+r}
+# Get a glimpse of the mapStates data.
+glimpse(mapStates)
+```
+
+US 2022 GDP data:
+
+```{
+r}
+# Load the openxlsx and readxl packages for reading Excel files.
+library(openxlsx)
+library(readxl)
+
+# Read the US state GDP data from an Excel file and clean up the state names.
+per_gdp_usd=read_excel('US state gpd 2022.xlsx') %>% mutate(names=str_replace(names,'\*','') %>% str_trim() )
+```
+
+```{
+r}
+# Get a glimpse of the GDP data.
+glimpse(per_gdp_usd)
+```
+
+## Merging and Preparing the Data
+
+We will merge the geospatial data with the GDP data.
+
+```{
+r}
+# Merge the map data with the GDP data by state name.
+map_df002 <- merge(map_df, per_gdp_usd, by.x = "name", by.y = "names")
+```
+
+```{
+r}
+# Get a glimpse of the merged data.
+glimpse(map_df002)
+```
+
+```{
+r}
+# Convert the merged data frame back to an sf object.
+map_sf002 <- sf::st_as_sf(map_df002, sf_column_name = "geometry")
+```
+
+# Creating the Choropleth Map
+
+Now we can create the choropleth map of the US states.
+
+```{
+r}
+# Create a color palette for the map.
+pal <- colorNumeric(
+  palette = "Blues",
+  domain = map_df002$per_gdp_usd
+  )
+
+# Create a color bin palette for the map.
+binpal <- colorBin("Blues",map_df002$per_gdp_usd, 20, pretty = FALSE)
+
+# Create the leaflet map.
+m <- leaflet(map_sf002) %>%
+   # Add default OpenStreetMap map tiles.
+  addTiles() %>%  
+   # Add polygons for the states.
+   addPolygons(smoothFactor = 0.3, fillOpacity = 0.5,weight = 1,
+    # Set the fill color based on the per capita GDP.
+   color = ~binpal(per_2022_usd),
+    # Create a popup with information about the state.
+    popup = ~ paste0(
+      "地区：", name, "<br/>",
+      "<hr/>",
+      "人均gpd：", per_2022_usd, "（千 美元）", "<br/>"
+    ),
+    # Create a label with more detailed information.
+     label = lapply(paste0(
+      "地区：", "<b>", map_sf002$name, "</b>", "<br/>",
+      "人均gpd 美元：", round(map_sf002$per_2022_usd/1000), "K <br/>",
+       "总gpd 美元：", round(map_sf002$total_2022_usd), "M <br/>"
+    ), htmltools::HTML)
+    ) %>% 
+  # Add a legend to the map.
+  addLegend(
+    position = "bottomright", title = "人均gpd(美元)",
+    pal = pal, values = ~per_2022_usd, opacity = 1.0
+    )
+
+# Display the map.
+m
+```
+
+# Resources
+
+Here are some useful resources for learning more about the data and tools used in this document.
+
+https://www.gunviolencearchive.org/reports/mass-shooting?page=8&year=2023
+

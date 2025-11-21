@@ -1,0 +1,74 @@
+---
+title: "Data Analytics in R - Recommended Books"
+author: "Tony D"
+execute:
+  warning: false
+  error: false
+format:
+  html:
+    toc: true
+    toc-location: right
+    code-fold: show
+    code-tools: true
+    number-sections: false
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-copy: true
+---
+
+# Recommended Books for Data Analytics in R
+
+A selection of cutting-edge books focused on data science, machine learning, and practical data analysis with R. These titles emphasize the tidyverse, modeling, and modern techniques suitable for aspiring data scientists and analysts.
+
+## `R for Data Science`
+
+**By Garrett Grolemund and Hadley Wickham (2017, 2nd ed. 2023)**  
+The definitive guide to data science with R from the creators of the tidyverse. Free online, this book covers importing, tidying, transforming, visualizing, and modeling data using modern R tools. Perfect for beginners to intermediate users.  
+*Key Topics:* Data wrangling with dplyr, visualization with ggplot2, modeling with tidymodels, and reproducible research.  
+[Free Online Book](https://r4ds.hadley.nz/) | [Print Version on O’Reilly](https://www.oreilly.com/library/view/r-for-data-science/9781492097402/)
+
+![](images/cover.png){width="300"}
+
+## Hands-On Programming with R
+
+**By Garrett Grolemund**  
+Companion to "R for Data Science," this book dives into programming fundamentals with R. It teaches programming concepts through hands-on examples, ideal for those transitioning to R from other languages or learning serious programming.  
+*Key Topics:* Variables, loops, functions, debugging, vectorized code, and best practices for writing clean R code.  
+[O’Reilly Online](https://rstudio-education.github.io/hopr/) | [Print Version](https://www.oreilly.com/library/view/hands-on-programming-with/9781449359102/)
+
+![](images/cover-1.png){width="300"}
+
+## Tidy Modeling with R
+
+**By Max Kuhn and Julia Silge**  
+Comprehensive guide to statistical modeling using the tidyverse and tidymodels framework. Covers the full modeling process from data preparation to evaluation, with a focus on practical, reproducible results.  
+*Key Topics:* Data splitting, preprocessing, model fitting (regression, classification), hyperparameter tuning, evaluation metrics, and deployment.  
+[Official Website](https://www.tmwr.org/) | [Print Version on O’Reilly](https://www.oreilly.com/library/view/tidy-modeling-with/9781492096481/)
+
+![](images/cover-01.png){width="300"}
+
+## Deep Learning with R
+
+**By François Chollet and J.J. Allaire**  
+Introduces deep learning concepts using Keras and TensorFlow in R. Suitable for users familiar with R who want to explore neural networks and advanced ML techniques. Bridges R with Python-based tools.  
+*Key Topics:* Neural network basics, convolutional neural networks (CNNs), recurrent neural networks (RNNs), computer vision, and natural language processing.  
+[Online Book](https://keras.rstudio.com/) | [Print Version on Manning](https://www.manning.com/books/deep-learning-with-r)
+
+![](images/718pmzi0+HL._AC_UF1000,1000_QL80_.jpg){width="300"}
+
+# References
+
+## Official Documentation
+- [tidyverse](https://www.tidyverse.org/)
+- [tidymodels](https://www.tidymodels.org/)
+- [RStudio Education](https://education.rstudio.com/)
+
+## Online Learning Platforms
+- [DataCamp - R Courses](https://www.datacamp.com/courses/tech:r)
+- [Coursera - Data Science Specialization](https://www.coursera.org/specializations/jhu-data-science)
+- [edX - Data Science with R](https://www.edx.org/learn/r-programming)
+
+## Community Resources
+- [R-bloggers](https://www.r-bloggers.com/)
+- [Tidy Tuesday](https://github.com/rfordatascience/tidytuesday)
+- [R Weekly](https://rweekly.org/)

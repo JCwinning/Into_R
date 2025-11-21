@@ -1,0 +1,2294 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Data Manipulation with tidyverse – R Handbook</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../Rlogo.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-8116483b35b7c59d831d40773437fcbf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../styles.css">
+<meta name="twitter:title" content="Data Manipulation with tidyverse – R Handbook">
+<meta name="twitter:description" content="">
+<meta name="twitter:image" content="images/ggplot_hive.jpg">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../Rlogo.png" alt="" class="navbar-logo light-content">
+    <img src="../Rlogo.png" alt="" class="navbar-logo dark-content">
+    </a>
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">R Handbook</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../index.html" aria-current="page"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-intro" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">intro</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-intro">    
+        <li class="dropdown-header">Intro</li>
+        <li>
+    <a class="dropdown-item" href="../intro/1 basic R.html">
+ <span class="dropdown-text">Basic R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../intro/2 probability.html">
+ <span class="dropdown-text">Probability</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../intro/3 Statistics.html">
+ <span class="dropdown-text">Statistics</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../intro/5 R book.html">
+ <span class="dropdown-text">R Books</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../intro/6 data analytic in R book.html">
+ <span class="dropdown-text">Data Analytics in R - Recommended Books</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../intro/7 error handling.html">
+ <span class="dropdown-text">Error handling</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-data" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Data</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-data">    
+        <li class="dropdown-header">data manipulation</li>
+        <li>
+    <a class="dropdown-item" href="../data manipulation/1 input output.html">
+ <span class="dropdown-text">Input &amp; Output in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../data manipulation/2 data_structure.html">
+ <span class="dropdown-text">Data Structures in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../data manipulation/3 data manipulation with tidyverse.html">
+ <span class="dropdown-text">Data Manipulation with tidyverse</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../data manipulation/4 data table.html">
+ <span class="dropdown-text">Data Tables in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../data manipulation/5 recipe.html">
+ <span class="dropdown-text">Recipe in tidymodels</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../data manipulation/6 resample.html">
+ <span class="dropdown-text">Resampling Methods in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../data manipulation/7 SQL database.html">
+ <span class="dropdown-text">Working with SQL Databases in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../data manipulation/8 data management.html">
+ <span class="dropdown-text">Data management</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-ploting" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Ploting</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-ploting">    
+        <li class="dropdown-header">Plot</li>
+        <li>
+    <a class="dropdown-item" href="../Plot/1 ggplot2.html">
+ <span class="dropdown-text">ggplot2 in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../Plot/2 plotly.html">
+ <span class="dropdown-text">Plotly in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../Plot/3 image processing.html">
+ <span class="dropdown-text">image processing</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../Plot/4 Financial data.html">
+ <span class="dropdown-text">Plot Financial data</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../Plot/Map/1 leaflet.html">
+ <span class="dropdown-text">Map</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-publishing" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Publishing</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-publishing">    
+        <li class="dropdown-header">Publish</li>
+        <li>
+    <a class="dropdown-item" href="../Publish/email/email.html">
+ <span class="dropdown-text">Email</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../Publish/git/git.html">
+ <span class="dropdown-text">Git</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../Publish/quarto/1 quarto intro.html">
+ <span class="dropdown-text">Quarto</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../Publish/Shiny/1 shiny weight tracking.html">
+ <span class="dropdown-text">Shiny</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-other" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Other</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-other">    
+        <li class="dropdown-header">Other</li>
+        <li>
+    <a class="dropdown-item" href="../other/google analytics/1 google analytics.html">
+ <span class="dropdown-text">google analytics</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../other/other/1 chromote.html">
+ <span class="dropdown-text">Other</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../other/web scrap/1 web scrap with rvest.html">
+ <span class="dropdown-text">web scrap</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../data manipulation/1 input output.html">data manipulation</a></li><li class="breadcrumb-item"><a href="../data manipulation/3 data manipulation with tidyverse.html">Data Manipulation with tidyverse</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="../index.html" class="sidebar-logo-link">
+      </a>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">data manipulation</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../data manipulation/1 input output.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Input &amp; Output in R</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../data manipulation/2 data_structure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data Structures in R</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../data manipulation/3 data manipulation with tidyverse.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Data Manipulation with tidyverse</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../data manipulation/4 data table.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data Tables in R</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../data manipulation/5 recipe.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Recipe in tidymodels</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../data manipulation/6 resample.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Resampling Methods in R</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../data manipulation/7 SQL database.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Working with SQL Databases in R</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../data manipulation/8 data management.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data management</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#dplyr-a-grammar-of-data-manipulation" id="toc-dplyr-a-grammar-of-data-manipulation" class="nav-link active" data-scroll-target="#dplyr-a-grammar-of-data-manipulation">1. <code>dplyr</code>: A Grammar of Data Manipulation</a>
+  <ul class="collapse">
+  <li><a href="#load-packages-and-data" id="toc-load-packages-and-data" class="nav-link" data-scroll-target="#load-packages-and-data">Load Packages and Data</a></li>
+  <li><a href="#get-column-names" id="toc-get-column-names" class="nav-link" data-scroll-target="#get-column-names">Get Column Names</a></li>
+  <li><a href="#select-pick-columns-by-name" id="toc-select-pick-columns-by-name" class="nav-link" data-scroll-target="#select-pick-columns-by-name"><code>select()</code>: Pick columns by name</a></li>
+  <li><a href="#select-by-index" id="toc-select-by-index" class="nav-link" data-scroll-target="#select-by-index">Select by Index</a></li>
+  <li><a href="#drop-columns" id="toc-drop-columns" class="nav-link" data-scroll-target="#drop-columns">Drop Columns</a></li>
+  <li><a href="#rename-columns" id="toc-rename-columns" class="nav-link" data-scroll-target="#rename-columns">Rename Columns</a></li>
+  <li><a href="#filter-pick-rows-by-condition" id="toc-filter-pick-rows-by-condition" class="nav-link" data-scroll-target="#filter-pick-rows-by-condition"><code>filter()</code>: Pick rows by condition</a></li>
+  <li><a href="#arrange-reorder-rows" id="toc-arrange-reorder-rows" class="nav-link" data-scroll-target="#arrange-reorder-rows"><code>arrange()</code>: Reorder rows</a></li>
+  <li><a href="#mutate-create-new-columns" id="toc-mutate-create-new-columns" class="nav-link" data-scroll-target="#mutate-create-new-columns"><code>mutate()</code>: Create new columns</a></li>
+  <li><a href="#summarise-and-group_by-collapse-rows-to-a-summary" id="toc-summarise-and-group_by-collapse-rows-to-a-summary" class="nav-link" data-scroll-target="#summarise-and-group_by-collapse-rows-to-a-summary"><code>summarise()</code> and <code>group_by()</code>: Collapse rows to a summary</a></li>
+  <li><a href="#joining-tables" id="toc-joining-tables" class="nav-link" data-scroll-target="#joining-tables">Joining Tables</a></li>
+  </ul></li>
+  <li><a href="#tidyr-tidy-your-data" id="toc-tidyr-tidy-your-data" class="nav-link" data-scroll-target="#tidyr-tidy-your-data">2. <code>tidyr</code>: Tidy Your Data</a>
+  <ul class="collapse">
+  <li><a href="#pivot_longer-wide-to-long" id="toc-pivot_longer-wide-to-long" class="nav-link" data-scroll-target="#pivot_longer-wide-to-long"><code>pivot_longer()</code>: Wide to Long</a></li>
+  <li><a href="#pivot_wider-long-to-wide" id="toc-pivot_wider-long-to-wide" class="nav-link" data-scroll-target="#pivot_wider-long-to-wide"><code>pivot_wider()</code>: Long to Wide</a></li>
+  </ul></li>
+  <li><a href="#stringr-string-manipulation" id="toc-stringr-string-manipulation" class="nav-link" data-scroll-target="#stringr-string-manipulation">3. <code>stringr</code>: String Manipulation</a></li>
+  <li><a href="#lubridate-date-and-time-manipulation" id="toc-lubridate-date-and-time-manipulation" class="nav-link" data-scroll-target="#lubridate-date-and-time-manipulation">4. <code>lubridate</code>: Date and Time Manipulation</a>
+  <ul class="collapse">
+  <li><a href="#today" id="toc-today" class="nav-link" data-scroll-target="#today">Today</a></li>
+  </ul></li>
+  <li><a href="#window-functions" id="toc-window-functions" class="nav-link" data-scroll-target="#window-functions">5. Window Functions</a>
+  <ul class="collapse">
+  <li><a href="#ranking-with-row_number" id="toc-ranking-with-row_number" class="nav-link" data-scroll-target="#ranking-with-row_number">Ranking with <code>row_number</code></a></li>
+  <li><a href="#accessing-previousnext-values-with-lag-and-lead" id="toc-accessing-previousnext-values-with-lag-and-lead" class="nav-link" data-scroll-target="#accessing-previousnext-values-with-lag-and-lead">Accessing Previous/Next Values with <code>lag</code> and <code>lead</code></a></li>
+  <li><a href="#cumulative-summaries" id="toc-cumulative-summaries" class="nav-link" data-scroll-target="#cumulative-summaries">Cumulative Summaries</a></li>
+  <li><a href="#order-rows" id="toc-order-rows" class="nav-link" data-scroll-target="#order-rows">Order Rows</a></li>
+  </ul></li>
+  <li><a href="#handle-missing-data" id="toc-handle-missing-data" class="nav-link" data-scroll-target="#handle-missing-data">6. Handle Missing Data</a>
+  <ul class="collapse">
+  <li><a href="#find-missing-data" id="toc-find-missing-data" class="nav-link" data-scroll-target="#find-missing-data">Find Missing Data</a></li>
+  <li><a href="#filter-out-missing-data" id="toc-filter-out-missing-data" class="nav-link" data-scroll-target="#filter-out-missing-data">Filter Out Missing Data</a></li>
+  </ul></li>
+  <li><a href="#dataframe-to-other-data-formats" id="toc-dataframe-to-other-data-formats" class="nav-link" data-scroll-target="#dataframe-to-other-data-formats">7. Dataframe to Other Data Formats</a>
+  <ul class="collapse">
+  <li><a href="#dataframe-to-vector" id="toc-dataframe-to-vector" class="nav-link" data-scroll-target="#dataframe-to-vector">Dataframe to Vector</a></li>
+  <li><a href="#dataframe-to-matrix" id="toc-dataframe-to-matrix" class="nav-link" data-scroll-target="#dataframe-to-matrix">Dataframe to Matrix</a></li>
+  <li><a href="#dataframe-to-list" id="toc-dataframe-to-list" class="nav-link" data-scroll-target="#dataframe-to-list">Dataframe to List</a></li>
+  </ul></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">8. References</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../data manipulation/1 input output.html">data manipulation</a></li><li class="breadcrumb-item"><a href="../data manipulation/3 data manipulation with tidyverse.html">Data Manipulation with tidyverse</a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Data Manipulation with tidyverse</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>The <code>tidyverse</code> is an opinionated collection of R packages designed for data science. All packages share an underlying design philosophy, grammar, and data structures. This guide focuses on <code>dplyr</code>, <code>tidyr</code>, <code>stringr</code>, and <code>lubridate</code>, the core packages for data manipulation.</p>
+<p><img src="images/ggplot_hive.jpg" class="img-fluid" width="600"></p>
+<section id="dplyr-a-grammar-of-data-manipulation" class="level1">
+<h1>1. <code>dplyr</code>: A Grammar of Data Manipulation</h1>
+<p><code>dplyr</code> provides a consistent and intuitive grammar for data manipulation. Its functions, or “verbs,” are easy to read and can be chained together using the pipe operator (<code>%&gt;%</code>), which passes the result of one function as the first argument to the next.</p>
+<p><img src="images/logo.png" class="img-fluid" width="231"></p>
+<section id="load-packages-and-data" class="level2">
+<h2 class="anchored" data-anchor-id="load-packages-and-data">Load Packages and Data</h2>
+<p>First, we load the <code>tidyverse</code> suite of packages.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>We will use the built-in <code>mtcars</code> dataset. For clarity, we convert the row names to a proper column called <code>car_name</code>.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(mtcars)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>small_mtcars <span class="ot">&lt;-</span> mtcars <span class="sc">%&gt;%</span> </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(cyl, mpg, hp) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>small_mtcars <span class="ot">&lt;-</span> <span class="fu">rownames_to_column</span>(small_mtcars, <span class="at">var =</span> <span class="st">"car_name"</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>mtcars_df <span class="ot">&lt;-</span> mtcars <span class="sc">%&gt;%</span> </span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">"car_name"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="co"># Convert to a tibble for better printing</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(mtcars_df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 12
+  car_name       mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb
+  &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 Mazda RX4     21       6   160   110  3.9   2.62  16.5     0     1     4     4
+2 Mazda RX4 W…  21       6   160   110  3.9   2.88  17.0     0     1     4     4
+3 Datsun 710    22.8     4   108    93  3.85  2.32  18.6     1     1     4     1
+4 Hornet 4 Dr…  21.4     6   258   110  3.08  3.22  19.4     1     0     3     1
+5 Hornet Spor…  18.7     8   360   175  3.15  3.44  17.0     0     0     3     2
+6 Valiant       18.1     6   225   105  2.76  3.46  20.2     1     0     3     1</code></pre>
+</div>
+</div>
+</section>
+<section id="get-column-names" class="level2">
+<h2 class="anchored" data-anchor-id="get-column-names">Get Column Names</h2>
+<p>The <code>names()</code> function returns a character vector of the column names in a data frame.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(mtcars_df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "car_name" "mpg"      "cyl"      "disp"     "hp"       "drat"    
+ [7] "wt"       "qsec"     "vs"       "am"       "gear"     "carb"    </code></pre>
+</div>
+</div>
+</section>
+<section id="select-pick-columns-by-name" class="level2">
+<h2 class="anchored" data-anchor-id="select-pick-columns-by-name"><code>select()</code>: Pick columns by name</h2>
+<p><code>select()</code> allows you to subset your data by choosing specific columns.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select a few specific columns</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>mtcars_df <span class="sc">%&gt;%</span> <span class="fu">select</span>(car_name, mpg, hp, cyl)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 32 × 4
+   car_name            mpg    hp   cyl
+   &lt;chr&gt;             &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1 Mazda RX4          21     110     6
+ 2 Mazda RX4 Wag      21     110     6
+ 3 Datsun 710         22.8    93     4
+ 4 Hornet 4 Drive     21.4   110     6
+ 5 Hornet Sportabout  18.7   175     8
+ 6 Valiant            18.1   105     6
+ 7 Duster 360         14.3   245     8
+ 8 Merc 240D          24.4    62     4
+ 9 Merc 230           22.8    95     4
+10 Merc 280           19.2   123     6
+# ℹ 22 more rows</code></pre>
+</div>
+</div>
+<p>Use helper functions like <code>starts_with()</code>, <code>ends_with()</code>, and <code>contains()</code> for powerful selections.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select all columns that start with the letter "d"</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>mtcars_df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">"d"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 32 × 2
+    disp  drat
+   &lt;dbl&gt; &lt;dbl&gt;
+ 1  160   3.9 
+ 2  160   3.9 
+ 3  108   3.85
+ 4  258   3.08
+ 5  360   3.15
+ 6  225   2.76
+ 7  360   3.21
+ 8  147.  3.69
+ 9  141.  3.92
+10  168.  3.92
+# ℹ 22 more rows</code></pre>
+</div>
+</div>
+<p>Use the <code>-</code> sign to deselect or drop columns.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select all columns except `vs` and `am`</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>mtcars_df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>vs, <span class="sc">-</span>am)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 32 × 10
+   car_name            mpg   cyl  disp    hp  drat    wt  qsec  gear  carb
+   &lt;chr&gt;             &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1 Mazda RX4          21       6  160    110  3.9   2.62  16.5     4     4
+ 2 Mazda RX4 Wag      21       6  160    110  3.9   2.88  17.0     4     4
+ 3 Datsun 710         22.8     4  108     93  3.85  2.32  18.6     4     1
+ 4 Hornet 4 Drive     21.4     6  258    110  3.08  3.22  19.4     3     1
+ 5 Hornet Sportabout  18.7     8  360    175  3.15  3.44  17.0     3     2
+ 6 Valiant            18.1     6  225    105  2.76  3.46  20.2     3     1
+ 7 Duster 360         14.3     8  360    245  3.21  3.57  15.8     3     4
+ 8 Merc 240D          24.4     4  147.    62  3.69  3.19  20       4     2
+ 9 Merc 230           22.8     4  141.    95  3.92  3.15  22.9     4     2
+10 Merc 280           19.2     6  168.   123  3.92  3.44  18.3     4     4
+# ℹ 22 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="select-by-index" class="level2">
+<h2 class="anchored" data-anchor-id="select-by-index">Select by Index</h2>
+<p>You can also select columns by their position.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>mtcars_df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="dv">1</span>, <span class="dv">2</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 32 × 2
+   car_name            mpg
+   &lt;chr&gt;             &lt;dbl&gt;
+ 1 Mazda RX4          21  
+ 2 Mazda RX4 Wag      21  
+ 3 Datsun 710         22.8
+ 4 Hornet 4 Drive     21.4
+ 5 Hornet Sportabout  18.7
+ 6 Valiant            18.1
+ 7 Duster 360         14.3
+ 8 Merc 240D          24.4
+ 9 Merc 230           22.8
+10 Merc 280           19.2
+# ℹ 22 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="drop-columns" class="level2">
+<h2 class="anchored" data-anchor-id="drop-columns">Drop Columns</h2>
+<p>Use the <code>-</code> sign to deselect or drop columns.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>mtcars_df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>cyl)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 32 × 11
+   car_name            mpg  disp    hp  drat    wt  qsec    vs    am  gear  carb
+   &lt;chr&gt;             &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1 Mazda RX4          21    160    110  3.9   2.62  16.5     0     1     4     4
+ 2 Mazda RX4 Wag      21    160    110  3.9   2.88  17.0     0     1     4     4
+ 3 Datsun 710         22.8  108     93  3.85  2.32  18.6     1     1     4     1
+ 4 Hornet 4 Drive     21.4  258    110  3.08  3.22  19.4     1     0     3     1
+ 5 Hornet Sportabout  18.7  360    175  3.15  3.44  17.0     0     0     3     2
+ 6 Valiant            18.1  225    105  2.76  3.46  20.2     1     0     3     1
+ 7 Duster 360         14.3  360    245  3.21  3.57  15.8     0     0     3     4
+ 8 Merc 240D          24.4  147.    62  3.69  3.19  20       1     0     4     2
+ 9 Merc 230           22.8  141.    95  3.92  3.15  22.9     1     0     4     2
+10 Merc 280           19.2  168.   123  3.92  3.44  18.3     1     0     4     4
+# ℹ 22 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="rename-columns" class="level2">
+<h2 class="anchored" data-anchor-id="rename-columns">Rename Columns</h2>
+<p>The <code>rename()</code> verb changes the name of a column.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>mtcars_df <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="at">new_cyl =</span> cyl)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 32 × 12
+   car_name    mpg new_cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb
+   &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1 Mazda RX4  21         6  160    110  3.9   2.62  16.5     0     1     4     4
+ 2 Mazda RX…  21         6  160    110  3.9   2.88  17.0     0     1     4     4
+ 3 Datsun 7…  22.8       4  108     93  3.85  2.32  18.6     1     1     4     1
+ 4 Hornet 4…  21.4       6  258    110  3.08  3.22  19.4     1     0     3     1
+ 5 Hornet S…  18.7       8  360    175  3.15  3.44  17.0     0     0     3     2
+ 6 Valiant    18.1       6  225    105  2.76  3.46  20.2     1     0     3     1
+ 7 Duster 3…  14.3       8  360    245  3.21  3.57  15.8     0     0     3     4
+ 8 Merc 240D  24.4       4  147.    62  3.69  3.19  20       1     0     4     2
+ 9 Merc 230   22.8       4  141.    95  3.92  3.15  22.9     1     0     4     2
+10 Merc 280   19.2       6  168.   123  3.92  3.44  18.3     1     0     4     4
+# ℹ 22 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="filter-pick-rows-by-condition" class="level2">
+<h2 class="anchored" data-anchor-id="filter-pick-rows-by-condition"><code>filter()</code>: Pick rows by condition</h2>
+<p><code>filter()</code> subsets rows based on logical conditions. Only rows where the condition is <code>TRUE</code> are kept.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter for cars with 8 cylinders</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>mtcars_df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(cyl <span class="sc">==</span> <span class="dv">8</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 14 × 12
+   car_name      mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb
+   &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1 Hornet Spo…  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2
+ 2 Duster 360   14.3     8  360    245  3.21  3.57  15.8     0     0     3     4
+ 3 Merc 450SE   16.4     8  276.   180  3.07  4.07  17.4     0     0     3     3
+ 4 Merc 450SL   17.3     8  276.   180  3.07  3.73  17.6     0     0     3     3
+ 5 Merc 450SLC  15.2     8  276.   180  3.07  3.78  18       0     0     3     3
+ 6 Cadillac F…  10.4     8  472    205  2.93  5.25  18.0     0     0     3     4
+ 7 Lincoln Co…  10.4     8  460    215  3     5.42  17.8     0     0     3     4
+ 8 Chrysler I…  14.7     8  440    230  3.23  5.34  17.4     0     0     3     4
+ 9 Dodge Chal…  15.5     8  318    150  2.76  3.52  16.9     0     0     3     2
+10 AMC Javelin  15.2     8  304    150  3.15  3.44  17.3     0     0     3     2
+11 Camaro Z28   13.3     8  350    245  3.73  3.84  15.4     0     0     3     4
+12 Pontiac Fi…  19.2     8  400    175  3.08  3.84  17.0     0     0     3     2
+13 Ford Pante…  15.8     8  351    264  4.22  3.17  14.5     0     1     5     4
+14 Maserati B…  15       8  301    335  3.54  3.57  14.6     0     1     5     8</code></pre>
+</div>
+</div>
+<p>Combine conditions with logical operators: - <code>,</code> or <code>&amp;</code> for AND - <code>|</code> for OR - <code>!</code> for NOT</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter for 8-cylinder cars with more than 200 horsepower</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>mtcars_df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(cyl <span class="sc">==</span> <span class="dv">8</span> <span class="sc">&amp;</span> hp <span class="sc">&gt;</span> <span class="dv">200</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 7 × 12
+  car_name       mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb
+  &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 Duster 360    14.3     8   360   245  3.21  3.57  15.8     0     0     3     4
+2 Cadillac Fl…  10.4     8   472   205  2.93  5.25  18.0     0     0     3     4
+3 Lincoln Con…  10.4     8   460   215  3     5.42  17.8     0     0     3     4
+4 Chrysler Im…  14.7     8   440   230  3.23  5.34  17.4     0     0     3     4
+5 Camaro Z28    13.3     8   350   245  3.73  3.84  15.4     0     0     3     4
+6 Ford Panter…  15.8     8   351   264  4.22  3.17  14.5     0     1     5     4
+7 Maserati Bo…  15       8   301   335  3.54  3.57  14.6     0     1     5     8</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter for cars that are either 8-cylinder OR have more than 300 horsepower</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>mtcars_df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(cyl <span class="sc">==</span> <span class="dv">8</span> <span class="sc">|</span> hp <span class="sc">&gt;</span> <span class="dv">300</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 14 × 12
+   car_name      mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb
+   &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1 Hornet Spo…  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2
+ 2 Duster 360   14.3     8  360    245  3.21  3.57  15.8     0     0     3     4
+ 3 Merc 450SE   16.4     8  276.   180  3.07  4.07  17.4     0     0     3     3
+ 4 Merc 450SL   17.3     8  276.   180  3.07  3.73  17.6     0     0     3     3
+ 5 Merc 450SLC  15.2     8  276.   180  3.07  3.78  18       0     0     3     3
+ 6 Cadillac F…  10.4     8  472    205  2.93  5.25  18.0     0     0     3     4
+ 7 Lincoln Co…  10.4     8  460    215  3     5.42  17.8     0     0     3     4
+ 8 Chrysler I…  14.7     8  440    230  3.23  5.34  17.4     0     0     3     4
+ 9 Dodge Chal…  15.5     8  318    150  2.76  3.52  16.9     0     0     3     2
+10 AMC Javelin  15.2     8  304    150  3.15  3.44  17.3     0     0     3     2
+11 Camaro Z28   13.3     8  350    245  3.73  3.84  15.4     0     0     3     4
+12 Pontiac Fi…  19.2     8  400    175  3.08  3.84  17.0     0     0     3     2
+13 Ford Pante…  15.8     8  351    264  4.22  3.17  14.5     0     1     5     4
+14 Maserati B…  15       8  301    335  3.54  3.57  14.6     0     1     5     8</code></pre>
+</div>
+</div>
+</section>
+<section id="arrange-reorder-rows" class="level2">
+<h2 class="anchored" data-anchor-id="arrange-reorder-rows"><code>arrange()</code>: Reorder rows</h2>
+<p><code>arrange()</code> sorts the rows of a data frame by one or more columns.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort cars by miles per gallon (mpg) in ascending order (the default)</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>mtcars_df <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(mpg)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 32 × 12
+   car_name      mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb
+   &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1 Cadillac F…  10.4     8  472    205  2.93  5.25  18.0     0     0     3     4
+ 2 Lincoln Co…  10.4     8  460    215  3     5.42  17.8     0     0     3     4
+ 3 Camaro Z28   13.3     8  350    245  3.73  3.84  15.4     0     0     3     4
+ 4 Duster 360   14.3     8  360    245  3.21  3.57  15.8     0     0     3     4
+ 5 Chrysler I…  14.7     8  440    230  3.23  5.34  17.4     0     0     3     4
+ 6 Maserati B…  15       8  301    335  3.54  3.57  14.6     0     1     5     8
+ 7 Merc 450SLC  15.2     8  276.   180  3.07  3.78  18       0     0     3     3
+ 8 AMC Javelin  15.2     8  304    150  3.15  3.44  17.3     0     0     3     2
+ 9 Dodge Chal…  15.5     8  318    150  2.76  3.52  16.9     0     0     3     2
+10 Ford Pante…  15.8     8  351    264  4.22  3.17  14.5     0     1     5     4
+# ℹ 22 more rows</code></pre>
+</div>
+</div>
+<p>Use <code>desc()</code> to sort in descending order.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort by cylinder count (desc) and then by mpg (desc) for tie-breaking</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>mtcars_df <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(cyl), <span class="fu">desc</span>(mpg))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 32 × 12
+   car_name      mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb
+   &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1 Pontiac Fi…  19.2     8  400    175  3.08  3.84  17.0     0     0     3     2
+ 2 Hornet Spo…  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2
+ 3 Merc 450SL   17.3     8  276.   180  3.07  3.73  17.6     0     0     3     3
+ 4 Merc 450SE   16.4     8  276.   180  3.07  4.07  17.4     0     0     3     3
+ 5 Ford Pante…  15.8     8  351    264  4.22  3.17  14.5     0     1     5     4
+ 6 Dodge Chal…  15.5     8  318    150  2.76  3.52  16.9     0     0     3     2
+ 7 Merc 450SLC  15.2     8  276.   180  3.07  3.78  18       0     0     3     3
+ 8 AMC Javelin  15.2     8  304    150  3.15  3.44  17.3     0     0     3     2
+ 9 Maserati B…  15       8  301    335  3.54  3.57  14.6     0     1     5     8
+10 Chrysler I…  14.7     8  440    230  3.23  5.34  17.4     0     0     3     4
+# ℹ 22 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="mutate-create-new-columns" class="level2">
+<h2 class="anchored" data-anchor-id="mutate-create-new-columns"><code>mutate()</code>: Create new columns</h2>
+<p><code>mutate()</code> adds new columns or transforms existing ones, while keeping all existing columns.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a new column for horsepower-to-weight ratio</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>mtcars_df <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">hp_per_wt =</span> hp <span class="sc">/</span> wt)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 32 × 13
+   car_name      mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb
+   &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1 Mazda RX4    21       6  160    110  3.9   2.62  16.5     0     1     4     4
+ 2 Mazda RX4 …  21       6  160    110  3.9   2.88  17.0     0     1     4     4
+ 3 Datsun 710   22.8     4  108     93  3.85  2.32  18.6     1     1     4     1
+ 4 Hornet 4 D…  21.4     6  258    110  3.08  3.22  19.4     1     0     3     1
+ 5 Hornet Spo…  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2
+ 6 Valiant      18.1     6  225    105  2.76  3.46  20.2     1     0     3     1
+ 7 Duster 360   14.3     8  360    245  3.21  3.57  15.8     0     0     3     4
+ 8 Merc 240D    24.4     4  147.    62  3.69  3.19  20       1     0     4     2
+ 9 Merc 230     22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2
+10 Merc 280     19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4
+# ℹ 22 more rows
+# ℹ 1 more variable: hp_per_wt &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p>Use <code>case_when()</code> for complex conditional logic, which is like a more powerful version of an if-else statement.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a column for cylinder category</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>mtcars_df <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">cyl_group =</span> <span class="fu">case_when</span>(</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    cyl <span class="sc">==</span> <span class="dv">4</span> <span class="sc">~</span> <span class="st">"Four-Cylinder"</span>,</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    cyl <span class="sc">==</span> <span class="dv">6</span> <span class="sc">~</span> <span class="st">"Six-Cylinder"</span>,</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    cyl <span class="sc">==</span> <span class="dv">8</span> <span class="sc">~</span> <span class="st">"Eight-Cylinder"</span>,</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>    <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"Other"</span> <span class="co"># Fallback for any other case</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  ))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 32 × 13
+   car_name      mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb
+   &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1 Mazda RX4    21       6  160    110  3.9   2.62  16.5     0     1     4     4
+ 2 Mazda RX4 …  21       6  160    110  3.9   2.88  17.0     0     1     4     4
+ 3 Datsun 710   22.8     4  108     93  3.85  2.32  18.6     1     1     4     1
+ 4 Hornet 4 D…  21.4     6  258    110  3.08  3.22  19.4     1     0     3     1
+ 5 Hornet Spo…  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2
+ 6 Valiant      18.1     6  225    105  2.76  3.46  20.2     1     0     3     1
+ 7 Duster 360   14.3     8  360    245  3.21  3.57  15.8     0     0     3     4
+ 8 Merc 240D    24.4     4  147.    62  3.69  3.19  20       1     0     4     2
+ 9 Merc 230     22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2
+10 Merc 280     19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4
+# ℹ 22 more rows
+# ℹ 1 more variable: cyl_group &lt;chr&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="summarise-and-group_by-collapse-rows-to-a-summary" class="level2">
+<h2 class="anchored" data-anchor-id="summarise-and-group_by-collapse-rows-to-a-summary"><code>summarise()</code> and <code>group_by()</code>: Collapse rows to a summary</h2>
+<p>This is one of the most powerful combinations in <code>dplyr</code>. <code>group_by()</code> groups the data by one or more variables. Subsequent operations are then performed on each group independently. <code>summarise()</code> then collapses each group into a single-row summary.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate summary statistics for each cylinder group</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>mtcars_df <span class="sc">%&gt;%</span> </span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cyl) <span class="sc">%&gt;%</span> </span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_mpg =</span> <span class="fu">mean</span>(mpg, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_hp =</span> <span class="fu">median</span>(hp, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_wt =</span> <span class="fu">min</span>(wt, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_wt =</span> <span class="fu">max</span>(wt, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">car_count =</span> <span class="fu">n</span>() <span class="co"># n() counts the number of rows in the group</span></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 6
+    cyl avg_mpg median_hp min_wt max_wt car_count
+  &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;     &lt;int&gt;
+1     4    26.7       91    1.51   3.19        11
+2     6    19.7      110    2.62   3.46         7
+3     8    15.1      192.   3.17   5.42        14</code></pre>
+</div>
+</div>
+</section>
+<section id="joining-tables" class="level2">
+<h2 class="anchored" data-anchor-id="joining-tables">Joining Tables</h2>
+<p><code>dplyr</code> provides a family of join functions to combine data from different tables.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>band_members_df <span class="ot">&lt;-</span> <span class="fu">tribble</span>(</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>name,     <span class="sc">~</span>band, </span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Mick"</span>,    <span class="st">"Stones"</span>,</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"John"</span>,    <span class="st">"Beatles"</span>,</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Paul"</span>,    <span class="st">"Beatles"</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>band_instruments_df <span class="ot">&lt;-</span> <span class="fu">tribble</span>(</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>name,     <span class="sc">~</span>plays, </span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Mick"</span>,    <span class="st">"vocals"</span>,</span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"John"</span>,    <span class="st">"guitar"</span>,</span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Keith"</span>,   <span class="st">"guitar"</span></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<ul>
+<li><code>inner_join()</code>: Returns only the rows where the key exists in both tables.</li>
+<li><code>left_join()</code>: Returns all rows from the left table, and matching rows from the right table.</li>
+<li><code>full_join()</code>: Returns all rows from both tables.</li>
+<li><code>anti_join()</code>: Returns all rows from the left table that do not have a match in the right table.</li>
+</ul>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Left join to keep all members and see who plays an instrument</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="fu">left_join</span>(band_members_df, band_instruments_df, <span class="at">by =</span> <span class="st">"name"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 3
+  name  band    plays 
+  &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt; 
+1 Mick  Stones  vocals
+2 John  Beatles guitar
+3 Paul  Beatles &lt;NA&gt;  </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Anti join to find which members are not in the instruments table</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anti_join</span>(band_members_df, band_instruments_df, <span class="at">by =</span> <span class="st">"name"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 2
+  name  band   
+  &lt;chr&gt; &lt;chr&gt;  
+1 Paul  Beatles</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="tidyr-tidy-your-data" class="level1">
+<h1>2. <code>tidyr</code>: Tidy Your Data</h1>
+<p><code>tidyr</code> provides tools for reshaping data. The goal is to create “tidy” data, which has a specific structure: 1. Every column is a variable. 2. Every row is an observation. 3. Every cell is a single value.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a sample wide-format (untidy) dataset</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>wide_data <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="at">header =</span> <span class="cn">TRUE</span>, <span class="at">text =</span> <span class="st">'</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="st"> subject sex control cond1 cond2</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="st">       1   M     7.9  12.3  10.7</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="st">       2   F     6.3  10.6  11.1</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a><span class="st">'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<section id="pivot_longer-wide-to-long" class="level3">
+<h3 class="anchored" data-anchor-id="pivot_longer-wide-to-long"><code>pivot_longer()</code>: Wide to Long</h3>
+<p><code>pivot_longer()</code> makes data “longer” by gathering multiple columns into key-value pairs. This is often the first step to making data “tidy.”</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>long_data <span class="ot">&lt;-</span> wide_data <span class="sc">%&gt;%</span> </span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">c</span>(control, cond1, cond2), <span class="co"># The columns to pivot</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">'condition'</span>,         <span class="co"># New column for the old column names</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">'measurement'</span>       <span class="co"># New column for the old cell values</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>long_data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 4
+  subject sex   condition measurement
+    &lt;int&gt; &lt;chr&gt; &lt;chr&gt;           &lt;dbl&gt;
+1       1 M     control           7.9
+2       1 M     cond1            12.3
+3       1 M     cond2            10.7
+4       2 F     control           6.3
+5       2 F     cond1            10.6
+6       2 F     cond2            11.1</code></pre>
+</div>
+</div>
+</section>
+<section id="pivot_wider-long-to-wide" class="level3">
+<h3 class="anchored" data-anchor-id="pivot_wider-long-to-wide"><code>pivot_wider()</code>: Long to Wide</h3>
+<p><code>pivot_wider()</code> does the opposite, making data “wider” by spreading a key-value pair into multiple columns.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>long_data <span class="sc">%&gt;%</span> </span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> condition,   <span class="co"># Column to get new column names from</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> measurement <span class="co"># Column to get cell values from</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 5
+  subject sex   control cond1 cond2
+    &lt;int&gt; &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1       1 M         7.9  12.3  10.7
+2       2 F         6.3  10.6  11.1</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="stringr-string-manipulation" class="level1">
+<h1>3. <code>stringr</code>: String Manipulation</h1>
+<p><code>stringr</code> provides a consistent and user-friendly interface for common string operations, built on top of the <code>stringi</code> package.</p>
+<p><img src="images/logo-01.png" class="img-fluid"></p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>text_vector <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"apple"</span>, <span class="st">"banana"</span>, <span class="st">"pear"</span>, <span class="st">"pineapple"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<ul>
+<li><code>str_detect()</code>: Check for the presence of a pattern.</li>
+<li><code>str_replace()</code>: Replace the first match of a pattern.</li>
+<li><code>str_extract()</code>: Extract the first match of a pattern.</li>
+<li><code>str_split()</code>: Split a string into pieces.</li>
+</ul>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find elements containing "apple"</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str_detect</span>(text_vector, <span class="st">"apple"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  TRUE FALSE FALSE  TRUE</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract numbers from a string using a regular expression</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="co"># \d+ is a regex for one or more digits</span></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str_extract</span>(<span class="st">"Order_ID_12345"</span>, <span class="st">"</span><span class="sc">\\</span><span class="st">d+"</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "12345"</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Split a string by a delimiter</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str_split</span>(<span class="st">"a-b-c"</span>, <span class="st">"-"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[1]]
+[1] "a" "b" "c"</code></pre>
+</div>
+</div>
+</section>
+<section id="lubridate-date-and-time-manipulation" class="level1">
+<h1>4. <code>lubridate</code>: Date and Time Manipulation</h1>
+<p><code>lubridate</code> simplifies working with dates and times in R, which can otherwise be quite complex.</p>
+<p><img src="images/logo-02.png" class="img-fluid"></p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<section id="today" class="level2">
+<h2 class="anchored" data-anchor-id="today">Today</h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">today</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "2025-11-21"</code></pre>
+</div>
+</div>
+<ul>
+<li><strong>Parsing:</strong> <code>ymd()</code>, <code>mdy()</code>, <code>dmy()</code> parse strings into dates reliably, automatically handling different separators.</li>
+<li><strong>Component Extraction:</strong> <code>year()</code>, <code>month()</code>, <code>day()</code>, <code>wday()</code> extract parts of a date.</li>
+<li><strong>Arithmetic:</strong> Perform calculations with date and time objects using <code>duration</code> and <code>period</code> objects.</li>
+</ul>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Parse a date</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>date_obj <span class="ot">&lt;-</span> <span class="fu">ymd</span>(<span class="st">"2023-10-27"</span>)</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the day of the week</span></span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a><span class="fu">wday</span>(date_obj, <span class="at">label =</span> <span class="cn">TRUE</span>, <span class="at">abbr =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] Friday
+7 Levels: Sunday &lt; Monday &lt; Tuesday &lt; Wednesday &lt; Thursday &lt; ... &lt; Saturday</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add 15 days to the date</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>date_obj <span class="sc">+</span> <span class="fu">days</span>(<span class="dv">15</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "2023-11-11"</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the time difference between two dates</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>new_year <span class="ot">&lt;-</span> <span class="fu">ymd</span>(<span class="st">"2024-01-01"</span>)</span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a><span class="fu">interval</span>(date_obj, new_year) <span class="sc">/</span> <span class="fu">days</span>(<span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 66</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="window-functions" class="level1">
+<h1>5. Window Functions</h1>
+<p>Window functions are functions that operate on a “window” of data (e.g., within a group) but, unlike <code>summarise()</code>, they return a value for every row.</p>
+<section id="ranking-with-row_number" class="level2">
+<h2 class="anchored" data-anchor-id="ranking-with-row_number">Ranking with <code>row_number</code></h2>
+<p><code>row_number()</code> assigns a unique rank to each row within a group.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>small_mtcars <span class="sc">%&gt;%</span> </span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cyl) <span class="sc">%&gt;%</span> </span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rank =</span> <span class="fu">row_number</span>(<span class="fu">desc</span>(mpg))) <span class="sc">%&gt;%</span> </span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(cyl, mpg, rank)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 3
+# Groups:   cyl [3]
+    cyl   mpg  rank
+  &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;
+1     6  21       2
+2     6  21       3
+3     4  22.8     1
+4     6  21.4     1
+5     8  18.7     1
+6     6  18.1     4</code></pre>
+</div>
+</div>
+</section>
+<section id="accessing-previousnext-values-with-lag-and-lead" class="level2">
+<h2 class="anchored" data-anchor-id="accessing-previousnext-values-with-lag-and-lead">Accessing Previous/Next Values with <code>lag</code> and <code>lead</code></h2>
+<p><code>lag()</code> and <code>lead()</code> are useful for comparing a value to its predecessor or successor.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>small_mtcars <span class="sc">%&gt;%</span> </span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(cyl, mpg) <span class="sc">%&gt;%</span> </span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">mpg_previous =</span> <span class="fu">lag</span>(mpg, <span class="at">n =</span> <span class="dv">1</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  cyl  mpg mpg_previous
+1   6 21.0           NA
+2   6 21.0         21.0
+3   4 22.8         21.0
+4   6 21.4         22.8
+5   8 18.7         21.4
+6   6 18.1         18.7</code></pre>
+</div>
+</div>
+</section>
+<section id="cumulative-summaries" class="level2">
+<h2 class="anchored" data-anchor-id="cumulative-summaries">Cumulative Summaries</h2>
+<p><code>cumsum()</code> calculates the cumulative sum.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>small_mtcars <span class="sc">%&gt;%</span> </span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(cyl, mpg) <span class="sc">%&gt;%</span> </span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">mpg_running_total =</span> <span class="fu">cumsum</span>(mpg))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  cyl  mpg mpg_running_total
+1   6 21.0              21.0
+2   6 21.0              42.0
+3   4 22.8              64.8
+4   6 21.4              86.2
+5   8 18.7             104.9
+6   6 18.1             123.0</code></pre>
+</div>
+</div>
+</section>
+<section id="order-rows" class="level2">
+<h2 class="anchored" data-anchor-id="order-rows">Order Rows</h2>
+<p><code>arrange()</code> sorts the rows of a data frame by one or more columns.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>small_mtcars <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(cyl) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>           car_name cyl  mpg  hp
+1        Datsun 710   4 22.8  93
+2         Mazda RX4   6 21.0 110
+3     Mazda RX4 Wag   6 21.0 110
+4    Hornet 4 Drive   6 21.4 110
+5           Valiant   6 18.1 105
+6 Hornet Sportabout   8 18.7 175</code></pre>
+</div>
+</div>
+<p>Sort in descending order using <code>desc()</code>.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>small_mtcars <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(cyl))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>           car_name cyl  mpg  hp
+1 Hornet Sportabout   8 18.7 175
+2         Mazda RX4   6 21.0 110
+3     Mazda RX4 Wag   6 21.0 110
+4    Hornet 4 Drive   6 21.4 110
+5           Valiant   6 18.1 105
+6        Datsun 710   4 22.8  93</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="handle-missing-data" class="level1">
+<h1>6. Handle Missing Data</h1>
+<p>Let’s create a sample data frame with missing values (<code>NA</code>).</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>missing_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="cn">NA</span>, <span class="dv">4</span>),</span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="cn">NA</span>, <span class="st">"c"</span>, <span class="st">"d"</span>)</span>
+<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<section id="find-missing-data" class="level2">
+<h2 class="anchored" data-anchor-id="find-missing-data">Find Missing Data</h2>
+<p><code>is.na()</code> returns a logical vector indicating which values are missing.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="fu">is.na</span>(missing_df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>         x     y
+[1,] FALSE FALSE
+[2,] FALSE  TRUE
+[3,]  TRUE FALSE
+[4,] FALSE FALSE</code></pre>
+</div>
+</div>
+</section>
+<section id="filter-out-missing-data" class="level2">
+<h2 class="anchored" data-anchor-id="filter-out-missing-data">Filter Out Missing Data</h2>
+<p>You can use <code>filter()</code> with <code>!is.na()</code> to remove rows with missing values in a specific column.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>missing_df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(y))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>   x y
+1  1 a
+2 NA c
+3  4 d</code></pre>
+</div>
+</div>
+<p><code>tidyr::drop_na()</code> removes rows with any missing values.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>missing_df <span class="sc">%&gt;%</span> <span class="fu">drop_na</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  x y
+1 1 a
+2 4 d</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="dataframe-to-other-data-formats" class="level1">
+<h1>7. Dataframe to Other Data Formats</h1>
+<section id="dataframe-to-vector" class="level2">
+<h2 class="anchored" data-anchor-id="dataframe-to-vector">Dataframe to Vector</h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> small_mtcars<span class="sc">$</span>cyl</span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a>data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 6 6 4 6 8 6</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "numeric"</code></pre>
+</div>
+</div>
+</section>
+<section id="dataframe-to-matrix" class="level2">
+<h2 class="anchored" data-anchor-id="dataframe-to-matrix">Dataframe to Matrix</h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a>data<span class="ot">=</span><span class="fu">data.matrix</span>(small_mtcars)</span>
+<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a>data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>     car_name cyl  mpg  hp
+[1,]        4   6 21.0 110
+[2,]        5   6 21.0 110
+[3,]        1   4 22.8  93
+[4,]        2   6 21.4 110
+[5,]        3   8 18.7 175
+[6,]        6   6 18.1 105</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "matrix" "array" </code></pre>
+</div>
+</div>
+</section>
+<section id="dataframe-to-list" class="level2">
+<h2 class="anchored" data-anchor-id="dataframe-to-list">Dataframe to List</h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a>data<span class="ot">=</span><span class="fu">as.list</span>(small_mtcars)</span>
+<span id="cb85-2"><a href="#cb85-2" aria-hidden="true" tabindex="-1"></a>data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>$car_name
+[1] "Mazda RX4"         "Mazda RX4 Wag"     "Datsun 710"       
+[4] "Hornet 4 Drive"    "Hornet Sportabout" "Valiant"          
+
+$cyl
+[1] 6 6 4 6 8 6
+
+$mpg
+[1] 21.0 21.0 22.8 21.4 18.7 18.1
+
+$hp
+[1] 110 110  93 110 175 105</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "list"</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="references" class="level1">
+<h1>8. References</h1>
+<ul>
+<li><a href="https://r4ds.hadley.nz/">R for Data Science, 2nd Edition</a></li>
+<li><a href="https://dplyr.tidyverse.org/">dplyr Documentation</a></li>
+<li><a href="https://tidyr.tidyverse.org/">tidyr Documentation</a></li>
+<li><a href="https://stringr.tidyverse.org/">stringr Documentation</a></li>
+<li><a href="https://lubridate.tidyverse.org/">lubridate Documentation</a></li>
+</ul>
+
+
+<!-- -->
+
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb89" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Data Manipulation with tidyverse"</span></span>
+<span id="cb89-3"><a href="#cb89-3" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb89-4"><a href="#cb89-4" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
+<span id="cb89-5"><a href="#cb89-5" aria-hidden="true" tabindex="-1"></a><span class="co">  error: false</span></span>
+<span id="cb89-6"><a href="#cb89-6" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
+<span id="cb89-7"><a href="#cb89-7" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb89-8"><a href="#cb89-8" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
+<span id="cb89-9"><a href="#cb89-9" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-location: right</span></span>
+<span id="cb89-10"><a href="#cb89-10" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: show</span></span>
+<span id="cb89-11"><a href="#cb89-11" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
+<span id="cb89-12"><a href="#cb89-12" aria-hidden="true" tabindex="-1"></a><span class="co">    number-sections: false</span></span>
+<span id="cb89-13"><a href="#cb89-13" aria-hidden="true" tabindex="-1"></a><span class="co">    code-block-bg: true</span></span>
+<span id="cb89-14"><a href="#cb89-14" aria-hidden="true" tabindex="-1"></a><span class="co">    code-block-border-left: "#31BAE9"</span></span>
+<span id="cb89-15"><a href="#cb89-15" aria-hidden="true" tabindex="-1"></a><span class="co">    code-copy: true</span></span>
+<span id="cb89-16"><a href="#cb89-16" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb89-17"><a href="#cb89-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-18"><a href="#cb89-18" aria-hidden="true" tabindex="-1"></a>The <span class="in">`tidyverse`</span> is an opinionated collection of R packages designed for data science. All packages share an underlying design philosophy, grammar, and data structures. This guide focuses on <span class="in">`dplyr`</span>, <span class="in">`tidyr`</span>, <span class="in">`stringr`</span>, and <span class="in">`lubridate`</span>, the core packages for data manipulation.</span>
+<span id="cb89-19"><a href="#cb89-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-20"><a href="#cb89-20" aria-hidden="true" tabindex="-1"></a><span class="al">![](images/ggplot_hive.jpg)</span>{width="600"}</span>
+<span id="cb89-21"><a href="#cb89-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-22"><a href="#cb89-22" aria-hidden="true" tabindex="-1"></a><span class="fu"># 1. `dplyr`: A Grammar of Data Manipulation</span></span>
+<span id="cb89-23"><a href="#cb89-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-24"><a href="#cb89-24" aria-hidden="true" tabindex="-1"></a><span class="in">`dplyr`</span> provides a consistent and intuitive grammar for data manipulation. Its functions, or "verbs," are easy to read and can be chained together using the pipe operator (<span class="in">`%&gt;%`</span>), which passes the result of one function as the first argument to the next.</span>
+<span id="cb89-25"><a href="#cb89-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-26"><a href="#cb89-26" aria-hidden="true" tabindex="-1"></a><span class="al">![](images/logo.png)</span>{width="231"}</span>
+<span id="cb89-27"><a href="#cb89-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-28"><a href="#cb89-28" aria-hidden="true" tabindex="-1"></a><span class="fu">## Load Packages and Data</span></span>
+<span id="cb89-29"><a href="#cb89-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-30"><a href="#cb89-30" aria-hidden="true" tabindex="-1"></a>First, we load the <span class="in">`tidyverse`</span> suite of packages.</span>
+<span id="cb89-31"><a href="#cb89-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-34"><a href="#cb89-34" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-35"><a href="#cb89-35" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb89-36"><a href="#cb89-36" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-37"><a href="#cb89-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-38"><a href="#cb89-38" aria-hidden="true" tabindex="-1"></a>We will use the built-in <span class="in">`mtcars`</span> dataset. For clarity, we convert the row names to a proper column called <span class="in">`car_name`</span>.</span>
+<span id="cb89-39"><a href="#cb89-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-42"><a href="#cb89-42" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-43"><a href="#cb89-43" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(mtcars)</span>
+<span id="cb89-44"><a href="#cb89-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-45"><a href="#cb89-45" aria-hidden="true" tabindex="-1"></a>small_mtcars <span class="ot">&lt;-</span> mtcars <span class="sc">%&gt;%</span> </span>
+<span id="cb89-46"><a href="#cb89-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(cyl, mpg, hp) <span class="sc">%&gt;%</span> </span>
+<span id="cb89-47"><a href="#cb89-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span>
+<span id="cb89-48"><a href="#cb89-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-49"><a href="#cb89-49" aria-hidden="true" tabindex="-1"></a>small_mtcars <span class="ot">&lt;-</span> <span class="fu">rownames_to_column</span>(small_mtcars, <span class="at">var =</span> <span class="st">"car_name"</span>)</span>
+<span id="cb89-50"><a href="#cb89-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-51"><a href="#cb89-51" aria-hidden="true" tabindex="-1"></a>mtcars_df <span class="ot">&lt;-</span> mtcars <span class="sc">%&gt;%</span> </span>
+<span id="cb89-52"><a href="#cb89-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">"car_name"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb89-53"><a href="#cb89-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="co"># Convert to a tibble for better printing</span></span>
+<span id="cb89-54"><a href="#cb89-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-55"><a href="#cb89-55" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(mtcars_df)</span>
+<span id="cb89-56"><a href="#cb89-56" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-57"><a href="#cb89-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-58"><a href="#cb89-58" aria-hidden="true" tabindex="-1"></a><span class="fu">## Get Column Names</span></span>
+<span id="cb89-59"><a href="#cb89-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-60"><a href="#cb89-60" aria-hidden="true" tabindex="-1"></a>The <span class="in">`names()`</span> function returns a character vector of the column names in a data frame.</span>
+<span id="cb89-61"><a href="#cb89-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-64"><a href="#cb89-64" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-65"><a href="#cb89-65" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(mtcars_df)</span>
+<span id="cb89-66"><a href="#cb89-66" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-67"><a href="#cb89-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-68"><a href="#cb89-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-69"><a href="#cb89-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-70"><a href="#cb89-70" aria-hidden="true" tabindex="-1"></a><span class="fu">## `select()`: Pick columns by name</span></span>
+<span id="cb89-71"><a href="#cb89-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-72"><a href="#cb89-72" aria-hidden="true" tabindex="-1"></a><span class="in">`select()`</span> allows you to subset your data by choosing specific columns.</span>
+<span id="cb89-73"><a href="#cb89-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-76"><a href="#cb89-76" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-77"><a href="#cb89-77" aria-hidden="true" tabindex="-1"></a><span class="co"># Select a few specific columns</span></span>
+<span id="cb89-78"><a href="#cb89-78" aria-hidden="true" tabindex="-1"></a>mtcars_df <span class="sc">%&gt;%</span> <span class="fu">select</span>(car_name, mpg, hp, cyl)</span>
+<span id="cb89-79"><a href="#cb89-79" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-80"><a href="#cb89-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-81"><a href="#cb89-81" aria-hidden="true" tabindex="-1"></a>Use helper functions like <span class="in">`starts_with()`</span>, <span class="in">`ends_with()`</span>, and <span class="in">`contains()`</span> for powerful selections.</span>
+<span id="cb89-82"><a href="#cb89-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-85"><a href="#cb89-85" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-86"><a href="#cb89-86" aria-hidden="true" tabindex="-1"></a><span class="co"># Select all columns that start with the letter "d"</span></span>
+<span id="cb89-87"><a href="#cb89-87" aria-hidden="true" tabindex="-1"></a>mtcars_df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">"d"</span>))</span>
+<span id="cb89-88"><a href="#cb89-88" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-89"><a href="#cb89-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-90"><a href="#cb89-90" aria-hidden="true" tabindex="-1"></a>Use the <span class="in">`-`</span> sign to deselect or drop columns.</span>
+<span id="cb89-91"><a href="#cb89-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-94"><a href="#cb89-94" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-95"><a href="#cb89-95" aria-hidden="true" tabindex="-1"></a><span class="co"># Select all columns except `vs` and `am`</span></span>
+<span id="cb89-96"><a href="#cb89-96" aria-hidden="true" tabindex="-1"></a>mtcars_df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>vs, <span class="sc">-</span>am)</span>
+<span id="cb89-97"><a href="#cb89-97" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-98"><a href="#cb89-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-99"><a href="#cb89-99" aria-hidden="true" tabindex="-1"></a><span class="fu">## Select by Index</span></span>
+<span id="cb89-100"><a href="#cb89-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-101"><a href="#cb89-101" aria-hidden="true" tabindex="-1"></a>You can also select columns by their position.</span>
+<span id="cb89-102"><a href="#cb89-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-105"><a href="#cb89-105" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-106"><a href="#cb89-106" aria-hidden="true" tabindex="-1"></a>mtcars_df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="dv">1</span>, <span class="dv">2</span>) </span>
+<span id="cb89-107"><a href="#cb89-107" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-108"><a href="#cb89-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-109"><a href="#cb89-109" aria-hidden="true" tabindex="-1"></a><span class="fu">## Drop Columns</span></span>
+<span id="cb89-110"><a href="#cb89-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-111"><a href="#cb89-111" aria-hidden="true" tabindex="-1"></a>Use the <span class="in">`-`</span> sign to deselect or drop columns.</span>
+<span id="cb89-112"><a href="#cb89-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-115"><a href="#cb89-115" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-116"><a href="#cb89-116" aria-hidden="true" tabindex="-1"></a>mtcars_df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>cyl)</span>
+<span id="cb89-117"><a href="#cb89-117" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-118"><a href="#cb89-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-119"><a href="#cb89-119" aria-hidden="true" tabindex="-1"></a><span class="fu">## Rename Columns</span></span>
+<span id="cb89-120"><a href="#cb89-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-121"><a href="#cb89-121" aria-hidden="true" tabindex="-1"></a>The <span class="in">`rename()`</span> verb changes the name of a column.</span>
+<span id="cb89-122"><a href="#cb89-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-125"><a href="#cb89-125" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-126"><a href="#cb89-126" aria-hidden="true" tabindex="-1"></a>mtcars_df <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="at">new_cyl =</span> cyl)</span>
+<span id="cb89-127"><a href="#cb89-127" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-128"><a href="#cb89-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-129"><a href="#cb89-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-130"><a href="#cb89-130" aria-hidden="true" tabindex="-1"></a><span class="fu">## `filter()`: Pick rows by condition</span></span>
+<span id="cb89-131"><a href="#cb89-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-132"><a href="#cb89-132" aria-hidden="true" tabindex="-1"></a><span class="in">`filter()`</span> subsets rows based on logical conditions. Only rows where the condition is <span class="in">`TRUE`</span> are kept.</span>
+<span id="cb89-133"><a href="#cb89-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-136"><a href="#cb89-136" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-137"><a href="#cb89-137" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter for cars with 8 cylinders</span></span>
+<span id="cb89-138"><a href="#cb89-138" aria-hidden="true" tabindex="-1"></a>mtcars_df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(cyl <span class="sc">==</span> <span class="dv">8</span>)</span>
+<span id="cb89-139"><a href="#cb89-139" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-140"><a href="#cb89-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-141"><a href="#cb89-141" aria-hidden="true" tabindex="-1"></a>Combine conditions with logical operators:</span>
+<span id="cb89-142"><a href="#cb89-142" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`,`</span> or <span class="in">`&amp;`</span> for AND</span>
+<span id="cb89-143"><a href="#cb89-143" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`|`</span> for OR</span>
+<span id="cb89-144"><a href="#cb89-144" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`!`</span> for NOT</span>
+<span id="cb89-145"><a href="#cb89-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-148"><a href="#cb89-148" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-149"><a href="#cb89-149" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter for 8-cylinder cars with more than 200 horsepower</span></span>
+<span id="cb89-150"><a href="#cb89-150" aria-hidden="true" tabindex="-1"></a>mtcars_df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(cyl <span class="sc">==</span> <span class="dv">8</span> <span class="sc">&amp;</span> hp <span class="sc">&gt;</span> <span class="dv">200</span>)</span>
+<span id="cb89-151"><a href="#cb89-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-152"><a href="#cb89-152" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter for cars that are either 8-cylinder OR have more than 300 horsepower</span></span>
+<span id="cb89-153"><a href="#cb89-153" aria-hidden="true" tabindex="-1"></a>mtcars_df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(cyl <span class="sc">==</span> <span class="dv">8</span> <span class="sc">|</span> hp <span class="sc">&gt;</span> <span class="dv">300</span>)</span>
+<span id="cb89-154"><a href="#cb89-154" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-155"><a href="#cb89-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-156"><a href="#cb89-156" aria-hidden="true" tabindex="-1"></a><span class="fu">## `arrange()`: Reorder rows</span></span>
+<span id="cb89-157"><a href="#cb89-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-158"><a href="#cb89-158" aria-hidden="true" tabindex="-1"></a><span class="in">`arrange()`</span> sorts the rows of a data frame by one or more columns.</span>
+<span id="cb89-159"><a href="#cb89-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-162"><a href="#cb89-162" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-163"><a href="#cb89-163" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort cars by miles per gallon (mpg) in ascending order (the default)</span></span>
+<span id="cb89-164"><a href="#cb89-164" aria-hidden="true" tabindex="-1"></a>mtcars_df <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(mpg)</span>
+<span id="cb89-165"><a href="#cb89-165" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-166"><a href="#cb89-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-167"><a href="#cb89-167" aria-hidden="true" tabindex="-1"></a>Use <span class="in">`desc()`</span> to sort in descending order.</span>
+<span id="cb89-168"><a href="#cb89-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-171"><a href="#cb89-171" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-172"><a href="#cb89-172" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort by cylinder count (desc) and then by mpg (desc) for tie-breaking</span></span>
+<span id="cb89-173"><a href="#cb89-173" aria-hidden="true" tabindex="-1"></a>mtcars_df <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(cyl), <span class="fu">desc</span>(mpg))</span>
+<span id="cb89-174"><a href="#cb89-174" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-175"><a href="#cb89-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-176"><a href="#cb89-176" aria-hidden="true" tabindex="-1"></a><span class="fu">## `mutate()`: Create new columns</span></span>
+<span id="cb89-177"><a href="#cb89-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-178"><a href="#cb89-178" aria-hidden="true" tabindex="-1"></a><span class="in">`mutate()`</span> adds new columns or transforms existing ones, while keeping all existing columns.</span>
+<span id="cb89-179"><a href="#cb89-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-182"><a href="#cb89-182" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-183"><a href="#cb89-183" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a new column for horsepower-to-weight ratio</span></span>
+<span id="cb89-184"><a href="#cb89-184" aria-hidden="true" tabindex="-1"></a>mtcars_df <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">hp_per_wt =</span> hp <span class="sc">/</span> wt)</span>
+<span id="cb89-185"><a href="#cb89-185" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-186"><a href="#cb89-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-187"><a href="#cb89-187" aria-hidden="true" tabindex="-1"></a>Use <span class="in">`case_when()`</span> for complex conditional logic, which is like a more powerful version of an if-else statement.</span>
+<span id="cb89-188"><a href="#cb89-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-191"><a href="#cb89-191" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-192"><a href="#cb89-192" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a column for cylinder category</span></span>
+<span id="cb89-193"><a href="#cb89-193" aria-hidden="true" tabindex="-1"></a>mtcars_df <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">cyl_group =</span> <span class="fu">case_when</span>(</span>
+<span id="cb89-194"><a href="#cb89-194" aria-hidden="true" tabindex="-1"></a>    cyl <span class="sc">==</span> <span class="dv">4</span> <span class="sc">~</span> <span class="st">"Four-Cylinder"</span>,</span>
+<span id="cb89-195"><a href="#cb89-195" aria-hidden="true" tabindex="-1"></a>    cyl <span class="sc">==</span> <span class="dv">6</span> <span class="sc">~</span> <span class="st">"Six-Cylinder"</span>,</span>
+<span id="cb89-196"><a href="#cb89-196" aria-hidden="true" tabindex="-1"></a>    cyl <span class="sc">==</span> <span class="dv">8</span> <span class="sc">~</span> <span class="st">"Eight-Cylinder"</span>,</span>
+<span id="cb89-197"><a href="#cb89-197" aria-hidden="true" tabindex="-1"></a>    <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"Other"</span> <span class="co"># Fallback for any other case</span></span>
+<span id="cb89-198"><a href="#cb89-198" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb89-199"><a href="#cb89-199" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-200"><a href="#cb89-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-201"><a href="#cb89-201" aria-hidden="true" tabindex="-1"></a><span class="fu">## `summarise()` and `group_by()`: Collapse rows to a summary</span></span>
+<span id="cb89-202"><a href="#cb89-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-203"><a href="#cb89-203" aria-hidden="true" tabindex="-1"></a>This is one of the most powerful combinations in <span class="in">`dplyr`</span>. <span class="in">`group_by()`</span> groups the data by one or more variables. Subsequent operations are then performed on each group independently. <span class="in">`summarise()`</span> then collapses each group into a single-row summary.</span>
+<span id="cb89-204"><a href="#cb89-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-207"><a href="#cb89-207" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-208"><a href="#cb89-208" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate summary statistics for each cylinder group</span></span>
+<span id="cb89-209"><a href="#cb89-209" aria-hidden="true" tabindex="-1"></a>mtcars_df <span class="sc">%&gt;%</span> </span>
+<span id="cb89-210"><a href="#cb89-210" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cyl) <span class="sc">%&gt;%</span> </span>
+<span id="cb89-211"><a href="#cb89-211" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb89-212"><a href="#cb89-212" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_mpg =</span> <span class="fu">mean</span>(mpg, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb89-213"><a href="#cb89-213" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_hp =</span> <span class="fu">median</span>(hp, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb89-214"><a href="#cb89-214" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_wt =</span> <span class="fu">min</span>(wt, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb89-215"><a href="#cb89-215" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_wt =</span> <span class="fu">max</span>(wt, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb89-216"><a href="#cb89-216" aria-hidden="true" tabindex="-1"></a>    <span class="at">car_count =</span> <span class="fu">n</span>() <span class="co"># n() counts the number of rows in the group</span></span>
+<span id="cb89-217"><a href="#cb89-217" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb89-218"><a href="#cb89-218" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-219"><a href="#cb89-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-220"><a href="#cb89-220" aria-hidden="true" tabindex="-1"></a><span class="fu">## Joining Tables</span></span>
+<span id="cb89-221"><a href="#cb89-221" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-222"><a href="#cb89-222" aria-hidden="true" tabindex="-1"></a><span class="in">`dplyr`</span> provides a family of join functions to combine data from different tables.</span>
+<span id="cb89-223"><a href="#cb89-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-226"><a href="#cb89-226" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-227"><a href="#cb89-227" aria-hidden="true" tabindex="-1"></a>band_members_df <span class="ot">&lt;-</span> <span class="fu">tribble</span>(</span>
+<span id="cb89-228"><a href="#cb89-228" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>name,     <span class="sc">~</span>band, </span>
+<span id="cb89-229"><a href="#cb89-229" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Mick"</span>,    <span class="st">"Stones"</span>,</span>
+<span id="cb89-230"><a href="#cb89-230" aria-hidden="true" tabindex="-1"></a>  <span class="st">"John"</span>,    <span class="st">"Beatles"</span>,</span>
+<span id="cb89-231"><a href="#cb89-231" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Paul"</span>,    <span class="st">"Beatles"</span></span>
+<span id="cb89-232"><a href="#cb89-232" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb89-233"><a href="#cb89-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-234"><a href="#cb89-234" aria-hidden="true" tabindex="-1"></a>band_instruments_df <span class="ot">&lt;-</span> <span class="fu">tribble</span>(</span>
+<span id="cb89-235"><a href="#cb89-235" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>name,     <span class="sc">~</span>plays, </span>
+<span id="cb89-236"><a href="#cb89-236" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Mick"</span>,    <span class="st">"vocals"</span>,</span>
+<span id="cb89-237"><a href="#cb89-237" aria-hidden="true" tabindex="-1"></a>  <span class="st">"John"</span>,    <span class="st">"guitar"</span>,</span>
+<span id="cb89-238"><a href="#cb89-238" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Keith"</span>,   <span class="st">"guitar"</span></span>
+<span id="cb89-239"><a href="#cb89-239" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb89-240"><a href="#cb89-240" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-241"><a href="#cb89-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-242"><a href="#cb89-242" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`inner_join()`</span>: Returns only the rows where the key exists in both tables.</span>
+<span id="cb89-243"><a href="#cb89-243" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`left_join()`</span>: Returns all rows from the left table, and matching rows from the right table.</span>
+<span id="cb89-244"><a href="#cb89-244" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`full_join()`</span>: Returns all rows from both tables.</span>
+<span id="cb89-245"><a href="#cb89-245" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`anti_join()`</span>: Returns all rows from the left table that do not have a match in the right table.</span>
+<span id="cb89-246"><a href="#cb89-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-249"><a href="#cb89-249" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-250"><a href="#cb89-250" aria-hidden="true" tabindex="-1"></a><span class="co"># Left join to keep all members and see who plays an instrument</span></span>
+<span id="cb89-251"><a href="#cb89-251" aria-hidden="true" tabindex="-1"></a><span class="fu">left_join</span>(band_members_df, band_instruments_df, <span class="at">by =</span> <span class="st">"name"</span>)</span>
+<span id="cb89-252"><a href="#cb89-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-253"><a href="#cb89-253" aria-hidden="true" tabindex="-1"></a><span class="co"># Anti join to find which members are not in the instruments table</span></span>
+<span id="cb89-254"><a href="#cb89-254" aria-hidden="true" tabindex="-1"></a><span class="fu">anti_join</span>(band_members_df, band_instruments_df, <span class="at">by =</span> <span class="st">"name"</span>)</span>
+<span id="cb89-255"><a href="#cb89-255" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-256"><a href="#cb89-256" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-257"><a href="#cb89-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-258"><a href="#cb89-258" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-259"><a href="#cb89-259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-260"><a href="#cb89-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-261"><a href="#cb89-261" aria-hidden="true" tabindex="-1"></a><span class="fu"># 2. `tidyr`: Tidy Your Data</span></span>
+<span id="cb89-262"><a href="#cb89-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-263"><a href="#cb89-263" aria-hidden="true" tabindex="-1"></a><span class="in">`tidyr`</span> provides tools for reshaping data. The goal is to create "tidy" data, which has a specific structure:</span>
+<span id="cb89-264"><a href="#cb89-264" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span>Every column is a variable.</span>
+<span id="cb89-265"><a href="#cb89-265" aria-hidden="true" tabindex="-1"></a><span class="ss">2.  </span>Every row is an observation.</span>
+<span id="cb89-266"><a href="#cb89-266" aria-hidden="true" tabindex="-1"></a><span class="ss">3.  </span>Every cell is a single value.</span>
+<span id="cb89-267"><a href="#cb89-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-270"><a href="#cb89-270" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-271"><a href="#cb89-271" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a sample wide-format (untidy) dataset</span></span>
+<span id="cb89-272"><a href="#cb89-272" aria-hidden="true" tabindex="-1"></a>wide_data <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="at">header =</span> <span class="cn">TRUE</span>, <span class="at">text =</span> <span class="st">'</span></span>
+<span id="cb89-273"><a href="#cb89-273" aria-hidden="true" tabindex="-1"></a><span class="st"> subject sex control cond1 cond2</span></span>
+<span id="cb89-274"><a href="#cb89-274" aria-hidden="true" tabindex="-1"></a><span class="st">       1   M     7.9  12.3  10.7</span></span>
+<span id="cb89-275"><a href="#cb89-275" aria-hidden="true" tabindex="-1"></a><span class="st">       2   F     6.3  10.6  11.1</span></span>
+<span id="cb89-276"><a href="#cb89-276" aria-hidden="true" tabindex="-1"></a><span class="st">'</span>)</span>
+<span id="cb89-277"><a href="#cb89-277" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-278"><a href="#cb89-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-279"><a href="#cb89-279" aria-hidden="true" tabindex="-1"></a><span class="fu">### `pivot_longer()`: Wide to Long</span></span>
+<span id="cb89-280"><a href="#cb89-280" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-281"><a href="#cb89-281" aria-hidden="true" tabindex="-1"></a><span class="in">`pivot_longer()`</span> makes data "longer" by gathering multiple columns into key-value pairs. This is often the first step to making data "tidy."</span>
+<span id="cb89-282"><a href="#cb89-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-285"><a href="#cb89-285" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-286"><a href="#cb89-286" aria-hidden="true" tabindex="-1"></a>long_data <span class="ot">&lt;-</span> wide_data <span class="sc">%&gt;%</span> </span>
+<span id="cb89-287"><a href="#cb89-287" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb89-288"><a href="#cb89-288" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">c</span>(control, cond1, cond2), <span class="co"># The columns to pivot</span></span>
+<span id="cb89-289"><a href="#cb89-289" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">'condition'</span>,         <span class="co"># New column for the old column names</span></span>
+<span id="cb89-290"><a href="#cb89-290" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">'measurement'</span>       <span class="co"># New column for the old cell values</span></span>
+<span id="cb89-291"><a href="#cb89-291" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb89-292"><a href="#cb89-292" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-293"><a href="#cb89-293" aria-hidden="true" tabindex="-1"></a>long_data</span>
+<span id="cb89-294"><a href="#cb89-294" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-295"><a href="#cb89-295" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-296"><a href="#cb89-296" aria-hidden="true" tabindex="-1"></a><span class="fu">### `pivot_wider()`: Long to Wide</span></span>
+<span id="cb89-297"><a href="#cb89-297" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-298"><a href="#cb89-298" aria-hidden="true" tabindex="-1"></a><span class="in">`pivot_wider()`</span> does the opposite, making data "wider" by spreading a key-value pair into multiple columns.</span>
+<span id="cb89-299"><a href="#cb89-299" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-302"><a href="#cb89-302" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-303"><a href="#cb89-303" aria-hidden="true" tabindex="-1"></a>long_data <span class="sc">%&gt;%</span> </span>
+<span id="cb89-304"><a href="#cb89-304" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
+<span id="cb89-305"><a href="#cb89-305" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> condition,   <span class="co"># Column to get new column names from</span></span>
+<span id="cb89-306"><a href="#cb89-306" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> measurement <span class="co"># Column to get cell values from</span></span>
+<span id="cb89-307"><a href="#cb89-307" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb89-308"><a href="#cb89-308" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-309"><a href="#cb89-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-310"><a href="#cb89-310" aria-hidden="true" tabindex="-1"></a><span class="fu"># 3. `stringr`: String Manipulation</span></span>
+<span id="cb89-311"><a href="#cb89-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-312"><a href="#cb89-312" aria-hidden="true" tabindex="-1"></a><span class="in">`stringr`</span> provides a consistent and user-friendly interface for common string operations, built on top of the <span class="in">`stringi`</span> package.</span>
+<span id="cb89-313"><a href="#cb89-313" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-314"><a href="#cb89-314" aria-hidden="true" tabindex="-1"></a><span class="al">![](images/logo-01.png)</span></span>
+<span id="cb89-315"><a href="#cb89-315" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-318"><a href="#cb89-318" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-319"><a href="#cb89-319" aria-hidden="true" tabindex="-1"></a>text_vector <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"apple"</span>, <span class="st">"banana"</span>, <span class="st">"pear"</span>, <span class="st">"pineapple"</span>)</span>
+<span id="cb89-320"><a href="#cb89-320" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-321"><a href="#cb89-321" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-322"><a href="#cb89-322" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`str_detect()`</span>: Check for the presence of a pattern.</span>
+<span id="cb89-323"><a href="#cb89-323" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`str_replace()`</span>: Replace the first match of a pattern.</span>
+<span id="cb89-324"><a href="#cb89-324" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`str_extract()`</span>: Extract the first match of a pattern.</span>
+<span id="cb89-325"><a href="#cb89-325" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`str_split()`</span>: Split a string into pieces.</span>
+<span id="cb89-326"><a href="#cb89-326" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-329"><a href="#cb89-329" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-330"><a href="#cb89-330" aria-hidden="true" tabindex="-1"></a><span class="co"># Find elements containing "apple"</span></span>
+<span id="cb89-331"><a href="#cb89-331" aria-hidden="true" tabindex="-1"></a><span class="fu">str_detect</span>(text_vector, <span class="st">"apple"</span>)</span>
+<span id="cb89-332"><a href="#cb89-332" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-333"><a href="#cb89-333" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract numbers from a string using a regular expression</span></span>
+<span id="cb89-334"><a href="#cb89-334" aria-hidden="true" tabindex="-1"></a><span class="co"># \d+ is a regex for one or more digits</span></span>
+<span id="cb89-335"><a href="#cb89-335" aria-hidden="true" tabindex="-1"></a><span class="fu">str_extract</span>(<span class="st">"Order_ID_12345"</span>, <span class="st">"</span><span class="sc">\\</span><span class="st">d+"</span>) </span>
+<span id="cb89-336"><a href="#cb89-336" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-337"><a href="#cb89-337" aria-hidden="true" tabindex="-1"></a><span class="co"># Split a string by a delimiter</span></span>
+<span id="cb89-338"><a href="#cb89-338" aria-hidden="true" tabindex="-1"></a><span class="fu">str_split</span>(<span class="st">"a-b-c"</span>, <span class="st">"-"</span>)</span>
+<span id="cb89-339"><a href="#cb89-339" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-340"><a href="#cb89-340" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-341"><a href="#cb89-341" aria-hidden="true" tabindex="-1"></a><span class="fu"># 4. `lubridate`: Date and Time Manipulation</span></span>
+<span id="cb89-342"><a href="#cb89-342" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-343"><a href="#cb89-343" aria-hidden="true" tabindex="-1"></a><span class="in">`lubridate`</span> simplifies working with dates and times in R, which can otherwise be quite complex.</span>
+<span id="cb89-344"><a href="#cb89-344" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-345"><a href="#cb89-345" aria-hidden="true" tabindex="-1"></a><span class="al">![](images/logo-02.png)</span></span>
+<span id="cb89-346"><a href="#cb89-346" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-349"><a href="#cb89-349" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-350"><a href="#cb89-350" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb89-351"><a href="#cb89-351" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-352"><a href="#cb89-352" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-353"><a href="#cb89-353" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-354"><a href="#cb89-354" aria-hidden="true" tabindex="-1"></a><span class="fu">## Today</span></span>
+<span id="cb89-355"><a href="#cb89-355" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-358"><a href="#cb89-358" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-359"><a href="#cb89-359" aria-hidden="true" tabindex="-1"></a><span class="fu">today</span>()</span>
+<span id="cb89-360"><a href="#cb89-360" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-361"><a href="#cb89-361" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-362"><a href="#cb89-362" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-363"><a href="#cb89-363" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Parsing:** <span class="in">`ymd()`</span>, <span class="in">`mdy()`</span>, <span class="in">`dmy()`</span> parse strings into dates reliably, automatically handling different separators.</span>
+<span id="cb89-364"><a href="#cb89-364" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Component Extraction:** <span class="in">`year()`</span>, <span class="in">`month()`</span>, <span class="in">`day()`</span>, <span class="in">`wday()`</span> extract parts of a date.</span>
+<span id="cb89-365"><a href="#cb89-365" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Arithmetic:** Perform calculations with date and time objects using <span class="in">`duration`</span> and <span class="in">`period`</span> objects.</span>
+<span id="cb89-366"><a href="#cb89-366" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-369"><a href="#cb89-369" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-370"><a href="#cb89-370" aria-hidden="true" tabindex="-1"></a><span class="co"># Parse a date</span></span>
+<span id="cb89-371"><a href="#cb89-371" aria-hidden="true" tabindex="-1"></a>date_obj <span class="ot">&lt;-</span> <span class="fu">ymd</span>(<span class="st">"2023-10-27"</span>)</span>
+<span id="cb89-372"><a href="#cb89-372" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-373"><a href="#cb89-373" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the day of the week</span></span>
+<span id="cb89-374"><a href="#cb89-374" aria-hidden="true" tabindex="-1"></a><span class="fu">wday</span>(date_obj, <span class="at">label =</span> <span class="cn">TRUE</span>, <span class="at">abbr =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb89-375"><a href="#cb89-375" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-376"><a href="#cb89-376" aria-hidden="true" tabindex="-1"></a><span class="co"># Add 15 days to the date</span></span>
+<span id="cb89-377"><a href="#cb89-377" aria-hidden="true" tabindex="-1"></a>date_obj <span class="sc">+</span> <span class="fu">days</span>(<span class="dv">15</span>)</span>
+<span id="cb89-378"><a href="#cb89-378" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-379"><a href="#cb89-379" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the time difference between two dates</span></span>
+<span id="cb89-380"><a href="#cb89-380" aria-hidden="true" tabindex="-1"></a>new_year <span class="ot">&lt;-</span> <span class="fu">ymd</span>(<span class="st">"2024-01-01"</span>)</span>
+<span id="cb89-381"><a href="#cb89-381" aria-hidden="true" tabindex="-1"></a><span class="fu">interval</span>(date_obj, new_year) <span class="sc">/</span> <span class="fu">days</span>(<span class="dv">1</span>)</span>
+<span id="cb89-382"><a href="#cb89-382" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-383"><a href="#cb89-383" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-384"><a href="#cb89-384" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-385"><a href="#cb89-385" aria-hidden="true" tabindex="-1"></a><span class="fu"># 5. Window Functions</span></span>
+<span id="cb89-386"><a href="#cb89-386" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-387"><a href="#cb89-387" aria-hidden="true" tabindex="-1"></a>Window functions are functions that operate on a "window" of data (e.g., within a group) but, unlike <span class="in">`summarise()`</span>, they return a value for every row.</span>
+<span id="cb89-388"><a href="#cb89-388" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-389"><a href="#cb89-389" aria-hidden="true" tabindex="-1"></a><span class="fu">## Ranking with `row_number`</span></span>
+<span id="cb89-390"><a href="#cb89-390" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-391"><a href="#cb89-391" aria-hidden="true" tabindex="-1"></a><span class="in">`row_number()`</span> assigns a unique rank to each row within a group.</span>
+<span id="cb89-392"><a href="#cb89-392" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-395"><a href="#cb89-395" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-396"><a href="#cb89-396" aria-hidden="true" tabindex="-1"></a>small_mtcars <span class="sc">%&gt;%</span> </span>
+<span id="cb89-397"><a href="#cb89-397" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cyl) <span class="sc">%&gt;%</span> </span>
+<span id="cb89-398"><a href="#cb89-398" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rank =</span> <span class="fu">row_number</span>(<span class="fu">desc</span>(mpg))) <span class="sc">%&gt;%</span> </span>
+<span id="cb89-399"><a href="#cb89-399" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(cyl, mpg, rank)</span>
+<span id="cb89-400"><a href="#cb89-400" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-401"><a href="#cb89-401" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-402"><a href="#cb89-402" aria-hidden="true" tabindex="-1"></a><span class="fu">## Accessing Previous/Next Values with `lag` and `lead`</span></span>
+<span id="cb89-403"><a href="#cb89-403" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-404"><a href="#cb89-404" aria-hidden="true" tabindex="-1"></a><span class="in">`lag()`</span> and <span class="in">`lead()`</span> are useful for comparing a value to its predecessor or successor.</span>
+<span id="cb89-405"><a href="#cb89-405" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-408"><a href="#cb89-408" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-409"><a href="#cb89-409" aria-hidden="true" tabindex="-1"></a>small_mtcars <span class="sc">%&gt;%</span> </span>
+<span id="cb89-410"><a href="#cb89-410" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(cyl, mpg) <span class="sc">%&gt;%</span> </span>
+<span id="cb89-411"><a href="#cb89-411" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">mpg_previous =</span> <span class="fu">lag</span>(mpg, <span class="at">n =</span> <span class="dv">1</span>))</span>
+<span id="cb89-412"><a href="#cb89-412" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-413"><a href="#cb89-413" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-414"><a href="#cb89-414" aria-hidden="true" tabindex="-1"></a><span class="fu">## Cumulative Summaries</span></span>
+<span id="cb89-415"><a href="#cb89-415" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-416"><a href="#cb89-416" aria-hidden="true" tabindex="-1"></a><span class="in">`cumsum()`</span> calculates the cumulative sum.</span>
+<span id="cb89-417"><a href="#cb89-417" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-420"><a href="#cb89-420" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-421"><a href="#cb89-421" aria-hidden="true" tabindex="-1"></a>small_mtcars <span class="sc">%&gt;%</span> </span>
+<span id="cb89-422"><a href="#cb89-422" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(cyl, mpg) <span class="sc">%&gt;%</span> </span>
+<span id="cb89-423"><a href="#cb89-423" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">mpg_running_total =</span> <span class="fu">cumsum</span>(mpg))</span>
+<span id="cb89-424"><a href="#cb89-424" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-425"><a href="#cb89-425" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-426"><a href="#cb89-426" aria-hidden="true" tabindex="-1"></a><span class="fu">## Order Rows</span></span>
+<span id="cb89-427"><a href="#cb89-427" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-428"><a href="#cb89-428" aria-hidden="true" tabindex="-1"></a><span class="in">`arrange()`</span> sorts the rows of a data frame by one or more columns.</span>
+<span id="cb89-429"><a href="#cb89-429" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-432"><a href="#cb89-432" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-433"><a href="#cb89-433" aria-hidden="true" tabindex="-1"></a>small_mtcars <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(cyl) </span>
+<span id="cb89-434"><a href="#cb89-434" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-435"><a href="#cb89-435" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-436"><a href="#cb89-436" aria-hidden="true" tabindex="-1"></a>Sort in descending order using <span class="in">`desc()`</span>.</span>
+<span id="cb89-437"><a href="#cb89-437" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-440"><a href="#cb89-440" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-441"><a href="#cb89-441" aria-hidden="true" tabindex="-1"></a>small_mtcars <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(cyl))</span>
+<span id="cb89-442"><a href="#cb89-442" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-443"><a href="#cb89-443" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-444"><a href="#cb89-444" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-445"><a href="#cb89-445" aria-hidden="true" tabindex="-1"></a><span class="fu"># 6. Handle Missing Data</span></span>
+<span id="cb89-446"><a href="#cb89-446" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-447"><a href="#cb89-447" aria-hidden="true" tabindex="-1"></a>Let's create a sample data frame with missing values (<span class="in">`NA`</span>).</span>
+<span id="cb89-448"><a href="#cb89-448" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-451"><a href="#cb89-451" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-452"><a href="#cb89-452" aria-hidden="true" tabindex="-1"></a>missing_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb89-453"><a href="#cb89-453" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="cn">NA</span>, <span class="dv">4</span>),</span>
+<span id="cb89-454"><a href="#cb89-454" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="cn">NA</span>, <span class="st">"c"</span>, <span class="st">"d"</span>)</span>
+<span id="cb89-455"><a href="#cb89-455" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb89-456"><a href="#cb89-456" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-457"><a href="#cb89-457" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-458"><a href="#cb89-458" aria-hidden="true" tabindex="-1"></a><span class="fu">## Find Missing Data</span></span>
+<span id="cb89-459"><a href="#cb89-459" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-460"><a href="#cb89-460" aria-hidden="true" tabindex="-1"></a><span class="in">`is.na()`</span> returns a logical vector indicating which values are missing.</span>
+<span id="cb89-461"><a href="#cb89-461" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-464"><a href="#cb89-464" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-465"><a href="#cb89-465" aria-hidden="true" tabindex="-1"></a><span class="fu">is.na</span>(missing_df)</span>
+<span id="cb89-466"><a href="#cb89-466" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-467"><a href="#cb89-467" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-468"><a href="#cb89-468" aria-hidden="true" tabindex="-1"></a><span class="fu">## Filter Out Missing Data</span></span>
+<span id="cb89-469"><a href="#cb89-469" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-470"><a href="#cb89-470" aria-hidden="true" tabindex="-1"></a>You can use <span class="in">`filter()`</span> with <span class="in">`!is.na()`</span> to remove rows with missing values in a specific column.</span>
+<span id="cb89-471"><a href="#cb89-471" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-474"><a href="#cb89-474" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-475"><a href="#cb89-475" aria-hidden="true" tabindex="-1"></a>missing_df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(y))</span>
+<span id="cb89-476"><a href="#cb89-476" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-477"><a href="#cb89-477" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-478"><a href="#cb89-478" aria-hidden="true" tabindex="-1"></a><span class="in">`tidyr::drop_na()`</span> removes rows with any missing values.</span>
+<span id="cb89-479"><a href="#cb89-479" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-482"><a href="#cb89-482" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-483"><a href="#cb89-483" aria-hidden="true" tabindex="-1"></a>missing_df <span class="sc">%&gt;%</span> <span class="fu">drop_na</span>()</span>
+<span id="cb89-484"><a href="#cb89-484" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-485"><a href="#cb89-485" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-486"><a href="#cb89-486" aria-hidden="true" tabindex="-1"></a><span class="fu"># 7. Dataframe to Other Data Formats</span></span>
+<span id="cb89-487"><a href="#cb89-487" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-488"><a href="#cb89-488" aria-hidden="true" tabindex="-1"></a><span class="fu">## Dataframe to Vector</span></span>
+<span id="cb89-489"><a href="#cb89-489" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-492"><a href="#cb89-492" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-493"><a href="#cb89-493" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> small_mtcars<span class="sc">$</span>cyl</span>
+<span id="cb89-494"><a href="#cb89-494" aria-hidden="true" tabindex="-1"></a>data</span>
+<span id="cb89-495"><a href="#cb89-495" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-496"><a href="#cb89-496" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-499"><a href="#cb89-499" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-500"><a href="#cb89-500" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(data)</span>
+<span id="cb89-501"><a href="#cb89-501" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-502"><a href="#cb89-502" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-503"><a href="#cb89-503" aria-hidden="true" tabindex="-1"></a><span class="fu">## Dataframe to Matrix</span></span>
+<span id="cb89-504"><a href="#cb89-504" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-507"><a href="#cb89-507" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-508"><a href="#cb89-508" aria-hidden="true" tabindex="-1"></a>data<span class="ot">=</span><span class="fu">data.matrix</span>(small_mtcars)</span>
+<span id="cb89-509"><a href="#cb89-509" aria-hidden="true" tabindex="-1"></a>data</span>
+<span id="cb89-510"><a href="#cb89-510" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-511"><a href="#cb89-511" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-514"><a href="#cb89-514" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-515"><a href="#cb89-515" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(data)</span>
+<span id="cb89-516"><a href="#cb89-516" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-517"><a href="#cb89-517" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-518"><a href="#cb89-518" aria-hidden="true" tabindex="-1"></a><span class="fu">## Dataframe to List</span></span>
+<span id="cb89-519"><a href="#cb89-519" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-522"><a href="#cb89-522" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-523"><a href="#cb89-523" aria-hidden="true" tabindex="-1"></a>data<span class="ot">=</span><span class="fu">as.list</span>(small_mtcars)</span>
+<span id="cb89-524"><a href="#cb89-524" aria-hidden="true" tabindex="-1"></a>data</span>
+<span id="cb89-525"><a href="#cb89-525" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-526"><a href="#cb89-526" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-529"><a href="#cb89-529" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb89-530"><a href="#cb89-530" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(data)</span>
+<span id="cb89-531"><a href="#cb89-531" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb89-532"><a href="#cb89-532" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-533"><a href="#cb89-533" aria-hidden="true" tabindex="-1"></a><span class="fu"># 8. References</span></span>
+<span id="cb89-534"><a href="#cb89-534" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-535"><a href="#cb89-535" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">R for Data Science, 2nd Edition</span><span class="co">](https://r4ds.hadley.nz/)</span></span>
+<span id="cb89-536"><a href="#cb89-536" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">dplyr Documentation</span><span class="co">](https://dplyr.tidyverse.org/)</span></span>
+<span id="cb89-537"><a href="#cb89-537" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">tidyr Documentation</span><span class="co">](https://tidyr.tidyverse.org/)</span></span>
+<span id="cb89-538"><a href="#cb89-538" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">stringr Documentation</span><span class="co">](https://stringr.tidyverse.org/)</span></span>
+<span id="cb89-539"><a href="#cb89-539" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">lubridate Documentation</span><span class="co">](https://lubridate.tidyverse.org/)</span></span>
+</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>This website is built with ❤️ and <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

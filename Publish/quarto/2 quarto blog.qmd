@@ -1,0 +1,216 @@
+---
+title: "quarto blog"
+subtitle: "with magick"
+
+author: "Tony D"
+
+execute:
+  warning: false
+  error: false
+  eval: false
+  
+format:
+  html:
+    toc: true
+    toc-location: right
+    code-fold: show
+    code-tools: true
+    number-sections: true
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-copy: true
+---
+
+# create quarto blog
+
+![](https://tidystep.netlify.app/posts/publish%20quarto%20blog/images/quarto-blog-v2.png)
+
+## blog post
+
+```{r}
+#| eval: false
+---
+title: "title"
+
+author: "name"
+date: "2024-05-03"
+categories: [R,quarto]
+execute:
+  warning: false
+  error: false
+  eval: false
+
+format:
+  html:
+    toc: true
+    toc-location: left
+    code-fold: show
+    code-tools: true
+    number-sections: true
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    
+---
+```
+
+## hide post from main page
+
+```{r}
+#| eval: false
+---
+draft: true  
+  
+---
+```
+
+## \_quarto.yml
+
+```{r}
+#| eval: false
+project:
+  type: website
+
+website:
+  title: "tidystep"
+  site-url: https://tidystep.netlify.app/
+  description: "A blog for data stuff"
+  favicon: "profile3.png"
+  google-analytics: "G-2EQK8RFKFX"
+  navbar:
+    right:
+      - about.qmd
+      - icon: github
+        href: https://github.com/TonyFly3000
+      - icon: twitter
+        href: https://twitter.com/TonyJCD
+      - icon: rss
+        href: index.xml
+
+  page-footer:
+    right: "This blog is built with ❤️ and [Quarto](https://quarto.org/)."
+
+format:
+  html:
+    theme: 
+      light: flatly
+      dark: darkly
+    css: styles.css
+    grid:
+      body-width: 1100px
+      margin-width: 300px
+      gutter-width: 1.5rem
+
+editor: visual
+execute:
+  freeze: true
+```
+
+## index.qmd
+
+```{r}
+#| eval: false
+---
+title: "微步数据"
+listing:
+  page-size: 8
+  contents: posts
+  sort: "date desc"
+  type: default
+  categories: true
+  sort-ui: true
+  filter-ui: false
+  fields: [image, date, title, author,categories]
+  feed: true
+page-layout: full
+title-block-banner: true
+---
+
+```
+
+
+## draft post,not include in the main page
+
+```{r}
+#| eval: false
+draft:true
+```
+
+
+## create password for blog
+
+
+### download staticryptR
+
+```{r}
+remotes::install_github("nikitoshina/staticryptR")
+```
+
+
+### download node
+
+```{bash}
+brew install node
+```
+
+
+###  Installing staticrypt
+
+```{bash}
+npm install -g staticrypt
+```
+
+
+###  edit _quarto.yml
+```{r}
+# _quarto.yml
+project:
+  output-dir: "./_output"
+  post-render: encrypt.r
+```
+
+
+### add encrypt.r
+
+password protect all website
+
+```{r}
+# encrypt.r
+staticryptR::staticryptr(
+  files = "_output/",
+  directory = ".",
+  password = "123123",
+  short = TRUE,
+  recursive = TRUE,
+  template_color_primary = "#6667AB",
+  template_color_secondary = "#f9f9f3",
+  template_title = "Your Document Title",
+  template_instructions = "Enter the password or contact example@email.com",
+  template_button = "Access"
+)
+```
+
+
+
+
+password protect one posts
+
+```{r}
+staticryptR::staticryptr(
+  files = c("posts/youtube_yt-dlp/"),
+  directory = c("docs/posts/"),
+  password = "123123",
+  short = TRUE,
+  recursive = TRUE,
+  template_color_primary = "#6667AB",
+  template_color_secondary = "#f9f9f3",
+  template_title = "Your Document Title",
+  template_instructions = "Enter the password or contact TonyJCing@outlook.com",
+  template_button = "Access",
+  print_cmd = TRUE
+)
+
+
+
+```
+
+

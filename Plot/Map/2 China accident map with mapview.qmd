@@ -1,0 +1,231 @@
+---
+title: "China accident map"
+subtitle: "with mapview"
+author: "Tony D"
+
+execute:
+  warning: false
+  error: false
+
+format:
+  html:
+    toc: true
+    toc-location: right
+    code-fold: show
+    code-tools: true
+    number-sections: true
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-copy: true
+---
+
+This document demonstrates how to create an interactive map of accidents in China using the `mapview` package in R. The data is sourced from the `chinese_incident_tracker` GitHub repository, which contains a collection of incident reports.
+
+# Data Acquisition and Preparation
+
+First, we load the necessary R libraries for data manipulation, web scraping, and visualization.
+
+```{r}
+# Load the tidyverse package for data manipulation and visualization.
+library(tidyverse)
+# Load the rvest package for web scraping.
+library(rvest)
+# Load the jsonlite package for working with JSON data.
+library(jsonlite)
+# Load the curl package for making HTTP requests.
+library(curl)
+# Load the lubridate package for working with dates and times.
+library(lubridate)
+# Load the plotly package for creating interactive plots.
+library(plotly)
+# Load the ggplot2 package for creating static plots.
+library(ggplot2)
+# Load the openxlsx package for reading and writing Excel files.
+library(openxlsx)
+# Load the readxl package for reading Excel files.
+library(readxl)
+```
+
+## Loading a Single File
+
+We start by loading a single JSON file to understand its structure.
+
+```{r}
+# You can uncomment these lines to download the file from the URL.
+# url <- "https://raw.githubusercontent.com/percent4/chinese_incident_tracker/main/elk/data/00105670-df53-4be8-9039-8a07fe2d2b4d.json"
+# download.file(url,"./data/SAFI.json", mode = "wb")
+```
+
+```{r}
+# Read the JSON file into a list.
+data001 <- read_json("./data/SAFI.json")
+```
+
+```{r}
+# Convert the list to a data frame and rename the coordinate columns.
+data002=data001 %>% as.data.frame()
+colnames(data002)[14] = "latitude"
+colnames(data002)[15] = "longitude"
+# Get a glimpse of the data frame.
+glimpse(data002)
+```
+
+## Loading All Files
+
+Now, we will load all the JSON files from the repository.
+
+```{r}
+# You can uncomment these lines to download the entire repository as a zip file.
+# url="https://github.com/percent4/chinese_incident_tracker/archive/refs/heads/main.zip"
+# download.file(url,"./data/data.zip", mode = "wb")
+```
+
+```{r}
+# You can uncomment this line to unzip the downloaded file.
+# unzip("./data/data.zip",exdir="./data/out")
+```
+
+```{r}
+# Copy the JSON files from the unzipped folder to a new folder.
+from <- "./data/out/chinese_incident_tracker-main/elk/data"
+to   <- "./data/json_folder"
+file.copy(list.files(from, full.names = TRUE), 
+          to, 
+          recursive = TRUE)
+```
+
+```{r}
+# You can uncomment this line to list the files in the new folder.
+# list.files("./data/json_folder")
+```
+
+```{r}
+# Create an empty tibble to store all the data.
+all_data=tibble()
+
+# Loop through each JSON file in the folder.
+for (i in list.files("./data/json_folder")) {
+  # Read the JSON file.
+  data001=read_json(paste0("./data/json_folder/",i))
+  # Convert the list to a data frame.
+  data002=data001 %>% as.data.frame()
+  # Rename the coordinate columns.
+  colnames(data002)[14] = "Longitude"
+  colnames(data002)[15] = "Latitude"
+  # Bind the data to the main tibble.
+  all_data=rbind(all_data,data002)
+}
+```
+
+```{r}
+# Create a text column for the map labels and a month_year column for charting.
+all_data=all_data %>% mutate(text=paste0(incident_type," ","死亡人数:",person_death_num," 受伤人数:",person_injury_num)
+                             ,month_year= format_ISO8601(ymd(start_date), precision = "ym")
+                             )
+```
+
+```{r}
+# Get a glimpse of the final data frame.
+glimpse(all_data)
+```
+
+```{r}
+# You can uncomment this line to save the data to an Excel file.
+# write.xlsx(all_data,'all_data.xlsx')
+```
+
+# Charting the Data
+
+Now, let's create some charts to visualize the data.
+
+## Grouping by Month
+
+We'll group the data by month and summarize the number of deaths and injuries.
+
+```{r}
+# Group the data by month_year and summarize the number of deaths and injuries.
+chartdata001=all_data %>% group_by(month_year)  %>%  summarise(person_death_num=sum(person_death_num)
+                                                           ,person_injury_num=sum(person_injury_num)
+                                                           )
+```
+
+## Reshaping the Data
+
+We'll reshape the data from a wide format to a long format for easier plotting.
+
+```{r}
+# Reshape the data from wide to long format.
+chartdata002=chartdata001 %>%select(month_year,person_death_num,person_injury_num) %>% 
+  pivot_longer(!c(month_year), names_to = 'type', values_to = 'DATA')
+```
+
+## Creating the Charts
+
+We'll create a bar chart of the number of deaths per month and a grouped bar chart of both deaths and injuries.
+
+```{r}
+# Create a bar chart of the number of deaths per month.
+gg=ggplot(chartdata001, aes(x=month_year, y=person_death_num,label = person_death_num))+
+  geom_bar(stat="identity",fill='red')+ geom_text(vjust = -1,
+              position = position_dodge(width = 0.9))+ theme_bw()
+
+# Convert the ggplot object to a plotly object for interactivity.
+ggplotly(gg)
+```
+
+```{r}
+# Create a grouped bar chart of the number of deaths and injuries per month.
+gg=ggplot(chartdata002, aes(fill=type, y=DATA, x=month_year)) +
+    geom_col(position = "dodge") +
+    geom_text(aes(label = DATA), vjust = 1.5,
+              position = position_dodge(width = 0.9))+scale_y_log10()+ theme_light()
+
+# Convert the ggplot object to a plotly object.
+pp=ggplotly(gg)
+
+# Display the plotly object.
+pp
+```
+
+# Mapping the Data
+
+Finally, we'll create an interactive map of the accidents using the `mapview` package.
+
+```{r}
+# Truncate the report text to 100 characters.
+all_data2 =all_data %>%  mutate(report=report %>% str_trunc(100))
+```
+
+```{r}
+# You can uncomment this line to save the data to an Excel file.
+# write.xlsx(all_data2,'all_data2.xlsx')
+```
+
+```{r fig.height=8}
+# Load the mapview, sf, and stringr packages.
+library(mapview)
+library(sf)
+library(stringr)
+
+# Create an interactive map of the accidents.
+mapview(all_data2, 
+        map.types='OpenStreetMap', 
+        label='text', 
+        xcol = "Longitude", 
+        ycol = "Latitude", 
+        zcol='incident_type', 
+        cex="person_death_num", 
+        crs = 4269, 
+        grid = FALSE)
+```
+
+# Resources
+
+Here are some useful resources for learning more about the tools used in this document.
+
+https://github.com/percent4/chinese_incident_tracker
+
+https://github.com/r-spatial/mapview
+
+https://maps.clb.org.hk/
+

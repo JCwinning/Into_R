@@ -1,0 +1,159 @@
+---
+title: "Shiny in R:weight tracking"
+author: "Tony D"
+
+execute:
+  warning: false
+  error: false
+format:
+  html:
+    toc: true
+    toc-location: right
+    code-fold: show
+    code-tools: true
+    number-sections: true
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+---
+
+
+
+# Introduction to Shiny
+
+Shiny is an R package that makes it easy to build interactive web applications directly from R. This tutorial will walk you through creating a weight tracking application.
+
+# What is Shiny?
+
+Shiny allows you to:
+- Create interactive web applications with no HTML, CSS, or JavaScript knowledge required
+- Build responsive dashboards and tools
+- Share your R analyses with non-technical users
+- Create interactive plots and tables
+
+# Live Example: Weight Tracking App
+
+Here's a working example of a Shiny application for weight tracking:
+
+## Shiny app: <https://tonyflying.shinyapps.io/weight_tracking>
+
+```{=html}
+<iframe width="900" height="500" src="https://tonyflying.shinyapps.io/weight_tracking/" title="shiny app"></iframe>
+```
+
+# Basic Structure of a Shiny App
+
+A Shiny app consists of two main components:
+
+## 1. User Interface (UI)
+
+The UI defines how your app looks and includes:
+- Input controls (sliders, dropdowns, text boxes)
+- Output displays (plots, tables, text)
+- Layout and styling
+
+## 2. Server Logic
+
+The server function:
+- Processes user inputs
+- Performs calculations and data manipulation
+- Generates outputs to display in the UI
+
+# Basic Shiny App Structure
+
+```{r}
+#| eval: false
+library(shiny)
+
+# Define UI
+ui <- fluidPage(
+  titlePanel("My First Shiny App"),
+
+  sidebarLayout(
+    sidebarPanel(
+      sliderInput("num", "Choose a number:",
+                  min = 0, max = 100, value = 50)
+    ),
+
+    mainPanel(
+      textOutput("result")
+    )
+  )
+)
+
+# Define server logic
+server <- function(input, output) {
+  output$result <- renderText({
+    paste("You selected:", input$num)
+  })
+}
+
+# Run the application
+shinyApp(ui = ui, server = server)
+```
+
+# Key Shiny Components
+
+## Input Widgets
+
+Common input types include:
+- `sliderInput()`: Numeric sliders
+- `textInput()`: Text input fields
+- `selectInput()`: Dropdown menus
+- `checkboxInput()`: Checkboxes
+- `radioButtons()`: Radio button groups
+
+## Output Functions
+
+Common output types include:
+- `textOutput()`: Display text
+- `plotOutput()`: Display plots
+- `tableOutput()`: Display tables
+- `uiOutput()`: Display dynamic UI elements
+
+## Reactive Expressions
+
+Reactive expressions automatically update when their inputs change:
+
+```{r}
+#| eval: false
+# Create a reactive expression
+reactive_data <- reactive({
+  # This code runs whenever its dependencies change
+  input$dataset %>%
+    filter(category == input$category)
+})
+
+# Use the reactive expression in output
+output$plot <- renderPlot({
+  ggplot(reactive_data(), aes(x, y)) +
+    geom_point()
+})
+```
+
+# Creating the Weight Tracking App
+
+The weight tracking app demonstrates:
+- **Data input**: Users can add new weight entries
+- **Data visualization**: Interactive plots showing weight trends
+- **Data management**: Store and retrieve weight data
+- **Interactive features**: Date ranges, goal setting, progress tracking
+
+# Next Steps
+
+To learn more about Shiny:
+1. [Official Shiny Tutorial](https://shiny.rstudio.com/tutorial/)
+2. [Shiny Gallery](https://shiny.rstudio.com/gallery/)
+3. [Mastering Shiny Book](https://mastering-shiny.org/)
+
+# Installation
+
+```{r}
+#| eval: false
+install.packages("shiny")
+```
+
+
+
+
+
+

@@ -1,0 +1,15 @@
+{
+  "hash": "89f605e69d32c34cc7a48e8d6117dbbb",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Shiny in web browser\"\nauthor: \"Tony Duan\"\n\nexecute:\n  warning: false\n  error: false\n\nformat:\n  html:\n    toc: true\n    toc-location: right\n    code-fold: show\n    code-tools: true\n    number-sections: true\n    code-block-bg: true\n    code-block-border-left: \"#31BAE9\"\n    \n\nfilters:\n  - shinylive\n---\n\n\n# option 1: create shiny in quarto doc\n\n\n## step 1 add quarto extension in project root folder\n\n::: {.cell}\n\n```{.bash .cell-code}\nquarto add quarto-ext/shinylive\n```\n:::\n\n## step 2 add in header\n\n```yaml\n---\n\nfilters:\n  - shinylive\n  \n---\n```\n\n## step 3 make shiny app \n\n```{shinylive-r}\n#| standalone: true\n#| viewerHeight: 600\n#| components: [editor, viewer]\nlibrary(shiny)\nlibrary(bslib)\n\nui <- page_fluid(\n  h2(\"Simple Histogram App\"),\n  layout_sidebar(\n    sidebar = sidebar(\n      sliderInput(\"n\", \"Number of observations:\", min = 10, max = 100, value = 30)\n    ),\n    plotOutput(\"hist\")\n  )\n)\n\nserver <- function(input, output) {\n  output$hist <- renderPlot({\n    hist(rnorm(input$n), main = \"Random Normal Data\", col = \"skyblue\")\n  })\n}\n\nshinyApp(ui, server)\n\n```\n\n\n# option 2 convert shiny to html\n\n![](images/my%20screenshots%201.png)\n\n\n::: panel-tabset\n\n\n## R\n::: {.cell}\n\n```{.r .cell-code}\nshinylive::export(app_dir=\"my_shiny_app\",output_dir=\"shiny_web\")\nhttps::run_app(\"shiny_web\")\n```\n:::\n\n\n## Python\n\n::: {.cell}\n\n```{.bash .cell-code}\nshinylive export my_shiny_app shiny_web\ncd site\npython -m http.server 8000\n```\n:::\n\n\n:::\n\n# option 3 upload to shinylive.io\n\nusing Shinylive.io\n\n::: panel-tabset\n\n\n## R\n\nshinylive.io/r/\n\n## Python\n\nshinylive.io/py/\n\n:::\n\n\n\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

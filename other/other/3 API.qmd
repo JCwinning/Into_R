@@ -1,0 +1,115 @@
+---
+title: "API"
+author: "Tony D"
+
+execute:
+  warning: false
+  error: false
+
+format:
+  html:
+    toc: true
+    toc-location: right
+    code-fold: show
+    code-tools: true
+    number-sections: true
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-copy: true
+---
+
+# calling API
+
+
+to get exchange rate from European Central Bank.https://frankfurter.dev/
+
+```{r}
+library(httr)
+library(jsonlite)
+library(plotly)
+library(lubridate)
+```
+
+
+
+```{r}
+get_usd_thb_rates <- function(start_date, end_date,base_currency,target_currency) {
+  url <- paste0(
+    "https://api.frankfurter.app/",
+    start_date, "..", end_date,
+    "?from=", base_currency,
+    "&to=", target_currency
+  )
+  
+  response <- GET(url)
+  
+  if (status_code(response) == 200) {
+    data <- fromJSON(content(response, "text"))
+    rates_df <- data.frame(
+      date = names(data$rates),
+      rate = sapply(data$rates, function(x) x[[target_currency]])
+    )
+    row.names(rates_df) <- NULL
+    rates_df$date <- as.Date(rates_df$date)
+    return(rates_df)
+  } else {
+    stop(paste("Error:", status_code(response)))
+  }
+}
+```
+
+
+```{r}
+USD_THB=get_usd_thb_rates(start_date='2024-01-01', end_date=Sys.Date(),base_currency='USD',target_currency='THB')
+```
+
+
+```{r}
+USD_CNY=get_usd_thb_rates(start_date='2024-01-01', end_date=Sys.Date(),base_currency='USD',target_currency='CNY')
+```
+
+
+```{r}
+USD_CNY_THB <- merge(USD_THB, USD_CNY, by = "date", suffixes = c("_THB", "_CNY"))
+```
+
+
+
+```{r}
+plot_ly(data=USD_CNY_THB, x=~date) %>%
+  add_lines(y=~rate_THB, name='USD to THB', line=list(color='blue')) %>%
+  add_lines(y=~rate_CNY, name='USD to CNY', line=list(color='red'), yaxis = "y2") %>%
+  layout(title="USD to THB and CNY Exchange Rates",
+         xaxis=list(title="Date"),
+         yaxis=list(title="Rate THB", showgrid=FALSE),
+         yaxis2=list(title="Rate CNY", overlaying = "y", side = "right", tickformat = ".2f"),
+         legend=list(orientation = 'h', xanchor = "center", x = 0.5, y = -0.2),
+         margin = list(r = 80)) # Increase right margin
+```
+
+
+
+```{r}
+CNY_THB=get_usd_thb_rates(start_date='2024-01-01', end_date=Sys.Date(),base_currency='CNY',target_currency='THB')
+```
+
+
+
+
+```{r}
+plot_ly(data=CNY_THB, x=~date) |> 
+  add_lines(y=~rate, name='CNY to THB', line=list(color='green')) |> 
+  layout(title="CNY to THB Exchange Rate",
+         xaxis=list(title="Date"),
+         yaxis=list(title="Rate", showgrid=FALSE),
+         legend=list(orientation = 'h', xanchor = "center", x = 0.5, y = -0.2),
+         margin = list(r = 80)) # Increase right margin
+```
+
+
+```{r}
+(max(CNY_THB$rate)-min(CNY_THB$rate))/min(CNY_THB$rate)
+```
+
+
+

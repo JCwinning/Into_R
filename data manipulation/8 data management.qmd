@@ -1,0 +1,160 @@
+---
+title: "Data management"
+author: "Tony D"
+
+execute:
+  warning: false
+  error: false
+  
+format:
+  html:
+    toc: true
+    toc-location: right
+    code-fold: show
+    code-tools: true
+    number-sections: false
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-copy: true
+---
+
+# 1. Introduction to Data Management
+
+Effective data management is crucial for reproducible and collaborative data science. It involves organizing, storing, and sharing data in a way that is efficient, secure, and easy to manage. In R, the `pins` package provides a powerful and straightforward solution for this challenge.
+
+![](images/my screenshots.png)
+
+The `pins` package allows you to "pin" data objects—like data frames, models, or plots—to a "board." A board is a location where you store your pins, which can be a local folder, a network drive, or a cloud service like Amazon S3, Google Cloud Storage, or Posit Connect. This makes it easy to share and access data across different projects, colleagues, or even between R and Python environments.
+
+The key idea is to treat data like a package. You can publish data to a board, and then others (or your future self) can install and use that data with a simple command, without worrying about file paths or where the data is stored.
+
+# 2. Getting Started with `pins`
+
+First, you need to install the package from CRAN.
+
+```{r}
+#| eval: false
+install.packages("pins")
+```
+
+Then, load the necessary libraries. We will use `pins` and `tidyverse`.
+
+```{r}
+library(pins)
+library(tidyverse)
+```
+
+# 3. Creating a Board
+
+A board is the storage location for your pins. For this example, we will create a simple board in a local folder. This is great for managing data for your own projects on a single machine.
+
+```{r}
+# Create a board in a subfolder named 'my_local_board'
+# This folder will be created in your current working directory.
+board <- board_folder("my_local_board")
+```
+
+You can check the path of your board.
+
+```{r}
+board
+```
+
+# 4. Pinning Data
+
+"Pinning" data means saving an R object to your board with a specific name. Let's pin the built-in `mtcars` dataset.
+
+The `pin_write()` function is used for this. It takes three main arguments:
+-   `x`: The R object you want to pin.
+-   `name`: A unique name for the pin.
+-   `board`: The board where you want to store the pin.
+-   `type`: The file format to save the pin as (e.g., "rds", "csv", "parquet"). `pins` will choose a sensible default if you don't specify.
+
+```{r}
+# Pin the mtcars data frame to our local board
+# We can also add a description for context
+pin_write(board, mtcars, name = "mtcars_data", description = "Motor Trend Car Road Tests dataset", type = "rds")
+```
+
+You can list the pins on your board to see what's available.
+
+```{r}
+pin_list(board)
+```
+
+You can also search for pins with `pin_search()`.
+
+```{r}
+pin_search(board, "mtcars")
+```
+
+# 5. Reading Data from a Pin
+
+Once data is pinned, you can easily read it back into your R session using `pin_read()`. This is incredibly useful for starting a new analysis without having to re-run a long data preparation script.
+
+```{r}
+# Read the 'mtcars_data' pin from our board
+my_mtcars_data <- pin_read(board, "mtcars_data")
+
+head(my_mtcars_data)
+```
+
+# 6. Sharing Data with Others
+
+The real power of `pins` comes from sharing data. While a local folder board is good for personal use, you can use other board types to collaborate with a team. Common choices include:
+
+-   `board_folder()`: For a shared network drive.
+-   `board_s3()`: For Amazon S3.
+-   `board_gcs()`: For Google Cloud Storage.
+-   `board_connect()`: For Posit Connect (formerly RStudio Connect), which is an excellent choice for teams within an organization.
+
+The workflow remains the same regardless of the board type. For example, to pin to an S3 bucket, your code would look like this (after setting up authentication):
+
+```{r}
+#| eval: false
+
+# Connect to an S3 board (requires AWS credentials to be configured)
+s3_board <- board_s3("my-team-s3-bucket")
+
+# Write and read from the S3 board just like a local one
+pin_write(s3_board, mtcars, name = "shared_mtcars")
+shared_data <- pin_read(s3_board, "shared_mtcars")
+```
+
+This makes your data assets portable and accessible, whether you are working on your laptop, a cloud virtual machine, or a production server.
+
+# 7. Versioning
+
+`pins` automatically versions your data. If you write to a pin with the same name multiple times, `pins` will save each version. This is a powerful feature for tracking changes and ensuring reproducibility. You can always go back to a previous version of your data if needed.
+
+Let's modify our `mtcars` data and pin it again.
+
+```{r}
+mtcars_modified <- mtcars %>% mutate(hp_per_cyl = hp / cyl)
+pin_write(board, mtcars_modified, name = "mtcars_data")
+```
+
+Now, you can list the available versions for the "mtcars_data" pin.
+
+```{r}
+pin_versions(board, "mtcars_data")
+```
+
+You can read a specific version by providing its version hash to `pin_read()`.
+
+```{r}
+# Get the hash for the first version we saved
+first_version_hash <- pin_versions(board, "mtcars_data")$version[1]
+
+# Read the original data using the version hash
+original_data <- pin_read(board, "mtcars_data", version = first_version_hash)
+
+# Check that it doesn't have the new column
+head(original_data)
+```
+
+# 8. References
+
+-   [pins for R Official Website](https://pins.rstudio.com/)
+-   [Getting Started with pins](https://pins.rstudio.com/articles/pins.html)
+-   [Managing and Sharing Data with pins Blog Post](https://posit.co/blog/2023/02/13/announcing-pins-1-1-0/)

@@ -1,0 +1,83 @@
+---
+title: "R Books"
+author: "Tony D"
+execute:
+  warning: false
+  error: false
+format:
+  html:
+    toc: true
+    toc-location: right
+    code-fold: show
+    code-tools: true
+    number-sections: false
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-copy: true
+---
+
+# Recommended R Books
+
+Below is a curated list of essential books for learning R, covering foundational concepts, data analysis, and advanced topics like package development. These books are selected for their clarity, depth, and practical focus.
+
+## `The Art of R Programming`
+
+**By Norman Matloff (2011)**  
+A comprehensive introduction to R programming with a focus on computer science fundamentals. Ideal for beginners and those with programming experience looking to master R's capabilities. Covers data structures, programming techniques, multimedia graphics, and debugging.  
+*Key Topics:* Vectors, matrices, lists, data frames, input/output, string manipulation, and performance optimization.  
+[Amazon Link](https://www.amazon.com/Art-Programming-Norman-Matloff/dp/1593273843) | [O'Reilly Page](https://www.oreilly.com/library/view/the-art-of/9781593273842/)
+
+![](images/71e--MA0ZLL._SL1500_.jpg){width="300"}
+
+## `The Book of R`
+
+**By Tilman M. Davies (2016)**  
+A thorough guide to R for complete beginners, blending theory with practical examples. Emphasizes understanding R's data types, programming constructs, and statistical methods without assuming prior experience.  
+*Key Topics:* Basic R syntax, data structures, control structures, functions, graphics, statistics, and modeling.  
+[Amazon Link](https://www.amazon.com/Book-R-Programming-Introduction/dp/1593276516) | [No Starch Press](https://nostarch.com/bookofr)
+
+![](images/71s-2K85mxL._AC_UF1000,1000_QL80_.jpg){width="300"}
+
+## R in Action
+
+**By Robert I. Kabacoff (2011)**  
+Practical guide to using R for data analysis, statistics, and graphing. Balances hands-on examples with statistical theory, making it suitable for users who want to apply R immediately.  
+*Key Topics:* Data visualization with ggplot2, statistical modeling, probability distributions, and advanced techniques like regression and clustering.  
+[Amazon Link](https://www.amazon.com/R-Action-Robert-I-Kabacoff/dp/1617291382) | [Manning Publications](https://www.manning.com/books/r-in-action)
+
+![](images/Kabacoff-R-3ed-HI.png){width="300"}
+
+## R Packages
+
+**By Hadley Wickham and Jennifer Bryan**  
+Essential for developers who want to create their own R packages. Covers the entire package development lifecycle from setup to testing and deployment. Assumes basic R knowledge.  
+*Key Topics:* Package structure, documentation with roxygen2, unit testing, version control, and best practices for sharing code.   
+[2nd Edition on OHI/O'Reilly](https://www.oreilly.com/library/view/r-packages-2nd/9781804611084/) | [Online Version](https://r-pkgs.org/)
+
+![](images/71NMYEJefqL._AC_UF1000,1000_QL80_.jpg){width="300"}
+
+## Additional Recommended Books
+
+### R for Data Science (2nd Edition)
+**By Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund**  
+The definitive guide to data science with R, focusing on the tidyverse ecosystem. Perfect for beginners and intermediate users.  
+[Free Online Version](https://r4ds.hadley.nz/) | [O'Reilly](https://www.oreilly.com/library/view/r-for-data/9781492097396/)
+
+### Advanced R (2nd Edition)
+**By Hadley Wickham**  
+Deep dive into R's programming language features. Essential for developers who want to understand R's internals.  
+[Free Online Version](https://adv-r.hadley.nz/) | [Chapman & Hall/CRC](https://www.routledge.com/Advanced-R-Second-Edition/Wickham/p/book/9780815384570)
+
+### Hands-On Programming with R
+**By Garrett Grolemund**  
+Learn R programming through practical projects. Great for complete beginners.  
+[Free Online Version](https://rstudio-education.github.io/hopr/)
+
+## Free Online Resources
+
+- [R for Data Science Solutions](https://mine-cetinkaya-rundel.github.io/r4ds-solutions/)
+- [ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/)
+- [Statistical Inference via Data Science](https://moderndive.com/)
+- [Tidy Modeling with R](https://www.tmwr.org/)
+- [R Graphics Cookbook](https://r-graphics.org/)
+- [Geocomputation with R](https://r.geocompx.org/)

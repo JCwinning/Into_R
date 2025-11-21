@@ -1,0 +1,86 @@
+---
+title: "web scrap with advance"
+author: "Tony D"
+
+execute:
+  warning: false
+  error: false
+  eval: false
+
+format:
+  html:
+    toc: true
+    toc-location: right
+    code-fold: show
+    code-tools: true
+    number-sections: true
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+---
+
+
+```{python}
+from seleniumbase import SB
+
+with SB(test=True, uc=True) as sb:
+    sb.open("https://google.com/ncr")
+    sb.type('[title="Search"]', "SeleniumBase GitHub page\n")
+    sb.click('[href*="github.com/seleniumbase/"]')
+    sb.save_screenshot_to_logs()  # ./latest_logs/
+    print(sb.get_page_title())
+```
+
+
+```{python}
+from seleniumbase import SB
+
+with SB(test=True, uc=True) as sb:
+    sb.open("https://www.whiskybase.com/whiskies/")
+    #sb.type('[title="Search"]', "SeleniumBase GitHub page\n")
+    #sb.click('[href*="github.com/seleniumbase/"]')
+    sb.save_screenshot_to_logs()  # ./latest_logs/
+    print(sb.get_page_title())
+```
+
+
+```{python}
+from seleniumbase import Driver
+class Scraper(BaseCase):
+def test_bypass_bot_protection(self):
+driver = Driver(uc=True)
+driver.open("https://www.whiskybase.com/whiskies/whisky/268484/2009-ud")
+driver.uc_gui_click_captcha()
+page_html = driver.get_page_source()
+print(page_html)
+driver.quit()
+```
+
+```{python}
+from bs4 import BeautifulSoup
+soup = BeautifulSoup(page_html, 'html.parser')
+print(soup.prettify())
+```
+
+
+```{python}
+print(soup.get_text())
+```
+
+
+```{python}
+soup.select(".votes-rating-current").text
+```
+
+
+h1
+
+# Reference:
+
+https://github.com/seleniumbase/SeleniumBase
+
+https://medium.com/@datajournal/web-scraping-with-seleniumbase-e3ead6aebe7f
+
+https://github.com/ultrafunkamsterdam/undetected-chromedriver
+
+
+

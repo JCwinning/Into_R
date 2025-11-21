@@ -1,0 +1,37 @@
+---
+title: "Git"
+author: "Tony D"
+
+execute:
+  warning: false
+  eval: false
+  error: false
+
+  
+format:
+  html:
+    toc: true
+    toc-location: right
+    code-fold: show
+    code-tools: true
+    
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-copy: true
+css: hscroll.css
+---
+
+# create or open R project(xxxxx.Rproj) in Rstudio
+
+enable github connection: ![](images/clipboard-3250918085.png)
+
+
+
+# commit change and push to github
+
+![](images/clipboard-740227692.png)
+
+
+# Reference:
+
+https://www.youtube.com/watch?v=PihKq1GPlcc

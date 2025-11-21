@@ -1,0 +1,2102 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Tony D">
+
+<title>Probability – R Handbook</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../Rlogo.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-8116483b35b7c59d831d40773437fcbf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../styles.css">
+<meta name="twitter:title" content="Probability – R Handbook">
+<meta name="twitter:description" content="">
+<meta name="twitter:image" content="images/images-01.jpg">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../Rlogo.png" alt="" class="navbar-logo light-content">
+    <img src="../Rlogo.png" alt="" class="navbar-logo dark-content">
+    </a>
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">R Handbook</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../index.html" aria-current="page"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-intro" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">intro</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-intro">    
+        <li class="dropdown-header">Intro</li>
+        <li>
+    <a class="dropdown-item" href="../intro/1 basic R.html">
+ <span class="dropdown-text">Basic R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../intro/2 probability.html">
+ <span class="dropdown-text">Probability</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../intro/3 Statistics.html">
+ <span class="dropdown-text">Statistics</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../intro/5 R book.html">
+ <span class="dropdown-text">R Books</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../intro/6 data analytic in R book.html">
+ <span class="dropdown-text">Data Analytics in R - Recommended Books</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../intro/7 error handling.html">
+ <span class="dropdown-text">Error handling</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-data" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Data</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-data">    
+        <li class="dropdown-header">data manipulation</li>
+        <li>
+    <a class="dropdown-item" href="../data manipulation/1 input output.html">
+ <span class="dropdown-text">Input &amp; Output in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../data manipulation/2 data_structure.html">
+ <span class="dropdown-text">Data Structures in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../data manipulation/3 data manipulation with tidyverse.html">
+ <span class="dropdown-text">Data Manipulation with tidyverse</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../data manipulation/4 data table.html">
+ <span class="dropdown-text">Data Tables in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../data manipulation/5 recipe.html">
+ <span class="dropdown-text">Recipe in tidymodels</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../data manipulation/6 resample.html">
+ <span class="dropdown-text">Resampling Methods in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../data manipulation/7 SQL database.html">
+ <span class="dropdown-text">Working with SQL Databases in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../data manipulation/8 data management.html">
+ <span class="dropdown-text">Data management</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-ploting" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Ploting</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-ploting">    
+        <li class="dropdown-header">Plot</li>
+        <li>
+    <a class="dropdown-item" href="../Plot/1 ggplot2.html">
+ <span class="dropdown-text">ggplot2 in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../Plot/2 plotly.html">
+ <span class="dropdown-text">Plotly in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../Plot/3 image processing.html">
+ <span class="dropdown-text">image processing</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../Plot/4 Financial data.html">
+ <span class="dropdown-text">Plot Financial data</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../Plot/Map/1 leaflet.html">
+ <span class="dropdown-text">Map</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-publishing" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Publishing</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-publishing">    
+        <li class="dropdown-header">Publish</li>
+        <li>
+    <a class="dropdown-item" href="../Publish/email/email.html">
+ <span class="dropdown-text">Email</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../Publish/git/git.html">
+ <span class="dropdown-text">Git</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../Publish/quarto/1 quarto intro.html">
+ <span class="dropdown-text">Quarto</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../Publish/Shiny/1 shiny weight tracking.html">
+ <span class="dropdown-text">Shiny</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-other" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Other</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-other">    
+        <li class="dropdown-header">Other</li>
+        <li>
+    <a class="dropdown-item" href="../other/google analytics/1 google analytics.html">
+ <span class="dropdown-text">google analytics</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../other/other/1 chromote.html">
+ <span class="dropdown-text">Other</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../other/web scrap/1 web scrap with rvest.html">
+ <span class="dropdown-text">web scrap</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../intro/1 basic R.html">Intro</a></li><li class="breadcrumb-item"><a href="../intro/2 probability.html">Probability</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="../index.html" class="sidebar-logo-link">
+      </a>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Intro</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../intro/1 basic R.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Basic R</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../intro/2 probability.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Probability</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../intro/3 Statistics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Statistics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../intro/5 R book.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R Books</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../intro/6 data analytic in R book.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data Analytics in R - Recommended Books</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../intro/7 error handling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Error handling</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#random-numbers" id="toc-random-numbers" class="nav-link active" data-scroll-target="#random-numbers"><span class="header-section-number">1</span> Random Numbers</a>
+  <ul class="collapse">
+  <li><a href="#draw-10-numbers-from-1-to-10" id="toc-draw-10-numbers-from-1-to-10" class="nav-link" data-scroll-target="#draw-10-numbers-from-1-to-10"><span class="header-section-number">1.1</span> Draw 10 numbers from 1 to 10</a></li>
+  <li><a href="#draw-10000-numbers-from-1-to-10" id="toc-draw-10000-numbers-from-1-to-10" class="nav-link" data-scroll-target="#draw-10000-numbers-from-1-to-10"><span class="header-section-number">1.2</span> Draw 10,000 numbers from 1 to 10</a></li>
+  </ul></li>
+  <li><a href="#permutations-and-combinations" id="toc-permutations-and-combinations" class="nav-link" data-scroll-target="#permutations-and-combinations"><span class="header-section-number">2</span> Permutations and Combinations</a>
+  <ul class="collapse">
+  <li><a href="#permutations-order-matters-choosing-2-numbers-from-4" id="toc-permutations-order-matters-choosing-2-numbers-from-4" class="nav-link" data-scroll-target="#permutations-order-matters-choosing-2-numbers-from-4"><span class="header-section-number">2.1</span> Permutations (order matters): choosing 2 numbers from 4</a></li>
+  <li><a href="#combinations-order-does-not-matter-choosing-2-numbers-from-4" id="toc-combinations-order-does-not-matter-choosing-2-numbers-from-4" class="nav-link" data-scroll-target="#combinations-order-does-not-matter-choosing-2-numbers-from-4"><span class="header-section-number">2.2</span> Combinations (order does not matter): choosing 2 numbers from 4</a></li>
+  </ul></li>
+  <li><a href="#conditional-probability" id="toc-conditional-probability" class="nav-link" data-scroll-target="#conditional-probability"><span class="header-section-number">3</span> Conditional Probability</a>
+  <ul class="collapse">
+  <li><a href="#solution-1-pat-least-one-p1-snoring-p2-snoring-p3-snoring-p4-snoring" id="toc-solution-1-pat-least-one-p1-snoring-p2-snoring-p3-snoring-p4-snoring" class="nav-link" data-scroll-target="#solution-1-pat-least-one-p1-snoring-p2-snoring-p3-snoring-p4-snoring"><span class="header-section-number">3.1</span> Solution 1: P(at least one) = P(1 snoring) + P(2 snoring) + P(3 snoring) + P(4 snoring)</a>
+  <ul class="collapse">
+  <li><a href="#snoring" id="toc-snoring" class="nav-link" data-scroll-target="#snoring"><span class="header-section-number">3.1.1</span> 0 snoring</a></li>
+  <li><a href="#snoring-1" id="toc-snoring-1" class="nav-link" data-scroll-target="#snoring-1"><span class="header-section-number">3.1.2</span> 1 snoring</a></li>
+  <li><a href="#snoring-2" id="toc-snoring-2" class="nav-link" data-scroll-target="#snoring-2"><span class="header-section-number">3.1.3</span> 2 snoring</a></li>
+  <li><a href="#snoring-3" id="toc-snoring-3" class="nav-link" data-scroll-target="#snoring-3"><span class="header-section-number">3.1.4</span> 3 snoring</a></li>
+  <li><a href="#snoring-4" id="toc-snoring-4" class="nav-link" data-scroll-target="#snoring-4"><span class="header-section-number">3.1.5</span> 4 snoring</a></li>
+  <li><a href="#total-probability-of-at-least-one-person-snoring" id="toc-total-probability-of-at-least-one-person-snoring" class="nav-link" data-scroll-target="#total-probability-of-at-least-one-person-snoring"><span class="header-section-number">3.1.6</span> Total probability of at least one person snoring:</a></li>
+  </ul></li>
+  <li><a href="#solution-2-pat-least-one-1---pno-one-snoring" id="toc-solution-2-pat-least-one-1---pno-one-snoring" class="nav-link" data-scroll-target="#solution-2-pat-least-one-1---pno-one-snoring"><span class="header-section-number">3.2</span> Solution 2: P(at least one) = 1 - P(no one snoring)</a></li>
+  </ul></li>
+  <li><a href="#derangement-problem" id="toc-derangement-problem" class="nav-link" data-scroll-target="#derangement-problem"><span class="header-section-number">4</span> Derangement Problem</a>
+  <ul class="collapse">
+  <li><a href="#question-1-what-is-the-probability-of-choosing-4-numbers-from-4-and-getting-0-correct-all-wrong" id="toc-question-1-what-is-the-probability-of-choosing-4-numbers-from-4-and-getting-0-correct-all-wrong" class="nav-link" data-scroll-target="#question-1-what-is-the-probability-of-choosing-4-numbers-from-4-and-getting-0-correct-all-wrong"><span class="header-section-number">4.1</span> Question 1: What is the probability of choosing 4 numbers from 4 and getting 0 correct (all wrong)?</a></li>
+  <li><a href="#question-2-what-is-the-probability-of-choosing-4-numbers-from-4-and-getting-exactly-1-correct" id="toc-question-2-what-is-the-probability-of-choosing-4-numbers-from-4-and-getting-exactly-1-correct" class="nav-link" data-scroll-target="#question-2-what-is-the-probability-of-choosing-4-numbers-from-4-and-getting-exactly-1-correct"><span class="header-section-number">4.2</span> Question 2: What is the probability of choosing 4 numbers from 4 and getting exactly 1 correct?</a></li>
+  <li><a href="#question-3-what-is-the-probability-of-choosing-4-numbers-from-4-and-getting-exactly-2-correct" id="toc-question-3-what-is-the-probability-of-choosing-4-numbers-from-4-and-getting-exactly-2-correct" class="nav-link" data-scroll-target="#question-3-what-is-the-probability-of-choosing-4-numbers-from-4-and-getting-exactly-2-correct"><span class="header-section-number">4.3</span> Question 3: What is the probability of choosing 4 numbers from 4 and getting exactly 2 correct?</a></li>
+  <li><a href="#question-4-what-is-the-probability-of-choosing-4-numbers-from-4-and-getting-exactly-3-correct" id="toc-question-4-what-is-the-probability-of-choosing-4-numbers-from-4-and-getting-exactly-3-correct" class="nav-link" data-scroll-target="#question-4-what-is-the-probability-of-choosing-4-numbers-from-4-and-getting-exactly-3-correct"><span class="header-section-number">4.4</span> Question 4: What is the probability of choosing 4 numbers from 4 and getting exactly 3 correct?</a></li>
+  <li><a href="#question-5-what-is-the-probability-of-choosing-4-numbers-from-4-and-getting-all-4-correct" id="toc-question-5-what-is-the-probability-of-choosing-4-numbers-from-4-and-getting-all-4-correct" class="nav-link" data-scroll-target="#question-5-what-is-the-probability-of-choosing-4-numbers-from-4-and-getting-all-4-correct"><span class="header-section-number">4.5</span> Question 5: What is the probability of choosing 4 numbers from 4 and getting all 4 correct?</a></li>
+  </ul></li>
+  <li><a href="#distributions" id="toc-distributions" class="nav-link" data-scroll-target="#distributions"><span class="header-section-number">5</span> Distributions</a>
+  <ul class="collapse">
+  <li><a href="#binomial-distribution" id="toc-binomial-distribution" class="nav-link" data-scroll-target="#binomial-distribution"><span class="header-section-number">5.1</span> Binomial Distribution</a>
+  <ul class="collapse">
+  <li><a href="#probability-mass-function-pmf" id="toc-probability-mass-function-pmf" class="nav-link" data-scroll-target="#probability-mass-function-pmf"><span class="header-section-number">5.1.1</span> Probability Mass Function (PMF)</a></li>
+  <li><a href="#cumulative-distribution-function-cdf" id="toc-cumulative-distribution-function-cdf" class="nav-link" data-scroll-target="#cumulative-distribution-function-cdf"><span class="header-section-number">5.1.2</span> Cumulative Distribution Function (CDF)</a></li>
+  <li><a href="#random-number-generation" id="toc-random-number-generation" class="nav-link" data-scroll-target="#random-number-generation"><span class="header-section-number">5.1.3</span> Random Number Generation</a></li>
+  </ul></li>
+  <li><a href="#normal-distribution-gaussian-distribution" id="toc-normal-distribution-gaussian-distribution" class="nav-link" data-scroll-target="#normal-distribution-gaussian-distribution"><span class="header-section-number">5.2</span> Normal Distribution (Gaussian Distribution)</a>
+  <ul class="collapse">
+  <li><a href="#r-functions" id="toc-r-functions" class="nav-link" data-scroll-target="#r-functions"><span class="header-section-number">5.2.1</span> R Functions</a></li>
+  <li><a href="#probability-density-function-pdf" id="toc-probability-density-function-pdf" class="nav-link" data-scroll-target="#probability-density-function-pdf"><span class="header-section-number">5.2.2</span> Probability Density Function (PDF)</a></li>
+  <li><a href="#cumulative-distribution-function-cdf-1" id="toc-cumulative-distribution-function-cdf-1" class="nav-link" data-scroll-target="#cumulative-distribution-function-cdf-1"><span class="header-section-number">5.2.3</span> Cumulative Distribution Function (CDF)</a></li>
+  <li><a href="#quantile-function" id="toc-quantile-function" class="nav-link" data-scroll-target="#quantile-function"><span class="header-section-number">5.2.4</span> Quantile Function</a></li>
+  <li><a href="#random-number-generation-1" id="toc-random-number-generation-1" class="nav-link" data-scroll-target="#random-number-generation-1"><span class="header-section-number">5.2.5</span> Random Number Generation</a></li>
+  <li><a href="#checking-for-normality" id="toc-checking-for-normality" class="nav-link" data-scroll-target="#checking-for-normality"><span class="header-section-number">5.2.6</span> Checking for Normality</a></li>
+  </ul></li>
+  <li><a href="#other-key-distributions" id="toc-other-key-distributions" class="nav-link" data-scroll-target="#other-key-distributions"><span class="header-section-number">5.3</span> Other Key Distributions</a></li>
+  </ul></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">6</span> References</a>
+  <ul class="collapse">
+  <li><a href="#online-resources" id="toc-online-resources" class="nav-link" data-scroll-target="#online-resources"><span class="header-section-number">6.1</span> Online Resources</a>
+  <ul class="collapse">
+  <li><a href="#tutorials-and-guides" id="toc-tutorials-and-guides" class="nav-link" data-scroll-target="#tutorials-and-guides"><span class="header-section-number">6.1.1</span> Tutorials and Guides</a></li>
+  <li><a href="#video-tutorials" id="toc-video-tutorials" class="nav-link" data-scroll-target="#video-tutorials"><span class="header-section-number">6.1.2</span> Video Tutorials</a></li>
+  <li><a href="#mathematical-concepts" id="toc-mathematical-concepts" class="nav-link" data-scroll-target="#mathematical-concepts"><span class="header-section-number">6.1.3</span> Mathematical Concepts</a></li>
+  </ul></li>
+  <li><a href="#books" id="toc-books" class="nav-link" data-scroll-target="#books"><span class="header-section-number">6.2</span> Books</a></li>
+  <li><a href="#r-documentation" id="toc-r-documentation" class="nav-link" data-scroll-target="#r-documentation"><span class="header-section-number">6.3</span> R Documentation</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../intro/1 basic R.html">Intro</a></li><li class="breadcrumb-item"><a href="../intro/2 probability.html">Probability</a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Probability</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Tony D </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Probability is the branch of mathematics concerning events and numerical descriptions of how likely they are to occur. The probability of an event is a number between 0 and 1; the larger the probability, the more likely an event is to occur.</p>
+<p><img src="images/images-01.jpg" class="img-fluid" width="350"></p>
+<section id="random-numbers" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Random Numbers</h1>
+<section id="draw-10-numbers-from-1-to-10" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="draw-10-numbers-from-1-to-10"><span class="header-section-number">1.1</span> Draw 10 numbers from 1 to 10</h2>
+<p>The <code>sample()</code> function is used to take a random sample from a vector. Here, we are sampling 10 numbers from the sequence 1 to 10. <code>replace = TRUE</code> means that after a number is drawn, it is put back into the pool and can be drawn again.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>a <span class="ot">=</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">10</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>a</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1]  9  2  5  4  7  7  4 10  6  1</code></pre>
+</div>
+</div>
+<p>This code creates a frequency table to show how many times each number was drawn. With a small sample size, the distribution might not be perfectly even.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">as.data.frame</span>(<span class="fu">table</span>(a))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>   a Freq
+1  1    1
+2  2    1
+3  4    2
+4  5    1
+5  6    1
+6  7    2
+7  9    1
+8 10    1</code></pre>
+</div>
+</div>
+</section>
+<section id="draw-10000-numbers-from-1-to-10" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="draw-10000-numbers-from-1-to-10"><span class="header-section-number">1.2</span> Draw 10,000 numbers from 1 to 10</h2>
+<p>By increasing the sample size to 10,000, the law of large numbers suggests that the frequency of each number will be much closer to 10%.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>a <span class="ot">=</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">10000</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">as.data.frame</span>(<span class="fu">table</span>(a))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>    a Freq
+1   1  990
+2   2 1001
+3   3  987
+4   4 1013
+5   5  961
+6   6 1089
+7   7 1032
+8   8  991
+9   9  984
+10 10  952</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="permutations-and-combinations" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Permutations and Combinations</h1>
+<p><img src="images/clipboard-2817248623.png" class="img-fluid"></p>
+<section id="permutations-order-matters-choosing-2-numbers-from-4" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="permutations-order-matters-choosing-2-numbers-from-4"><span class="header-section-number">2.1</span> Permutations (order matters): choosing 2 numbers from 4</h2>
+<p>The <code>gtools::permutations()</code> function calculates the number of ways to choose and arrange <code>r</code> items from a set of <code>n</code> items. The formula is n! / (n-r)!.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gtools)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>all_num <span class="ot">=</span> <span class="dv">4</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>choose <span class="ot">=</span> <span class="dv">2</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">permutations</span>(<span class="at">n =</span> all_num, <span class="at">r =</span> choose, <span class="at">v =</span> <span class="dv">1</span><span class="sc">:</span>all_num)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>res</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>      [,1] [,2]
+ [1,]    1    2
+ [2,]    1    3
+ [3,]    1    4
+ [4,]    2    1
+ [5,]    2    3
+ [6,]    2    4
+ [7,]    3    1
+ [8,]    3    2
+ [9,]    3    4
+[10,]    4    1
+[11,]    4    2
+[12,]    4    3</code></pre>
+</div>
+</div>
+<p>The number of permutations is 12.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">nrow</span>(res))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 12</code></pre>
+</div>
+</div>
+<p>This can be calculated manually using the formula 4! / (4-2)!.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">factorial</span>(<span class="dv">4</span>) <span class="sc">/</span> <span class="fu">factorial</span>(<span class="dv">4</span> <span class="sc">-</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 12</code></pre>
+</div>
+</div>
+</section>
+<section id="combinations-order-does-not-matter-choosing-2-numbers-from-4" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="combinations-order-does-not-matter-choosing-2-numbers-from-4"><span class="header-section-number">2.2</span> Combinations (order does not matter): choosing 2 numbers from 4</h2>
+<p>The <code>gtools::combinations()</code> function calculates the number of ways to choose <code>r</code> items from a set of <code>n</code> items, where order does not matter. The formula is n! / ((n-r)! * r!).</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gtools)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>all_num <span class="ot">=</span> <span class="dv">4</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>choose <span class="ot">=</span> <span class="dv">2</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">combinations</span>(<span class="at">n =</span> all_num, <span class="at">r =</span> choose, <span class="at">v =</span> <span class="dv">1</span><span class="sc">:</span>all_num)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>res</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2]
+[1,]    1    2
+[2,]    1    3
+[3,]    1    4
+[4,]    2    3
+[5,]    2    4
+[6,]    3    4</code></pre>
+</div>
+</div>
+<p>The number of combinations is 6.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">nrow</span>(res))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 6</code></pre>
+</div>
+</div>
+<p>This can be calculated manually using the formula 4! / ((4-2)! * 2!).</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">factorial</span>(<span class="dv">4</span>) <span class="sc">/</span> (<span class="fu">factorial</span>(<span class="dv">4</span> <span class="sc">-</span> <span class="dv">2</span>) <span class="sc">*</span> <span class="fu">factorial</span>(<span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 6</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="conditional-probability" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Conditional Probability</h1>
+<p><strong>Problem</strong>: The probability of any single person snoring is 20%. If there are 4 people in a room, what is the probability that at least one person snores?</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">=</span> <span class="fl">0.2</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">=</span> <span class="dv">4</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<section id="solution-1-pat-least-one-p1-snoring-p2-snoring-p3-snoring-p4-snoring" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="solution-1-pat-least-one-p1-snoring-p2-snoring-p3-snoring-p4-snoring"><span class="header-section-number">3.1</span> Solution 1: P(at least one) = P(1 snoring) + P(2 snoring) + P(3 snoring) + P(4 snoring)</h2>
+<p>This method calculates the probability of each case (1, 2, 3, or 4 people snoring) and adds them together.</p>
+<section id="snoring" class="level3" data-number="3.1.1">
+<h3 data-number="3.1.1" class="anchored" data-anchor-id="snoring"><span class="header-section-number">3.1.1</span> 0 snoring</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>p0 <span class="ot">=</span> (<span class="fl">0.8</span> <span class="sc">*</span> <span class="fl">0.8</span> <span class="sc">*</span> <span class="fl">0.8</span> <span class="sc">*</span> <span class="fl">0.8</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>p0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.4096</code></pre>
+</div>
+</div>
+</section>
+<section id="snoring-1" class="level3" data-number="3.1.2">
+<h3 data-number="3.1.2" class="anchored" data-anchor-id="snoring-1"><span class="header-section-number">3.1.2</span> 1 snoring</h3>
+<p>There are 4 possible ways for exactly one person to snore.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">=</span> (<span class="fl">0.2</span> <span class="sc">*</span> <span class="fl">0.8</span> <span class="sc">*</span> <span class="fl">0.8</span> <span class="sc">*</span> <span class="fl">0.8</span>) <span class="sc">*</span> <span class="dv">4</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>p1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.4096</code></pre>
+</div>
+</div>
+</section>
+<section id="snoring-2" class="level3" data-number="3.1.3">
+<h3 data-number="3.1.3" class="anchored" data-anchor-id="snoring-2"><span class="header-section-number">3.1.3</span> 2 snoring</h3>
+<p>There are C(4,2) = 6 ways for exactly two people to snore.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">factorial</span>(<span class="dv">4</span>) <span class="sc">/</span> (<span class="fu">factorial</span>(<span class="dv">4</span> <span class="sc">-</span> <span class="dv">2</span>) <span class="sc">*</span> <span class="fu">factorial</span>(<span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 6</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">=</span> (<span class="fl">0.2</span> <span class="sc">*</span> <span class="fl">0.2</span> <span class="sc">*</span> <span class="fl">0.8</span> <span class="sc">*</span> <span class="fl">0.8</span>) <span class="sc">*</span> <span class="dv">6</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>p2</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.1536</code></pre>
+</div>
+</div>
+</section>
+<section id="snoring-3" class="level3" data-number="3.1.4">
+<h3 data-number="3.1.4" class="anchored" data-anchor-id="snoring-3"><span class="header-section-number">3.1.4</span> 3 snoring</h3>
+<p>There are C(4,3) = 4 ways for exactly three people to snore.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">factorial</span>(<span class="dv">4</span>) <span class="sc">/</span> (<span class="fu">factorial</span>(<span class="dv">4</span> <span class="sc">-</span> <span class="dv">3</span>) <span class="sc">*</span> <span class="fu">factorial</span>(<span class="dv">3</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 4</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">=</span> (<span class="fl">0.2</span> <span class="sc">*</span> <span class="fl">0.2</span> <span class="sc">*</span> <span class="fl">0.2</span> <span class="sc">*</span> <span class="fl">0.8</span>) <span class="sc">*</span> <span class="dv">4</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>p3</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.0256</code></pre>
+</div>
+</div>
+</section>
+<section id="snoring-4" class="level3" data-number="3.1.5">
+<h3 data-number="3.1.5" class="anchored" data-anchor-id="snoring-4"><span class="header-section-number">3.1.5</span> 4 snoring</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>p4 <span class="ot">=</span> (<span class="fl">0.2</span> <span class="sc">*</span> <span class="fl">0.2</span> <span class="sc">*</span> <span class="fl">0.2</span> <span class="sc">*</span> <span class="fl">0.2</span>)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>p4</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.0016</code></pre>
+</div>
+</div>
+</section>
+<section id="total-probability-of-at-least-one-person-snoring" class="level3" data-number="3.1.6">
+<h3 data-number="3.1.6" class="anchored" data-anchor-id="total-probability-of-at-least-one-person-snoring"><span class="header-section-number">3.1.6</span> Total probability of at least one person snoring:</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>P_at_least_one <span class="ot">=</span> p1 <span class="sc">+</span> p2 <span class="sc">+</span> p3 <span class="sc">+</span> p4</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>P_at_least_one</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.5904</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="solution-2-pat-least-one-1---pno-one-snoring" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="solution-2-pat-least-one-1---pno-one-snoring"><span class="header-section-number">3.2</span> Solution 2: P(at least one) = 1 - P(no one snoring)</h2>
+<p>This is a more direct method. The complement of “at least one” is “none”.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>P_at_least_one2 <span class="ot">=</span> <span class="dv">1</span> <span class="sc">-</span> (<span class="fl">0.8</span><span class="sc">^</span><span class="dv">4</span>)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>P_at_least_one2</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.5904</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="derangement-problem" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Derangement Problem</h1>
+<p>A derangement is a permutation of the elements of a set, such that no element appears in its original position.</p>
+<section id="question-1-what-is-the-probability-of-choosing-4-numbers-from-4-and-getting-0-correct-all-wrong" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="question-1-what-is-the-probability-of-choosing-4-numbers-from-4-and-getting-0-correct-all-wrong"><span class="header-section-number">4.1</span> Question 1: What is the probability of choosing 4 numbers from 4 and getting 0 correct (all wrong)?</h2>
+<p>The total number of permutations is 4! = 24.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">factorial</span>(<span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 24</code></pre>
+</div>
+</div>
+<p>The number of derangements D(n) can be approximated by <code>round(n!/e)</code>. For n=4, this is D(4) = 9.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>e <span class="ot">=</span> <span class="fu">exp</span>(<span class="dv">1</span>) <span class="co"># Use the built-in constant for e</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>D_4 <span class="ot">=</span> <span class="fu">round</span>(<span class="fu">factorial</span>(<span class="dv">4</span>) <span class="sc">/</span> e)</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>D_4</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 9</code></pre>
+</div>
+</div>
+<p>The probability of a complete derangement is the number of derangements divided by the total number of permutations.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>Q1 <span class="ot">=</span> D_4 <span class="sc">/</span> <span class="fu">factorial</span>(<span class="dv">4</span>)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>Q1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.375</code></pre>
+</div>
+</div>
+</section>
+<section id="question-2-what-is-the-probability-of-choosing-4-numbers-from-4-and-getting-exactly-1-correct" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="question-2-what-is-the-probability-of-choosing-4-numbers-from-4-and-getting-exactly-1-correct"><span class="header-section-number">4.2</span> Question 2: What is the probability of choosing 4 numbers from 4 and getting exactly 1 correct?</h2>
+<p>First, choose 1 number to be correct (C(4,1) = 4 ways). Then, find the number of derangements for the remaining 3 numbers (D(3) = 2).</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>D_3 <span class="ot">=</span> <span class="fu">round</span>(<span class="fu">factorial</span>(<span class="dv">3</span>) <span class="sc">/</span> e)</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>D_3</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2</code></pre>
+</div>
+</div>
+<p>The total number of ways to get exactly 1 correct is C(4,1) * D(3) = 4 * 2 = 8.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>Q2 <span class="ot">=</span> (<span class="dv">4</span> <span class="sc">*</span> D_3) <span class="sc">/</span> <span class="fu">factorial</span>(<span class="dv">4</span>)</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>Q2</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.3333333</code></pre>
+</div>
+</div>
+</section>
+<section id="question-3-what-is-the-probability-of-choosing-4-numbers-from-4-and-getting-exactly-2-correct" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="question-3-what-is-the-probability-of-choosing-4-numbers-from-4-and-getting-exactly-2-correct"><span class="header-section-number">4.3</span> Question 3: What is the probability of choosing 4 numbers from 4 and getting exactly 2 correct?</h2>
+<p>First, choose 2 numbers to be correct (C(4,2) = 6 ways). Then, find the number of derangements for the remaining 2 numbers (D(2) = 1).</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>D_2 <span class="ot">=</span> <span class="fu">round</span>(<span class="fu">factorial</span>(<span class="dv">2</span>) <span class="sc">/</span> e)</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>C_4_2 <span class="ot">=</span> <span class="fu">factorial</span>(<span class="dv">4</span>) <span class="sc">/</span> (<span class="fu">factorial</span>(<span class="dv">2</span>) <span class="sc">*</span> <span class="fu">factorial</span>(<span class="dv">2</span>))</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>Q3 <span class="ot">=</span> (C_4_2 <span class="sc">*</span> D_2) <span class="sc">/</span> <span class="fu">factorial</span>(<span class="dv">4</span>)</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>Q3</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.25</code></pre>
+</div>
+</div>
+</section>
+<section id="question-4-what-is-the-probability-of-choosing-4-numbers-from-4-and-getting-exactly-3-correct" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="question-4-what-is-the-probability-of-choosing-4-numbers-from-4-and-getting-exactly-3-correct"><span class="header-section-number">4.4</span> Question 4: What is the probability of choosing 4 numbers from 4 and getting exactly 3 correct?</h2>
+<p>This is impossible. If 3 numbers are in their correct positions, the 4th number must also be in its correct position. The number of derangements of 1 item is D(1) = 0.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>Q4 <span class="ot">=</span> <span class="dv">0</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>Q4</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+</div>
+</section>
+<section id="question-5-what-is-the-probability-of-choosing-4-numbers-from-4-and-getting-all-4-correct" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="question-5-what-is-the-probability-of-choosing-4-numbers-from-4-and-getting-all-4-correct"><span class="header-section-number">4.5</span> Question 5: What is the probability of choosing 4 numbers from 4 and getting all 4 correct?</h2>
+<p>There is only one way for this to happen.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>Q5 <span class="ot">=</span> <span class="dv">1</span> <span class="sc">/</span> <span class="fu">factorial</span>(<span class="dv">4</span>)</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>Q5</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.04166667</code></pre>
+</div>
+</div>
+<p>The sum of all probabilities should be 1.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>Q1 <span class="sc">+</span> Q2 <span class="sc">+</span> Q3 <span class="sc">+</span> Q4 <span class="sc">+</span> Q5</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="distributions" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Distributions</h1>
+<section id="binomial-distribution" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="binomial-distribution"><span class="header-section-number">5.1</span> Binomial Distribution</h2>
+<p>The binomial distribution models the number of successes in a fixed number of independent trials, each with a binary outcome (success/failure).</p>
+<section id="probability-mass-function-pmf" class="level3" data-number="5.1.1">
+<h3 data-number="5.1.1" class="anchored" data-anchor-id="probability-mass-function-pmf"><span class="header-section-number">5.1.1</span> Probability Mass Function (PMF)</h3>
+<p>In R, the <code>dbinom</code> function calculates the probability of getting exactly <code>x</code> successes. While this is technically a PMF for a discrete distribution, R uses the <code>d</code> prefix convention for both PDF (continuous) and PMF (discrete).</p>
+<p>Probability of exactly 1 person snoring:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>n <span class="ot">=</span> <span class="dv">4</span> <span class="co"># number of trials (people)</span></span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>p <span class="ot">=</span> <span class="fl">0.2</span> <span class="co"># probability of success (snoring)</span></span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a><span class="fu">dbinom</span>(<span class="at">x =</span> <span class="dv">1</span>, <span class="at">size =</span> n, <span class="at">prob =</span> p)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.4096</code></pre>
+</div>
+</div>
+<p>Probabilities for 0, 1, 2, 3, or 4 people snoring:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbinom</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>), <span class="at">size =</span> n, <span class="at">prob =</span> p)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.4096 0.4096 0.1536 0.0256 0.0016</code></pre>
+</div>
+</div>
+</section>
+<section id="cumulative-distribution-function-cdf" class="level3" data-number="5.1.2">
+<h3 data-number="5.1.2" class="anchored" data-anchor-id="cumulative-distribution-function-cdf"><span class="header-section-number">5.1.2</span> Cumulative Distribution Function (CDF)</h3>
+<p>The <code>pbinom</code> function calculates the cumulative probability of getting <code>q</code> or fewer successes.</p>
+<p>Probability of 1 or fewer people snoring:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pbinom</span>(<span class="at">q =</span> <span class="dv">1</span>, <span class="at">size =</span> n, <span class="at">prob =</span> p, <span class="at">lower.tail =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.8192</code></pre>
+</div>
+</div>
+</section>
+<section id="random-number-generation" class="level3" data-number="5.1.3">
+<h3 data-number="5.1.3" class="anchored" data-anchor-id="random-number-generation"><span class="header-section-number">5.1.3</span> Random Number Generation</h3>
+<p>The <code>rbinom</code> function generates random numbers from a binomial distribution.</p>
+<p>Generate 10,000 random values from this distribution:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>a <span class="ot">=</span> <span class="fu">rbinom</span>(<span class="dv">10000</span>, <span class="at">size =</span> <span class="dv">4</span>, <span class="at">prob =</span> <span class="fl">0.2</span>)</span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(a)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>a
+   0    1    2    3    4 
+4071 4166 1490  250   23 </code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="normal-distribution-gaussian-distribution" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="normal-distribution-gaussian-distribution"><span class="header-section-number">5.2</span> Normal Distribution (Gaussian Distribution)</h2>
+<p>A continuous probability distribution characterized by a bell-shaped curve. It is defined by its mean (μ) and standard deviation (σ).</p>
+<section id="r-functions" class="level3" data-number="5.2.1">
+<h3 data-number="5.2.1" class="anchored" data-anchor-id="r-functions"><span class="header-section-number">5.2.1</span> R Functions</h3>
+<ul>
+<li><code>dnorm</code>: Density function (PDF)</li>
+<li><code>pnorm</code>: Cumulative distribution function (CDF)</li>
+<li><code>qnorm</code>: Quantile function (inverse CDF)</li>
+<li><code>rnorm</code>: Random number generation</li>
+</ul>
+</section>
+<section id="probability-density-function-pdf" class="level3" data-number="5.2.2">
+<h3 data-number="5.2.2" class="anchored" data-anchor-id="probability-density-function-pdf"><span class="header-section-number">5.2.2</span> Probability Density Function (PDF)</h3>
+<p>Calculates the height of the probability density function at a given point.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dnorm</span>(<span class="dv">0</span>, <span class="at">mean =</span> <span class="dv">1</span>, <span class="at">sd =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.1760327</code></pre>
+</div>
+</div>
+</section>
+<section id="cumulative-distribution-function-cdf-1" class="level3" data-number="5.2.3">
+<h3 data-number="5.2.3" class="anchored" data-anchor-id="cumulative-distribution-function-cdf-1"><span class="header-section-number">5.2.3</span> Cumulative Distribution Function (CDF)</h3>
+<p>Calculates the area under the curve to the left of a given value (the probability of observing a value less than or equal to <code>q</code>).</p>
+<p>Probability of observing a value &lt;= 70 from a N(75, 5) distribution:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pnorm</span>(<span class="at">q =</span> <span class="dv">70</span>, <span class="at">mean =</span> <span class="dv">75</span>, <span class="at">sd =</span> <span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.1586553</code></pre>
+</div>
+</div>
+</section>
+<section id="quantile-function" class="level3" data-number="5.2.4">
+<h3 data-number="5.2.4" class="anchored" data-anchor-id="quantile-function"><span class="header-section-number">5.2.4</span> Quantile Function</h3>
+<p>Finds the value <code>x</code> such that P(X &lt;= x) = p.&nbsp;It is the inverse of the CDF.</p>
+<p>Find the 25th percentile (Q1) of a N(75, 5) distribution:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qnorm</span>(<span class="at">p =</span> <span class="fl">0.25</span>, <span class="at">mean =</span> <span class="dv">75</span>, <span class="at">sd =</span> <span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 71.62755</code></pre>
+</div>
+</div>
+</section>
+<section id="random-number-generation-1" class="level3" data-number="5.2.5">
+<h3 data-number="5.2.5" class="anchored" data-anchor-id="random-number-generation-1"><span class="header-section-number">5.2.5</span> Random Number Generation</h3>
+<p>Generate 1,000 random numbers from a N(75, 5) distribution and plot a histogram.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>nd <span class="ot">=</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">1000</span>, <span class="at">mean =</span> <span class="dv">75</span>, <span class="at">sd =</span> <span class="dv">5</span>)</span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(nd)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="2-probability_files/figure-html/unnamed-chunk-37-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="checking-for-normality" class="level3" data-number="5.2.6">
+<h3 data-number="5.2.6" class="anchored" data-anchor-id="checking-for-normality"><span class="header-section-number">5.2.6</span> Checking for Normality</h3>
+<p>It’s often important to check if a dataset follows a normal distribution.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>nd_data <span class="ot">=</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">1000</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">2</span>)</span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>non_nd_data <span class="ot">=</span> <span class="fu">rpois</span>(<span class="at">n =</span> <span class="dv">1000</span>, <span class="at">lambda =</span> <span class="dv">5</span>) <span class="co"># Poisson data is not normal</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<section id="method-1-histogram" class="level4" data-number="5.2.6.1">
+<h4 data-number="5.2.6.1" class="anchored" data-anchor-id="method-1-histogram"><span class="header-section-number">5.2.6.1</span> Method 1: Histogram</h4>
+<p>A bell-shaped histogram suggests normality.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(nd_data, <span class="at">col =</span> <span class="st">'steelblue'</span>, <span class="at">main =</span> <span class="st">'Normal'</span>)</span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(non_nd_data, <span class="at">col =</span> <span class="st">'darkred'</span>, <span class="at">main =</span> <span class="st">'Non-normal'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="2-probability_files/figure-html/unnamed-chunk-39-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="method-2-q-q-plot" class="level4" data-number="5.2.6.2">
+<h4 data-number="5.2.6.2" class="anchored" data-anchor-id="method-2-q-q-plot"><span class="header-section-number">5.2.6.2</span> Method 2: Q-Q Plot</h4>
+<p>If the data is normal, the points on a Q-Q plot will fall closely along the straight line.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(nd_data, <span class="at">main =</span> <span class="st">'Normal'</span>)</span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(nd_data)</span>
+<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(non_nd_data, <span class="at">main =</span> <span class="st">'Non-normal'</span>)</span>
+<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(non_nd_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="2-probability_files/figure-html/unnamed-chunk-40-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="method-3-shapiro-wilk-test" class="level4" data-number="5.2.6.3">
+<h4 data-number="5.2.6.3" class="anchored" data-anchor-id="method-3-shapiro-wilk-test"><span class="header-section-number">5.2.6.3</span> Method 3: Shapiro-Wilk Test</h4>
+<p>A statistical test for normality. The null hypothesis (H0) is that the data is normally distributed.</p>
+<p>If the p-value is &gt; 0.05, we do not reject the null hypothesis.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(nd_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  nd_data
+W = 0.99878, p-value = 0.7416</code></pre>
+</div>
+</div>
+<p>If the p-value is &lt; 0.05, we reject the null hypothesis.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(non_nd_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  non_nd_data
+W = 0.97058, p-value = 2.364e-13</code></pre>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="other-key-distributions" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="other-key-distributions"><span class="header-section-number">5.3</span> Other Key Distributions</h2>
+<ul>
+<li><strong>Student’s t-distribution</strong>: Used for inference about the mean of a normally distributed population when the standard deviation is unknown.</li>
+<li><strong>F-distribution</strong>: Used in ANOVA to compare the means of multiple groups.</li>
+<li><strong>Chi-square distribution</strong>: Used in goodness-of-fit tests and tests of independence.</li>
+<li><strong>Poisson Distribution</strong>: Models the number of events occurring in a fixed interval of time or space.</li>
+</ul>
+</section>
+</section>
+<section id="references" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> References</h1>
+<section id="online-resources" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="online-resources"><span class="header-section-number">6.1</span> Online Resources</h2>
+<section id="tutorials-and-guides" class="level3" data-number="6.1.1">
+<h3 data-number="6.1.1" class="anchored" data-anchor-id="tutorials-and-guides"><span class="header-section-number">6.1.1</span> Tutorials and Guides</h3>
+<ul>
+<li><a href="https://www.huber.embl.de/users/kaspar/biostat_2021/2-demo.html">Wolfgang Huber - Biostatistics Course</a></li>
+<li><a href="https://www.scribbr.com/statistics/probability-distributions/">Scribbr - Probability Distributions Guide</a></li>
+<li><a href="https://www.statology.org/test-for-normality-in-r/">Statology - Test for Normality in R</a></li>
+</ul>
+</section>
+<section id="video-tutorials" class="level3" data-number="6.1.2">
+<h3 data-number="6.1.2" class="anchored" data-anchor-id="video-tutorials"><span class="header-section-number">6.1.2</span> Video Tutorials</h3>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=peEsXbdMY_4">Permutations and Combinations</a></li>
+<li><a href="https://www.youtube.com/watch?v=ETd-jPhI_tE">Conditional Probability</a></li>
+<li><a href="https://www.youtube.com/watch?v=kvmSAXhX9Hs">Binomial Distribution</a></li>
+<li><a href="https://www.youtube.com/watch?v=RlhnNbPZC0A">Normal Distribution</a></li>
+<li><a href="https://www.youtube.com/watch?v=X5NXDK6AVtU">Understanding Distributions</a></li>
+<li><a href="https://www.youtube.com/watch?v=Q_pO9NzWxPY">Probability Theory</a></li>
+</ul>
+</section>
+<section id="mathematical-concepts" class="level3" data-number="6.1.3">
+<h3 data-number="6.1.3" class="anchored" data-anchor-id="mathematical-concepts"><span class="header-section-number">6.1.3</span> Mathematical Concepts</h3>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Derangement">Wikipedia - Derangement</a></li>
+</ul>
+</section>
+</section>
+<section id="books" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="books"><span class="header-section-number">6.2</span> Books</h2>
+<ul>
+<li><strong>Introduction to Probability</strong> by Joseph K. Blitzstein and Jessica Hwang</li>
+<li><strong>Probability and Statistics for Data Science</strong> by Norman Matloff</li>
+<li><strong>The Art of Statistics</strong> by David Spiegelhalter</li>
+</ul>
+</section>
+<section id="r-documentation" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="r-documentation"><span class="header-section-number">6.3</span> R Documentation</h2>
+<ul>
+<li><a href="https://stat.ethz.ch/R-manual/R-devel/library/stats/html/Distributions.html">R Stats Package</a></li>
+</ul>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<details><summary>sessionInfo()</summary>
+<pre class="details" data-summary="sessionInfo()"><code>R version 4.5.1 (2025-06-13)
+Platform: aarch64-apple-darwin20
+Running under: macOS Tahoe 26.1
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.1
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+time zone: Asia/Shanghai
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] gtools_3.9.5
+
+loaded via a namespace (and not attached):
+ [1] htmlwidgets_1.6.4 compiler_4.5.1    fastmap_1.2.0     cli_3.6.5        
+ [5] tools_4.5.1       htmltools_0.5.8.1 rstudioapi_0.17.1 yaml_2.3.10      
+ [9] rmarkdown_2.29    knitr_1.50        jsonlite_2.0.0    xfun_0.52        
+[13] digest_0.6.37     rlang_1.1.6       evaluate_1.0.4   </code></pre>
+</details>
+</div>
+</div>
+
+
+<!-- -->
+
+</section>
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb81" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Probability"</span></span>
+<span id="cb81-3"><a href="#cb81-3" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> "Tony D"</span></span>
+<span id="cb81-4"><a href="#cb81-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-5"><a href="#cb81-5" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb81-6"><a href="#cb81-6" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
+<span id="cb81-7"><a href="#cb81-7" aria-hidden="true" tabindex="-1"></a><span class="co">  error: false</span></span>
+<span id="cb81-8"><a href="#cb81-8" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
+<span id="cb81-9"><a href="#cb81-9" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb81-10"><a href="#cb81-10" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
+<span id="cb81-11"><a href="#cb81-11" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-location: right</span></span>
+<span id="cb81-12"><a href="#cb81-12" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: show</span></span>
+<span id="cb81-13"><a href="#cb81-13" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
+<span id="cb81-14"><a href="#cb81-14" aria-hidden="true" tabindex="-1"></a><span class="co">    number-sections: true</span></span>
+<span id="cb81-15"><a href="#cb81-15" aria-hidden="true" tabindex="-1"></a><span class="co">    code-block-bg: true</span></span>
+<span id="cb81-16"><a href="#cb81-16" aria-hidden="true" tabindex="-1"></a><span class="co">    code-block-border-left: "#31BAE9"</span></span>
+<span id="cb81-17"><a href="#cb81-17" aria-hidden="true" tabindex="-1"></a><span class="co">    code-copy: true</span></span>
+<span id="cb81-18"><a href="#cb81-18" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb81-19"><a href="#cb81-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-20"><a href="#cb81-20" aria-hidden="true" tabindex="-1"></a>Probability is the branch of mathematics concerning events and numerical descriptions of how likely they are to occur. The probability of an event is a number between 0 and 1; the larger the probability, the more likely an event is to occur.</span>
+<span id="cb81-21"><a href="#cb81-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-22"><a href="#cb81-22" aria-hidden="true" tabindex="-1"></a><span class="al">![](images/images-01.jpg)</span>{width="350"}</span>
+<span id="cb81-23"><a href="#cb81-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-24"><a href="#cb81-24" aria-hidden="true" tabindex="-1"></a><span class="fu"># Random Numbers</span></span>
+<span id="cb81-25"><a href="#cb81-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-26"><a href="#cb81-26" aria-hidden="true" tabindex="-1"></a><span class="fu">## Draw 10 numbers from 1 to 10</span></span>
+<span id="cb81-27"><a href="#cb81-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-28"><a href="#cb81-28" aria-hidden="true" tabindex="-1"></a>The <span class="in">`sample()`</span> function is used to take a random sample from a vector. Here, we are sampling 10 numbers from the sequence 1 to 10. <span class="in">`replace = TRUE`</span> means that after a number is drawn, it is put back into the pool and can be drawn again.</span>
+<span id="cb81-29"><a href="#cb81-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-32"><a href="#cb81-32" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-33"><a href="#cb81-33" aria-hidden="true" tabindex="-1"></a>a <span class="ot">=</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">10</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb81-34"><a href="#cb81-34" aria-hidden="true" tabindex="-1"></a>a</span>
+<span id="cb81-35"><a href="#cb81-35" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-36"><a href="#cb81-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-37"><a href="#cb81-37" aria-hidden="true" tabindex="-1"></a>This code creates a frequency table to show how many times each number was drawn. With a small sample size, the distribution might not be perfectly even.</span>
+<span id="cb81-38"><a href="#cb81-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-41"><a href="#cb81-41" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-42"><a href="#cb81-42" aria-hidden="true" tabindex="-1"></a><span class="fu">as.data.frame</span>(<span class="fu">table</span>(a))</span>
+<span id="cb81-43"><a href="#cb81-43" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-44"><a href="#cb81-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-45"><a href="#cb81-45" aria-hidden="true" tabindex="-1"></a><span class="fu">## Draw 10,000 numbers from 1 to 10</span></span>
+<span id="cb81-46"><a href="#cb81-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-47"><a href="#cb81-47" aria-hidden="true" tabindex="-1"></a>By increasing the sample size to 10,000, the law of large numbers suggests that the frequency of each number will be much closer to 10%.</span>
+<span id="cb81-48"><a href="#cb81-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-51"><a href="#cb81-51" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-52"><a href="#cb81-52" aria-hidden="true" tabindex="-1"></a>a <span class="ot">=</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">10000</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb81-53"><a href="#cb81-53" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-54"><a href="#cb81-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-57"><a href="#cb81-57" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-58"><a href="#cb81-58" aria-hidden="true" tabindex="-1"></a><span class="fu">as.data.frame</span>(<span class="fu">table</span>(a))</span>
+<span id="cb81-59"><a href="#cb81-59" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-60"><a href="#cb81-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-61"><a href="#cb81-61" aria-hidden="true" tabindex="-1"></a><span class="fu"># Permutations and Combinations</span></span>
+<span id="cb81-62"><a href="#cb81-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-63"><a href="#cb81-63" aria-hidden="true" tabindex="-1"></a><span class="al">![](images/clipboard-2817248623.png)</span></span>
+<span id="cb81-64"><a href="#cb81-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-65"><a href="#cb81-65" aria-hidden="true" tabindex="-1"></a><span class="fu">## Permutations (order matters): choosing 2 numbers from 4</span></span>
+<span id="cb81-66"><a href="#cb81-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-67"><a href="#cb81-67" aria-hidden="true" tabindex="-1"></a>The <span class="in">`gtools::permutations()`</span> function calculates the number of ways to choose and arrange <span class="in">`r`</span> items from a set of <span class="in">`n`</span> items. The formula is n! / (n-r)!.</span>
+<span id="cb81-68"><a href="#cb81-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-71"><a href="#cb81-71" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-72"><a href="#cb81-72" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gtools)</span>
+<span id="cb81-73"><a href="#cb81-73" aria-hidden="true" tabindex="-1"></a>all_num <span class="ot">=</span> <span class="dv">4</span></span>
+<span id="cb81-74"><a href="#cb81-74" aria-hidden="true" tabindex="-1"></a>choose <span class="ot">=</span> <span class="dv">2</span></span>
+<span id="cb81-75"><a href="#cb81-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-76"><a href="#cb81-76" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">permutations</span>(<span class="at">n =</span> all_num, <span class="at">r =</span> choose, <span class="at">v =</span> <span class="dv">1</span><span class="sc">:</span>all_num)</span>
+<span id="cb81-77"><a href="#cb81-77" aria-hidden="true" tabindex="-1"></a>res</span>
+<span id="cb81-78"><a href="#cb81-78" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-79"><a href="#cb81-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-80"><a href="#cb81-80" aria-hidden="true" tabindex="-1"></a>The number of permutations is 12.</span>
+<span id="cb81-81"><a href="#cb81-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-84"><a href="#cb81-84" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-85"><a href="#cb81-85" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">nrow</span>(res))</span>
+<span id="cb81-86"><a href="#cb81-86" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-87"><a href="#cb81-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-88"><a href="#cb81-88" aria-hidden="true" tabindex="-1"></a>This can be calculated manually using the formula 4! / (4-2)!.</span>
+<span id="cb81-89"><a href="#cb81-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-92"><a href="#cb81-92" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-93"><a href="#cb81-93" aria-hidden="true" tabindex="-1"></a><span class="fu">factorial</span>(<span class="dv">4</span>) <span class="sc">/</span> <span class="fu">factorial</span>(<span class="dv">4</span> <span class="sc">-</span> <span class="dv">2</span>)</span>
+<span id="cb81-94"><a href="#cb81-94" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-95"><a href="#cb81-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-96"><a href="#cb81-96" aria-hidden="true" tabindex="-1"></a><span class="fu">## Combinations (order does not matter): choosing 2 numbers from 4</span></span>
+<span id="cb81-97"><a href="#cb81-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-98"><a href="#cb81-98" aria-hidden="true" tabindex="-1"></a>The <span class="in">`gtools::combinations()`</span> function calculates the number of ways to choose <span class="in">`r`</span> items from a set of <span class="in">`n`</span> items, where order does not matter. The formula is n! / ((n-r)! * r!).</span>
+<span id="cb81-99"><a href="#cb81-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-102"><a href="#cb81-102" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-103"><a href="#cb81-103" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gtools)</span>
+<span id="cb81-104"><a href="#cb81-104" aria-hidden="true" tabindex="-1"></a>all_num <span class="ot">=</span> <span class="dv">4</span></span>
+<span id="cb81-105"><a href="#cb81-105" aria-hidden="true" tabindex="-1"></a>choose <span class="ot">=</span> <span class="dv">2</span></span>
+<span id="cb81-106"><a href="#cb81-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-107"><a href="#cb81-107" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">combinations</span>(<span class="at">n =</span> all_num, <span class="at">r =</span> choose, <span class="at">v =</span> <span class="dv">1</span><span class="sc">:</span>all_num)</span>
+<span id="cb81-108"><a href="#cb81-108" aria-hidden="true" tabindex="-1"></a>res</span>
+<span id="cb81-109"><a href="#cb81-109" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-110"><a href="#cb81-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-111"><a href="#cb81-111" aria-hidden="true" tabindex="-1"></a>The number of combinations is 6.</span>
+<span id="cb81-112"><a href="#cb81-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-115"><a href="#cb81-115" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-116"><a href="#cb81-116" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">nrow</span>(res))</span>
+<span id="cb81-117"><a href="#cb81-117" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-118"><a href="#cb81-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-119"><a href="#cb81-119" aria-hidden="true" tabindex="-1"></a>This can be calculated manually using the formula 4! / ((4-2)! * 2!).</span>
+<span id="cb81-120"><a href="#cb81-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-123"><a href="#cb81-123" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-124"><a href="#cb81-124" aria-hidden="true" tabindex="-1"></a><span class="fu">factorial</span>(<span class="dv">4</span>) <span class="sc">/</span> (<span class="fu">factorial</span>(<span class="dv">4</span> <span class="sc">-</span> <span class="dv">2</span>) <span class="sc">*</span> <span class="fu">factorial</span>(<span class="dv">2</span>))</span>
+<span id="cb81-125"><a href="#cb81-125" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-126"><a href="#cb81-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-127"><a href="#cb81-127" aria-hidden="true" tabindex="-1"></a><span class="fu"># Conditional Probability</span></span>
+<span id="cb81-128"><a href="#cb81-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-129"><a href="#cb81-129" aria-hidden="true" tabindex="-1"></a>**Problem**: The probability of any single person snoring is 20%. If there are 4 people in a room, what is the probability that at least one person snores?</span>
+<span id="cb81-130"><a href="#cb81-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-133"><a href="#cb81-133" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-134"><a href="#cb81-134" aria-hidden="true" tabindex="-1"></a>p <span class="ot">=</span> <span class="fl">0.2</span></span>
+<span id="cb81-135"><a href="#cb81-135" aria-hidden="true" tabindex="-1"></a>n <span class="ot">=</span> <span class="dv">4</span></span>
+<span id="cb81-136"><a href="#cb81-136" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-137"><a href="#cb81-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-138"><a href="#cb81-138" aria-hidden="true" tabindex="-1"></a><span class="fu">## Solution 1: P(at least one) = P(1 snoring) + P(2 snoring) + P(3 snoring) + P(4 snoring)</span></span>
+<span id="cb81-139"><a href="#cb81-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-140"><a href="#cb81-140" aria-hidden="true" tabindex="-1"></a>This method calculates the probability of each case (1, 2, 3, or 4 people snoring) and adds them together.</span>
+<span id="cb81-141"><a href="#cb81-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-142"><a href="#cb81-142" aria-hidden="true" tabindex="-1"></a><span class="fu">### 0 snoring</span></span>
+<span id="cb81-143"><a href="#cb81-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-146"><a href="#cb81-146" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-147"><a href="#cb81-147" aria-hidden="true" tabindex="-1"></a>p0 <span class="ot">=</span> (<span class="fl">0.8</span> <span class="sc">*</span> <span class="fl">0.8</span> <span class="sc">*</span> <span class="fl">0.8</span> <span class="sc">*</span> <span class="fl">0.8</span>)</span>
+<span id="cb81-148"><a href="#cb81-148" aria-hidden="true" tabindex="-1"></a>p0</span>
+<span id="cb81-149"><a href="#cb81-149" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-150"><a href="#cb81-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-151"><a href="#cb81-151" aria-hidden="true" tabindex="-1"></a><span class="fu">### 1 snoring</span></span>
+<span id="cb81-152"><a href="#cb81-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-153"><a href="#cb81-153" aria-hidden="true" tabindex="-1"></a>There are 4 possible ways for exactly one person to snore.</span>
+<span id="cb81-154"><a href="#cb81-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-157"><a href="#cb81-157" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-158"><a href="#cb81-158" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">=</span> (<span class="fl">0.2</span> <span class="sc">*</span> <span class="fl">0.8</span> <span class="sc">*</span> <span class="fl">0.8</span> <span class="sc">*</span> <span class="fl">0.8</span>) <span class="sc">*</span> <span class="dv">4</span></span>
+<span id="cb81-159"><a href="#cb81-159" aria-hidden="true" tabindex="-1"></a>p1</span>
+<span id="cb81-160"><a href="#cb81-160" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-161"><a href="#cb81-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-162"><a href="#cb81-162" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2 snoring</span></span>
+<span id="cb81-163"><a href="#cb81-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-164"><a href="#cb81-164" aria-hidden="true" tabindex="-1"></a>There are C(4,2) = 6 ways for exactly two people to snore.</span>
+<span id="cb81-165"><a href="#cb81-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-168"><a href="#cb81-168" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-169"><a href="#cb81-169" aria-hidden="true" tabindex="-1"></a><span class="fu">factorial</span>(<span class="dv">4</span>) <span class="sc">/</span> (<span class="fu">factorial</span>(<span class="dv">4</span> <span class="sc">-</span> <span class="dv">2</span>) <span class="sc">*</span> <span class="fu">factorial</span>(<span class="dv">2</span>))</span>
+<span id="cb81-170"><a href="#cb81-170" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-171"><a href="#cb81-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-174"><a href="#cb81-174" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-175"><a href="#cb81-175" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">=</span> (<span class="fl">0.2</span> <span class="sc">*</span> <span class="fl">0.2</span> <span class="sc">*</span> <span class="fl">0.8</span> <span class="sc">*</span> <span class="fl">0.8</span>) <span class="sc">*</span> <span class="dv">6</span></span>
+<span id="cb81-176"><a href="#cb81-176" aria-hidden="true" tabindex="-1"></a>p2</span>
+<span id="cb81-177"><a href="#cb81-177" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-178"><a href="#cb81-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-179"><a href="#cb81-179" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3 snoring</span></span>
+<span id="cb81-180"><a href="#cb81-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-181"><a href="#cb81-181" aria-hidden="true" tabindex="-1"></a>There are C(4,3) = 4 ways for exactly three people to snore.</span>
+<span id="cb81-182"><a href="#cb81-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-185"><a href="#cb81-185" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-186"><a href="#cb81-186" aria-hidden="true" tabindex="-1"></a><span class="fu">factorial</span>(<span class="dv">4</span>) <span class="sc">/</span> (<span class="fu">factorial</span>(<span class="dv">4</span> <span class="sc">-</span> <span class="dv">3</span>) <span class="sc">*</span> <span class="fu">factorial</span>(<span class="dv">3</span>))</span>
+<span id="cb81-187"><a href="#cb81-187" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-188"><a href="#cb81-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-191"><a href="#cb81-191" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-192"><a href="#cb81-192" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">=</span> (<span class="fl">0.2</span> <span class="sc">*</span> <span class="fl">0.2</span> <span class="sc">*</span> <span class="fl">0.2</span> <span class="sc">*</span> <span class="fl">0.8</span>) <span class="sc">*</span> <span class="dv">4</span></span>
+<span id="cb81-193"><a href="#cb81-193" aria-hidden="true" tabindex="-1"></a>p3</span>
+<span id="cb81-194"><a href="#cb81-194" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-195"><a href="#cb81-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-196"><a href="#cb81-196" aria-hidden="true" tabindex="-1"></a><span class="fu">### 4 snoring</span></span>
+<span id="cb81-197"><a href="#cb81-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-200"><a href="#cb81-200" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-201"><a href="#cb81-201" aria-hidden="true" tabindex="-1"></a>p4 <span class="ot">=</span> (<span class="fl">0.2</span> <span class="sc">*</span> <span class="fl">0.2</span> <span class="sc">*</span> <span class="fl">0.2</span> <span class="sc">*</span> <span class="fl">0.2</span>)</span>
+<span id="cb81-202"><a href="#cb81-202" aria-hidden="true" tabindex="-1"></a>p4</span>
+<span id="cb81-203"><a href="#cb81-203" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-204"><a href="#cb81-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-205"><a href="#cb81-205" aria-hidden="true" tabindex="-1"></a><span class="fu">### Total probability of at least one person snoring:</span></span>
+<span id="cb81-206"><a href="#cb81-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-209"><a href="#cb81-209" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-210"><a href="#cb81-210" aria-hidden="true" tabindex="-1"></a>P_at_least_one <span class="ot">=</span> p1 <span class="sc">+</span> p2 <span class="sc">+</span> p3 <span class="sc">+</span> p4</span>
+<span id="cb81-211"><a href="#cb81-211" aria-hidden="true" tabindex="-1"></a>P_at_least_one</span>
+<span id="cb81-212"><a href="#cb81-212" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-213"><a href="#cb81-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-214"><a href="#cb81-214" aria-hidden="true" tabindex="-1"></a><span class="fu">## Solution 2: P(at least one) = 1 - P(no one snoring)</span></span>
+<span id="cb81-215"><a href="#cb81-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-216"><a href="#cb81-216" aria-hidden="true" tabindex="-1"></a>This is a more direct method. The complement of "at least one" is "none".</span>
+<span id="cb81-217"><a href="#cb81-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-220"><a href="#cb81-220" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-221"><a href="#cb81-221" aria-hidden="true" tabindex="-1"></a>P_at_least_one2 <span class="ot">=</span> <span class="dv">1</span> <span class="sc">-</span> (<span class="fl">0.8</span><span class="sc">^</span><span class="dv">4</span>)</span>
+<span id="cb81-222"><a href="#cb81-222" aria-hidden="true" tabindex="-1"></a>P_at_least_one2</span>
+<span id="cb81-223"><a href="#cb81-223" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-224"><a href="#cb81-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-225"><a href="#cb81-225" aria-hidden="true" tabindex="-1"></a><span class="fu"># Derangement Problem</span></span>
+<span id="cb81-226"><a href="#cb81-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-227"><a href="#cb81-227" aria-hidden="true" tabindex="-1"></a>A derangement is a permutation of the elements of a set, such that no element appears in its original position.</span>
+<span id="cb81-228"><a href="#cb81-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-229"><a href="#cb81-229" aria-hidden="true" tabindex="-1"></a><span class="fu">## Question 1: What is the probability of choosing 4 numbers from 4 and getting 0 correct (all wrong)?</span></span>
+<span id="cb81-230"><a href="#cb81-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-231"><a href="#cb81-231" aria-hidden="true" tabindex="-1"></a>The total number of permutations is 4! = 24.</span>
+<span id="cb81-232"><a href="#cb81-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-235"><a href="#cb81-235" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-236"><a href="#cb81-236" aria-hidden="true" tabindex="-1"></a><span class="fu">factorial</span>(<span class="dv">4</span>)</span>
+<span id="cb81-237"><a href="#cb81-237" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-238"><a href="#cb81-238" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-239"><a href="#cb81-239" aria-hidden="true" tabindex="-1"></a>The number of derangements D(n) can be approximated by <span class="in">`round(n!/e)`</span>. For n=4, this is D(4) = 9.</span>
+<span id="cb81-240"><a href="#cb81-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-243"><a href="#cb81-243" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-244"><a href="#cb81-244" aria-hidden="true" tabindex="-1"></a>e <span class="ot">=</span> <span class="fu">exp</span>(<span class="dv">1</span>) <span class="co"># Use the built-in constant for e</span></span>
+<span id="cb81-245"><a href="#cb81-245" aria-hidden="true" tabindex="-1"></a>D_4 <span class="ot">=</span> <span class="fu">round</span>(<span class="fu">factorial</span>(<span class="dv">4</span>) <span class="sc">/</span> e)</span>
+<span id="cb81-246"><a href="#cb81-246" aria-hidden="true" tabindex="-1"></a>D_4</span>
+<span id="cb81-247"><a href="#cb81-247" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-248"><a href="#cb81-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-249"><a href="#cb81-249" aria-hidden="true" tabindex="-1"></a>The probability of a complete derangement is the number of derangements divided by the total number of permutations.</span>
+<span id="cb81-250"><a href="#cb81-250" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-253"><a href="#cb81-253" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-254"><a href="#cb81-254" aria-hidden="true" tabindex="-1"></a>Q1 <span class="ot">=</span> D_4 <span class="sc">/</span> <span class="fu">factorial</span>(<span class="dv">4</span>)</span>
+<span id="cb81-255"><a href="#cb81-255" aria-hidden="true" tabindex="-1"></a>Q1</span>
+<span id="cb81-256"><a href="#cb81-256" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-257"><a href="#cb81-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-258"><a href="#cb81-258" aria-hidden="true" tabindex="-1"></a><span class="fu">## Question 2: What is the probability of choosing 4 numbers from 4 and getting exactly 1 correct?</span></span>
+<span id="cb81-259"><a href="#cb81-259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-260"><a href="#cb81-260" aria-hidden="true" tabindex="-1"></a>First, choose 1 number to be correct (C(4,1) = 4 ways). Then, find the number of derangements for the remaining 3 numbers (D(3) = 2).</span>
+<span id="cb81-261"><a href="#cb81-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-264"><a href="#cb81-264" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-265"><a href="#cb81-265" aria-hidden="true" tabindex="-1"></a>D_3 <span class="ot">=</span> <span class="fu">round</span>(<span class="fu">factorial</span>(<span class="dv">3</span>) <span class="sc">/</span> e)</span>
+<span id="cb81-266"><a href="#cb81-266" aria-hidden="true" tabindex="-1"></a>D_3</span>
+<span id="cb81-267"><a href="#cb81-267" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-268"><a href="#cb81-268" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-269"><a href="#cb81-269" aria-hidden="true" tabindex="-1"></a>The total number of ways to get exactly 1 correct is C(4,1) * D(3) = 4 * 2 = 8.</span>
+<span id="cb81-270"><a href="#cb81-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-273"><a href="#cb81-273" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-274"><a href="#cb81-274" aria-hidden="true" tabindex="-1"></a>Q2 <span class="ot">=</span> (<span class="dv">4</span> <span class="sc">*</span> D_3) <span class="sc">/</span> <span class="fu">factorial</span>(<span class="dv">4</span>)</span>
+<span id="cb81-275"><a href="#cb81-275" aria-hidden="true" tabindex="-1"></a>Q2</span>
+<span id="cb81-276"><a href="#cb81-276" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-277"><a href="#cb81-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-278"><a href="#cb81-278" aria-hidden="true" tabindex="-1"></a><span class="fu">## Question 3: What is the probability of choosing 4 numbers from 4 and getting exactly 2 correct?</span></span>
+<span id="cb81-279"><a href="#cb81-279" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-280"><a href="#cb81-280" aria-hidden="true" tabindex="-1"></a>First, choose 2 numbers to be correct (C(4,2) = 6 ways). Then, find the number of derangements for the remaining 2 numbers (D(2) = 1).</span>
+<span id="cb81-281"><a href="#cb81-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-284"><a href="#cb81-284" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-285"><a href="#cb81-285" aria-hidden="true" tabindex="-1"></a>D_2 <span class="ot">=</span> <span class="fu">round</span>(<span class="fu">factorial</span>(<span class="dv">2</span>) <span class="sc">/</span> e)</span>
+<span id="cb81-286"><a href="#cb81-286" aria-hidden="true" tabindex="-1"></a>C_4_2 <span class="ot">=</span> <span class="fu">factorial</span>(<span class="dv">4</span>) <span class="sc">/</span> (<span class="fu">factorial</span>(<span class="dv">2</span>) <span class="sc">*</span> <span class="fu">factorial</span>(<span class="dv">2</span>))</span>
+<span id="cb81-287"><a href="#cb81-287" aria-hidden="true" tabindex="-1"></a>Q3 <span class="ot">=</span> (C_4_2 <span class="sc">*</span> D_2) <span class="sc">/</span> <span class="fu">factorial</span>(<span class="dv">4</span>)</span>
+<span id="cb81-288"><a href="#cb81-288" aria-hidden="true" tabindex="-1"></a>Q3</span>
+<span id="cb81-289"><a href="#cb81-289" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-290"><a href="#cb81-290" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-291"><a href="#cb81-291" aria-hidden="true" tabindex="-1"></a><span class="fu">## Question 4: What is the probability of choosing 4 numbers from 4 and getting exactly 3 correct?</span></span>
+<span id="cb81-292"><a href="#cb81-292" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-293"><a href="#cb81-293" aria-hidden="true" tabindex="-1"></a>This is impossible. If 3 numbers are in their correct positions, the 4th number must also be in its correct position. The number of derangements of 1 item is D(1) = 0.</span>
+<span id="cb81-294"><a href="#cb81-294" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-297"><a href="#cb81-297" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-298"><a href="#cb81-298" aria-hidden="true" tabindex="-1"></a>Q4 <span class="ot">=</span> <span class="dv">0</span></span>
+<span id="cb81-299"><a href="#cb81-299" aria-hidden="true" tabindex="-1"></a>Q4</span>
+<span id="cb81-300"><a href="#cb81-300" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-301"><a href="#cb81-301" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-302"><a href="#cb81-302" aria-hidden="true" tabindex="-1"></a><span class="fu">## Question 5: What is the probability of choosing 4 numbers from 4 and getting all 4 correct?</span></span>
+<span id="cb81-303"><a href="#cb81-303" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-304"><a href="#cb81-304" aria-hidden="true" tabindex="-1"></a>There is only one way for this to happen.</span>
+<span id="cb81-305"><a href="#cb81-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-308"><a href="#cb81-308" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-309"><a href="#cb81-309" aria-hidden="true" tabindex="-1"></a>Q5 <span class="ot">=</span> <span class="dv">1</span> <span class="sc">/</span> <span class="fu">factorial</span>(<span class="dv">4</span>)</span>
+<span id="cb81-310"><a href="#cb81-310" aria-hidden="true" tabindex="-1"></a>Q5</span>
+<span id="cb81-311"><a href="#cb81-311" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-312"><a href="#cb81-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-313"><a href="#cb81-313" aria-hidden="true" tabindex="-1"></a>The sum of all probabilities should be 1.</span>
+<span id="cb81-314"><a href="#cb81-314" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-317"><a href="#cb81-317" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-318"><a href="#cb81-318" aria-hidden="true" tabindex="-1"></a>Q1 <span class="sc">+</span> Q2 <span class="sc">+</span> Q3 <span class="sc">+</span> Q4 <span class="sc">+</span> Q5</span>
+<span id="cb81-319"><a href="#cb81-319" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-320"><a href="#cb81-320" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-321"><a href="#cb81-321" aria-hidden="true" tabindex="-1"></a><span class="fu"># Distributions</span></span>
+<span id="cb81-322"><a href="#cb81-322" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-323"><a href="#cb81-323" aria-hidden="true" tabindex="-1"></a><span class="fu">## Binomial Distribution</span></span>
+<span id="cb81-324"><a href="#cb81-324" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-325"><a href="#cb81-325" aria-hidden="true" tabindex="-1"></a>The binomial distribution models the number of successes in a fixed number of independent trials, each with a binary outcome (success/failure).</span>
+<span id="cb81-326"><a href="#cb81-326" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-327"><a href="#cb81-327" aria-hidden="true" tabindex="-1"></a><span class="fu">### Probability Mass Function (PMF)</span></span>
+<span id="cb81-328"><a href="#cb81-328" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-329"><a href="#cb81-329" aria-hidden="true" tabindex="-1"></a>In R, the <span class="in">`dbinom`</span> function calculates the probability of getting exactly <span class="in">`x`</span> successes. While this is technically a PMF for a discrete distribution, R uses the <span class="in">`d`</span> prefix convention for both PDF (continuous) and PMF (discrete).</span>
+<span id="cb81-330"><a href="#cb81-330" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-331"><a href="#cb81-331" aria-hidden="true" tabindex="-1"></a>Probability of exactly 1 person snoring:</span>
+<span id="cb81-332"><a href="#cb81-332" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-335"><a href="#cb81-335" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-336"><a href="#cb81-336" aria-hidden="true" tabindex="-1"></a>n <span class="ot">=</span> <span class="dv">4</span> <span class="co"># number of trials (people)</span></span>
+<span id="cb81-337"><a href="#cb81-337" aria-hidden="true" tabindex="-1"></a>p <span class="ot">=</span> <span class="fl">0.2</span> <span class="co"># probability of success (snoring)</span></span>
+<span id="cb81-338"><a href="#cb81-338" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-339"><a href="#cb81-339" aria-hidden="true" tabindex="-1"></a><span class="fu">dbinom</span>(<span class="at">x =</span> <span class="dv">1</span>, <span class="at">size =</span> n, <span class="at">prob =</span> p)</span>
+<span id="cb81-340"><a href="#cb81-340" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-341"><a href="#cb81-341" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-342"><a href="#cb81-342" aria-hidden="true" tabindex="-1"></a>Probabilities for 0, 1, 2, 3, or 4 people snoring:</span>
+<span id="cb81-343"><a href="#cb81-343" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-346"><a href="#cb81-346" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-347"><a href="#cb81-347" aria-hidden="true" tabindex="-1"></a><span class="fu">dbinom</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>), <span class="at">size =</span> n, <span class="at">prob =</span> p)</span>
+<span id="cb81-348"><a href="#cb81-348" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-349"><a href="#cb81-349" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-350"><a href="#cb81-350" aria-hidden="true" tabindex="-1"></a><span class="fu">### Cumulative Distribution Function (CDF)</span></span>
+<span id="cb81-351"><a href="#cb81-351" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-352"><a href="#cb81-352" aria-hidden="true" tabindex="-1"></a>The <span class="in">`pbinom`</span> function calculates the cumulative probability of getting <span class="in">`q`</span> or fewer successes.</span>
+<span id="cb81-353"><a href="#cb81-353" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-354"><a href="#cb81-354" aria-hidden="true" tabindex="-1"></a>Probability of 1 or fewer people snoring:</span>
+<span id="cb81-355"><a href="#cb81-355" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-358"><a href="#cb81-358" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-359"><a href="#cb81-359" aria-hidden="true" tabindex="-1"></a><span class="fu">pbinom</span>(<span class="at">q =</span> <span class="dv">1</span>, <span class="at">size =</span> n, <span class="at">prob =</span> p, <span class="at">lower.tail =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb81-360"><a href="#cb81-360" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-361"><a href="#cb81-361" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-362"><a href="#cb81-362" aria-hidden="true" tabindex="-1"></a><span class="fu">### Random Number Generation</span></span>
+<span id="cb81-363"><a href="#cb81-363" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-364"><a href="#cb81-364" aria-hidden="true" tabindex="-1"></a>The <span class="in">`rbinom`</span> function generates random numbers from a binomial distribution.</span>
+<span id="cb81-365"><a href="#cb81-365" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-366"><a href="#cb81-366" aria-hidden="true" tabindex="-1"></a>Generate 10,000 random values from this distribution:</span>
+<span id="cb81-367"><a href="#cb81-367" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-370"><a href="#cb81-370" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-371"><a href="#cb81-371" aria-hidden="true" tabindex="-1"></a>a <span class="ot">=</span> <span class="fu">rbinom</span>(<span class="dv">10000</span>, <span class="at">size =</span> <span class="dv">4</span>, <span class="at">prob =</span> <span class="fl">0.2</span>)</span>
+<span id="cb81-372"><a href="#cb81-372" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(a)</span>
+<span id="cb81-373"><a href="#cb81-373" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-374"><a href="#cb81-374" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-375"><a href="#cb81-375" aria-hidden="true" tabindex="-1"></a><span class="fu">## Normal Distribution (Gaussian Distribution)</span></span>
+<span id="cb81-376"><a href="#cb81-376" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-377"><a href="#cb81-377" aria-hidden="true" tabindex="-1"></a>A continuous probability distribution characterized by a bell-shaped curve. It is defined by its mean (μ) and standard deviation (σ).</span>
+<span id="cb81-378"><a href="#cb81-378" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-379"><a href="#cb81-379" aria-hidden="true" tabindex="-1"></a><span class="fu">### R Functions</span></span>
+<span id="cb81-380"><a href="#cb81-380" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-381"><a href="#cb81-381" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`dnorm`</span>: Density function (PDF)</span>
+<span id="cb81-382"><a href="#cb81-382" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`pnorm`</span>: Cumulative distribution function (CDF)</span>
+<span id="cb81-383"><a href="#cb81-383" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`qnorm`</span>: Quantile function (inverse CDF)</span>
+<span id="cb81-384"><a href="#cb81-384" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`rnorm`</span>: Random number generation</span>
+<span id="cb81-385"><a href="#cb81-385" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-386"><a href="#cb81-386" aria-hidden="true" tabindex="-1"></a><span class="fu">### Probability Density Function (PDF)</span></span>
+<span id="cb81-387"><a href="#cb81-387" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-388"><a href="#cb81-388" aria-hidden="true" tabindex="-1"></a>Calculates the height of the probability density function at a given point.</span>
+<span id="cb81-389"><a href="#cb81-389" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-392"><a href="#cb81-392" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-393"><a href="#cb81-393" aria-hidden="true" tabindex="-1"></a><span class="fu">dnorm</span>(<span class="dv">0</span>, <span class="at">mean =</span> <span class="dv">1</span>, <span class="at">sd =</span> <span class="dv">2</span>)</span>
+<span id="cb81-394"><a href="#cb81-394" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-395"><a href="#cb81-395" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-396"><a href="#cb81-396" aria-hidden="true" tabindex="-1"></a><span class="fu">### Cumulative Distribution Function (CDF)</span></span>
+<span id="cb81-397"><a href="#cb81-397" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-398"><a href="#cb81-398" aria-hidden="true" tabindex="-1"></a>Calculates the area under the curve to the left of a given value (the probability of observing a value less than or equal to <span class="in">`q`</span>).</span>
+<span id="cb81-399"><a href="#cb81-399" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-400"><a href="#cb81-400" aria-hidden="true" tabindex="-1"></a>Probability of observing a value &lt;= 70 from a N(75, 5) distribution:</span>
+<span id="cb81-401"><a href="#cb81-401" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-404"><a href="#cb81-404" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-405"><a href="#cb81-405" aria-hidden="true" tabindex="-1"></a><span class="fu">pnorm</span>(<span class="at">q =</span> <span class="dv">70</span>, <span class="at">mean =</span> <span class="dv">75</span>, <span class="at">sd =</span> <span class="dv">5</span>)</span>
+<span id="cb81-406"><a href="#cb81-406" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-407"><a href="#cb81-407" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-408"><a href="#cb81-408" aria-hidden="true" tabindex="-1"></a><span class="fu">### Quantile Function</span></span>
+<span id="cb81-409"><a href="#cb81-409" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-410"><a href="#cb81-410" aria-hidden="true" tabindex="-1"></a>Finds the value <span class="in">`x`</span> such that P(X &lt;= x) = p. It is the inverse of the CDF.</span>
+<span id="cb81-411"><a href="#cb81-411" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-412"><a href="#cb81-412" aria-hidden="true" tabindex="-1"></a>Find the 25th percentile (Q1) of a N(75, 5) distribution:</span>
+<span id="cb81-413"><a href="#cb81-413" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-416"><a href="#cb81-416" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-417"><a href="#cb81-417" aria-hidden="true" tabindex="-1"></a><span class="fu">qnorm</span>(<span class="at">p =</span> <span class="fl">0.25</span>, <span class="at">mean =</span> <span class="dv">75</span>, <span class="at">sd =</span> <span class="dv">5</span>)</span>
+<span id="cb81-418"><a href="#cb81-418" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-419"><a href="#cb81-419" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-420"><a href="#cb81-420" aria-hidden="true" tabindex="-1"></a><span class="fu">### Random Number Generation</span></span>
+<span id="cb81-421"><a href="#cb81-421" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-422"><a href="#cb81-422" aria-hidden="true" tabindex="-1"></a>Generate 1,000 random numbers from a N(75, 5) distribution and plot a histogram.</span>
+<span id="cb81-423"><a href="#cb81-423" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-426"><a href="#cb81-426" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-427"><a href="#cb81-427" aria-hidden="true" tabindex="-1"></a>nd <span class="ot">=</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">1000</span>, <span class="at">mean =</span> <span class="dv">75</span>, <span class="at">sd =</span> <span class="dv">5</span>)</span>
+<span id="cb81-428"><a href="#cb81-428" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(nd)</span>
+<span id="cb81-429"><a href="#cb81-429" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-430"><a href="#cb81-430" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-431"><a href="#cb81-431" aria-hidden="true" tabindex="-1"></a><span class="fu">### Checking for Normality</span></span>
+<span id="cb81-432"><a href="#cb81-432" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-433"><a href="#cb81-433" aria-hidden="true" tabindex="-1"></a>It's often important to check if a dataset follows a normal distribution.</span>
+<span id="cb81-434"><a href="#cb81-434" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-437"><a href="#cb81-437" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-438"><a href="#cb81-438" aria-hidden="true" tabindex="-1"></a>nd_data <span class="ot">=</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">1000</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">2</span>)</span>
+<span id="cb81-439"><a href="#cb81-439" aria-hidden="true" tabindex="-1"></a>non_nd_data <span class="ot">=</span> <span class="fu">rpois</span>(<span class="at">n =</span> <span class="dv">1000</span>, <span class="at">lambda =</span> <span class="dv">5</span>) <span class="co"># Poisson data is not normal</span></span>
+<span id="cb81-440"><a href="#cb81-440" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-441"><a href="#cb81-441" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-442"><a href="#cb81-442" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Method 1: Histogram</span></span>
+<span id="cb81-443"><a href="#cb81-443" aria-hidden="true" tabindex="-1"></a>A bell-shaped histogram suggests normality.</span>
+<span id="cb81-444"><a href="#cb81-444" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-447"><a href="#cb81-447" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-448"><a href="#cb81-448" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb81-449"><a href="#cb81-449" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(nd_data, <span class="at">col =</span> <span class="st">'steelblue'</span>, <span class="at">main =</span> <span class="st">'Normal'</span>)</span>
+<span id="cb81-450"><a href="#cb81-450" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(non_nd_data, <span class="at">col =</span> <span class="st">'darkred'</span>, <span class="at">main =</span> <span class="st">'Non-normal'</span>)</span>
+<span id="cb81-451"><a href="#cb81-451" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-452"><a href="#cb81-452" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-453"><a href="#cb81-453" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Method 2: Q-Q Plot</span></span>
+<span id="cb81-454"><a href="#cb81-454" aria-hidden="true" tabindex="-1"></a>If the data is normal, the points on a Q-Q plot will fall closely along the straight line.</span>
+<span id="cb81-455"><a href="#cb81-455" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-458"><a href="#cb81-458" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-459"><a href="#cb81-459" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb81-460"><a href="#cb81-460" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(nd_data, <span class="at">main =</span> <span class="st">'Normal'</span>)</span>
+<span id="cb81-461"><a href="#cb81-461" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(nd_data)</span>
+<span id="cb81-462"><a href="#cb81-462" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(non_nd_data, <span class="at">main =</span> <span class="st">'Non-normal'</span>)</span>
+<span id="cb81-463"><a href="#cb81-463" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(non_nd_data)</span>
+<span id="cb81-464"><a href="#cb81-464" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-465"><a href="#cb81-465" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-466"><a href="#cb81-466" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Method 3: Shapiro-Wilk Test</span></span>
+<span id="cb81-467"><a href="#cb81-467" aria-hidden="true" tabindex="-1"></a>A statistical test for normality. The null hypothesis (H0) is that the data is normally distributed.</span>
+<span id="cb81-468"><a href="#cb81-468" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-469"><a href="#cb81-469" aria-hidden="true" tabindex="-1"></a>If the p-value is &gt; 0.05, we do not reject the null hypothesis.</span>
+<span id="cb81-470"><a href="#cb81-470" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-473"><a href="#cb81-473" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-474"><a href="#cb81-474" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(nd_data)</span>
+<span id="cb81-475"><a href="#cb81-475" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-476"><a href="#cb81-476" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-477"><a href="#cb81-477" aria-hidden="true" tabindex="-1"></a>If the p-value is &lt; 0.05, we reject the null hypothesis.</span>
+<span id="cb81-478"><a href="#cb81-478" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-481"><a href="#cb81-481" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb81-482"><a href="#cb81-482" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(non_nd_data)</span>
+<span id="cb81-483"><a href="#cb81-483" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb81-484"><a href="#cb81-484" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-485"><a href="#cb81-485" aria-hidden="true" tabindex="-1"></a><span class="fu">## Other Key Distributions</span></span>
+<span id="cb81-486"><a href="#cb81-486" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-487"><a href="#cb81-487" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Student's t-distribution**: Used for inference about the mean of a normally distributed population when the standard deviation is unknown.</span>
+<span id="cb81-488"><a href="#cb81-488" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**F-distribution**: Used in ANOVA to compare the means of multiple groups.</span>
+<span id="cb81-489"><a href="#cb81-489" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Chi-square distribution**: Used in goodness-of-fit tests and tests of independence.</span>
+<span id="cb81-490"><a href="#cb81-490" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Poisson Distribution**: Models the number of events occurring in a fixed interval of time or space.</span>
+<span id="cb81-491"><a href="#cb81-491" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-492"><a href="#cb81-492" aria-hidden="true" tabindex="-1"></a><span class="fu"># References</span></span>
+<span id="cb81-493"><a href="#cb81-493" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-494"><a href="#cb81-494" aria-hidden="true" tabindex="-1"></a><span class="fu">## Online Resources</span></span>
+<span id="cb81-495"><a href="#cb81-495" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-496"><a href="#cb81-496" aria-hidden="true" tabindex="-1"></a><span class="fu">### Tutorials and Guides</span></span>
+<span id="cb81-497"><a href="#cb81-497" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Wolfgang Huber - Biostatistics Course</span><span class="co">](https://www.huber.embl.de/users/kaspar/biostat_2021/2-demo.html)</span></span>
+<span id="cb81-498"><a href="#cb81-498" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Scribbr - Probability Distributions Guide</span><span class="co">](https://www.scribbr.com/statistics/probability-distributions/)</span></span>
+<span id="cb81-499"><a href="#cb81-499" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Statology - Test for Normality in R</span><span class="co">](https://www.statology.org/test-for-normality-in-r/)</span></span>
+<span id="cb81-500"><a href="#cb81-500" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-501"><a href="#cb81-501" aria-hidden="true" tabindex="-1"></a><span class="fu">### Video Tutorials</span></span>
+<span id="cb81-502"><a href="#cb81-502" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Permutations and Combinations</span><span class="co">](https://www.youtube.com/watch?v=peEsXbdMY_4)</span></span>
+<span id="cb81-503"><a href="#cb81-503" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Conditional Probability</span><span class="co">](https://www.youtube.com/watch?v=ETd-jPhI_tE)</span></span>
+<span id="cb81-504"><a href="#cb81-504" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Binomial Distribution</span><span class="co">](https://www.youtube.com/watch?v=kvmSAXhX9Hs)</span></span>
+<span id="cb81-505"><a href="#cb81-505" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Normal Distribution</span><span class="co">](https://www.youtube.com/watch?v=RlhnNbPZC0A)</span></span>
+<span id="cb81-506"><a href="#cb81-506" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Understanding Distributions</span><span class="co">](https://www.youtube.com/watch?v=X5NXDK6AVtU)</span></span>
+<span id="cb81-507"><a href="#cb81-507" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Probability Theory</span><span class="co">](https://www.youtube.com/watch?v=Q_pO9NzWxPY)</span></span>
+<span id="cb81-508"><a href="#cb81-508" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-509"><a href="#cb81-509" aria-hidden="true" tabindex="-1"></a><span class="fu">### Mathematical Concepts</span></span>
+<span id="cb81-510"><a href="#cb81-510" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Wikipedia - Derangement</span><span class="co">](https://en.wikipedia.org/wiki/Derangement)</span></span>
+<span id="cb81-511"><a href="#cb81-511" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-512"><a href="#cb81-512" aria-hidden="true" tabindex="-1"></a><span class="fu">## Books</span></span>
+<span id="cb81-513"><a href="#cb81-513" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Introduction to Probability** by Joseph K. Blitzstein and Jessica Hwang</span>
+<span id="cb81-514"><a href="#cb81-514" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Probability and Statistics for Data Science** by Norman Matloff</span>
+<span id="cb81-515"><a href="#cb81-515" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**The Art of Statistics** by David Spiegelhalter</span>
+<span id="cb81-516"><a href="#cb81-516" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-517"><a href="#cb81-517" aria-hidden="true" tabindex="-1"></a><span class="fu">## R Documentation</span></span>
+<span id="cb81-518"><a href="#cb81-518" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">R Stats Package</span><span class="co">](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/Distributions.html)</span></span>
+<span id="cb81-519"><a href="#cb81-519" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-520"><a href="#cb81-520" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, attr.output='.details summary="sessionInfo()"'}</span></span>
+<span id="cb81-521"><a href="#cb81-521" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span>
+<span id="cb81-522"><a href="#cb81-522" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>This website is built with ❤️ and <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

@@ -1,0 +1,15 @@
+{
+  "hash": "2bfc80a60ad3dd8985fa5f5d8cd68978",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"web scrap with rvest\"\n\nauthor: \"Tony D\"\n\nexecute:\n  warning: false\n  error: false\n  eval: false\nformat:\n  html:\n    toc: true\n    toc-location: right\n    code-fold: show\n    code-tools: true\n    number-sections: true\n    code-block-bg: true\n    code-block-border-left: \"#31BAE9\"\n---\n\n\n# loal pacakge\n\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(rvest)\nlibrary(tidyverse)\n```\n:::\n\n\n\n\n# read html\n\n\n::: {.cell}\n\n```{.r .cell-code}\nurl='https://www.r-project.org/'\npage=read_html(url)\n```\n:::\n\n\n\n# get HTML text\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\npage %>%html_element(css = \"h1\") |> html_text(trim = TRUE)\n```\n:::\n\n\n\n# get HTML link\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\npage %>%html_element(css = \"strong a\") |> html_text(trim = TRUE)\n```\n:::\n\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\npage %>%html_element(css = \"strong a\") |> html_attr(\"href\")\n```\n:::\n\n\n# get table\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\nurl='https://en.wikipedia.org/wiki/List_of_Formula_One_drivers'\npage=read_html(url)\n```\n:::\n\n\n\n## get 3rd table\n\nfind table xpath\n\n\n::: {.cell}\n\n```{.r .cell-code}\ntable=page %>%html_element(xpath = '//*[@id=\"mw-content-text\"]/div[1]/table[3]') |> html_table()\ntable |> head()\n```\n:::\n\n\n## get 4th table\n\nfind table xpath\n\n\n::: {.cell}\n\n```{.r .cell-code}\ntable=page %>%html_element(xpath = '//*[@id=\"mw-content-text\"]/div[1]/table[4]') |> html_table()\ntable |> head()\n```\n:::\n\n\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\nsessionInfo()\n```\n:::\n\n\n\n# using read_html_live() with more advance web scraping\n\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(rvest)\nlibrary(tidyverse)\n```\n:::\n\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\nurl=\"https://www.whiskybase.com/whiskies/\"\nweb <- read_html_live(url)\n```\n:::\n\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\nweb$view()\n```\n:::\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\nintro_text=web %>% html_elements(\".widget-article-content\") |> html_text(trim = TRUE) \nintro_text\n```\n:::\n\n\n\n\n# Reference\n\n\nhttps://r4ds.hadley.nz/webscraping.html\n\nhttps://rvest.tidyverse.org/reference/read_html_live.html\n\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

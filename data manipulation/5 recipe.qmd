@@ -1,0 +1,178 @@
+---
+title: "Recipe in tidymodels"
+
+author: "Tony D"
+
+execute:
+  warning: false
+  error: false
+format:
+  html:
+    toc: true
+    toc-location: right
+    code-fold: show
+    code-tools: true
+    number-sections: false
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-copy: true
+---
+
+# 1. What is a Recipe?
+
+The `recipes` package, part of the `tidymodels` ecosystem, provides a powerful and flexible framework for data preprocessing. A **recipe** is an object that defines a series of steps for transforming your data before it is used to train a model. Think of it as a blueprint for data preparation.
+
+Using `recipes` is beneficial because it:
+
+-   **Separates preprocessing from modeling:** Keeps your code clean and organized.
+-   **Prevents data leakage:** Ensures that information from the test set does not "leak" into the training process, which is a common and subtle bug in machine learning. For example, when normalizing data, the mean and standard deviation should be calculated from the training data only and then applied to both the training and test sets.
+-   **Is highly extensible:** Provides a wide range of built-in steps for common tasks and allows you to create your own custom steps.
+
+# 2. Creating a Sample Dataset
+
+Let's create a small, messy dataset to demonstrate how recipes work. It contains a mix of data types, missing values (`NA`), and categorical variables with many levels.
+
+```{r}
+library(recipes)
+library(tidyverse)
+
+# Create a sample training dataset
+trees_train <- tibble(
+  tree_id = 1:10,
+  species = factor(c("Oak", "Pine", "Maple", "Oak", "Pine", "Hickory", "Birch", "Oak", "Pine", "Maple")),
+  date_planted = as.Date(c("2001-01-10", "2005-03-15", "2002-07-20", "2010-11-01", "2008-09-12", 
+                           "2001-04-25", "2019-06-30", "2004-02-18", "2006-08-05", "2011-12-21")),
+  caretaker = c("City", "Private", "City", "City", "Private", "Non-Profit", "City", "Private", "City", "Private"),
+  site_info = c("Park A", "Yard B", "Park C", "Park A", "Yard D", "Reserve E", "Park F", "Yard G", "Park A", "Yard H"),
+  height_m = c(10, 12, 8, 15, 13, 11, 2, 14, 12, 9),
+  diameter_cm = c(30, 35, 25, 40, 38, 32, 5, 39, 36, NA), # Added a missing value
+  legal_status = factor(c("Protected", "Not Protected", "Protected", "Protected", "Not Protected", 
+                          "Protected", "Not Protected", "Protected", "Not Protected", "Protected"))
+)
+```
+
+
+```{r}
+# Create a sample test set (new data)
+new_trees_data <- tibble(
+  tree_id = 11:12,
+  species = factor(c("Oak", "Redwood")),
+  date_planted = as.Date(c("2015-05-10", "2021-11-15")),
+  caretaker = c("City", "State"),
+  site_info = c("Park A", "National Park I"),
+  height_m = c(5, 1),
+  diameter_cm = c(15, 2),
+  legal_status = factor(c("Protected", "Protected"))
+)
+```
+
+# 3. Defining a Recipe
+
+A recipe is created with the `recipe()` function. You specify the model formula (`legal_status ~ .` means we want to predict `legal_status` using all other variables) and the training data.
+
+Then, you pipe (`%>%`) this object into a series of `step_*()` functions, each performing a specific preprocessing task.
+
+```{r}
+tree_rec <- recipe(legal_status ~ ., data = trees_train) %>%
+  
+  # 1. Assign roles: `update_role()` tells the recipe that `tree_id` is just an identifier
+  # and should not be used as a predictor or outcome. This prevents it from being included
+  # in the model matrix but keeps it in the data for reference.
+  update_role(tree_id, new_role = "ID") %>%
+  
+  # 2. Impute missing values: `step_impute_mean` will fill in the NA in `diameter_cm`
+  # with the mean of the non-missing values from the training set.
+  step_impute_mean(all_numeric_predictors()) %>%
+  
+  # 3. Collapse infrequent categories: `step_other()` is great for high-cardinality
+  # categorical variables. It pools infrequent levels into a single "other" category.
+  step_other(species, caretaker, site_info, threshold = 0.2, other = "other_level") %>%
+  
+  # 4. Create date features: Instead of using the exact date, which might not be a good
+  # predictor, we can extract the year. `step_rm()` then removes the original date column.
+  step_date(date_planted, features = c("year")) %>%
+  step_rm(date_planted) %>%
+  
+  # 5. Create dummy variables: `step_dummy()` converts all nominal (categorical) predictors
+  # into numeric binary (0/1) columns. This is required for many modeling algorithms.
+  step_dummy(all_nominal_predictors()) %>%
+  
+  # 6. Remove zero-variance predictors: `step_zv()` removes any predictor columns that
+  # contain only a single unique value, as these have no predictive power.
+  step_zv(all_predictors()) %>% 
+  
+  # 7. Normalize numeric predictors: `step_normalize()` scales all numeric predictors to have
+  # a mean of 0 and a standard deviation of 1. This helps many models converge faster.
+  step_normalize(all_numeric_predictors())
+
+# Print the recipe to see the defined steps
+tree_rec
+```
+
+# 4. Prepping and Baking the Recipe
+
+Defining the recipe doesn't actually perform the transformations. This is a crucial concept.
+
+1.  **`prep(recipe)`:** You first need to **`prep()`** the recipe. This function estimates the required parameters from the **training data only**. For example, it learns the means and standard deviations for normalization, the levels to collapse for `step_other`, and the full set of dummy variables to create. This is the step that prevents data leakage.
+
+2.  **`bake(prep, new_data)`:** After prepping, you can **`bake()`** the recipe. This applies the learned transformations to any dataset, such as the training data or, more importantly, new data like a test set.
+
+```{r}
+# Prep the recipe using the training data
+prepped_recipe <- prep(tree_rec, training = trees_train)
+
+# Bake the training data to see the result of the transformations
+# Using new_data = NULL bakes the original training data
+processed_training_data <- bake(prepped_recipe, new_data = NULL)
+
+# Display the first few rows of the processed data
+head(processed_training_data)
+```
+
+Now, let's apply the same, already-prepped recipe to our `new_trees_data`.
+
+```{r}
+# Bake the new data
+processed_new_data <- bake(prepped_recipe, new_data = new_trees_data)
+
+# Display the processed new data
+processed_new_data
+```
+
+Notice how the recipe correctly handled the new, unseen levels ("Redwood", "State", etc.) in the test set based on the rules it learned from the training set. The new levels were converted to the "other_level" dummy variable, and the normalization was applied using the mean and standard deviation from the *training* data.
+
+# 5. Common Recipe Steps and Selectors
+
+The `recipes` package has a rich set of steps. Some of the most common include:
+
+-   `step_impute_*()`: For handling missing data (e.g., `step_impute_mean`, `step_impute_median`, `step_impute_knn`).
+-   `step_log()`: For log-transforming numeric variables.
+-   `step_corr()`: For removing highly correlated predictors.
+-   `step_downsample()` / `step_upsample()`: For addressing class imbalance.
+-   `step_pca()`: For Principal Component Analysis.
+
+### Selector Functions
+
+You can use powerful **selector functions** to choose which variables a step should apply to. This makes your recipes more robust and scalable.
+
+-   `all_predictors()`: Selects all predictor variables.
+-   `all_outcomes()`: Selects all outcome variables.
+-   `all_numeric()`, `all_nominal()`: Selects variables of a specific type.
+-   `all_numeric_predictors()`: Selects all numeric predictors.
+-   `starts_with()`, `ends_with()`, `contains()`: Selects variables based on their names.
+
+# 6. References
+
+## Official Documentation
+- [Tidymodels `recipes` Documentation](https://recipes.tidymodels.org/)
+- [Available Recipe Steps](https://recipes.tidymodels.org/reference/index.html)
+- [Tidy Modeling with R - Book](https://www.tmwr.org/)
+
+## Tutorials
+- [Get Started with Tidymodels](https://www.tidymodels.org/start/)
+- [Feature Engineering with recipes](https://www.tmwr.org/recipes.html)
+- [recipes Package Vignettes](https://recipes.tidymodels.org/articles/)
+
+## Additional Resources
+- [Applied Machine Learning - Max Kuhn](https://appliedmla.com/)
+- [Preprocessing Data in R](https://www.datacamp.com/community/tutorials/preprocessing-in-data-science-part-1-centering-scaling-and-knn)

@@ -1,0 +1,946 @@
+---
+title: "Basic R"
+author: "Tony D"
+
+execute:
+  warning: false
+  error: false
+
+  
+format:
+  html:
+    toc: true
+    toc-location: right
+    code-fold: show
+    code-tools: true
+    number-sections: true
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-copy: true
+---
+
+![](images/R_logo.svg.png){width="300"}
+
+```{r setup, include=FALSE}
+# Configure reticulate to use Python 3.13
+reticulate::use_python(
+    "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3"
+)
+```
+
+# R version
+
+The `version` object in R holds information about the current R version you are running.
+
+```{r}
+version
+```
+
+## Manage R Version with rig
+
+https://github.com/r-lib/rig
+
+
+### install rig
+
+```{bash}
+#| eval: false
+brew tap r-lib/rig
+brew install --cask rig
+```
+
+### show current downloaded R version
+
+```{bash}
+rig list
+```
+
+### show current which R version can be downloaded
+
+```{bash}
+rig available
+```
+
+### download R version
+
+```{bash}
+#| eval: false
+rig add 4.4.3
+```
+
+### use R 4.4.3 version
+
+```{bash}
+#| eval: false
+#rig default 4.4-arm64
+```
+
+
+### use R 4.5.1 version
+
+```{bash}
+#| eval: false
+rig default 4.5-arm64
+```
+
+or you can choose with UI
+
+```{bash}
+#| eval: false
+open -a Rig
+```
+
+![](images/clipboard-4220028785.png)
+
+
+# Work with files
+
+## Get current directory
+
+The `getwd()` function returns your current working directory as a string.
+
+```{r}
+#| eval: false
+getwd()
+```
+
+## Get all file names under the current directory
+
+The `list.files()` function returns a character vector of file and directory names in the specified directory. Without an argument, it lists files in the current directory.
+
+```{r}
+list.files()
+```
+
+## Get all file names under one level up directory
+
+You can use `..` to refer to the parent directory.
+
+```{r}
+list.files("../")
+```
+
+## Get file info
+
+The `file.info()` function returns a data frame with information about the specified file, such as its size, creation time, and modification time.
+
+```{r}
+#| eval: false
+file.info("6 data analytic in R book.qmd")
+```
+
+## Create folder
+
+The `dir.create()` function creates a new directory (folder).
+
+```{r}
+#| eval: false
+dir.create("testing_folder")
+```
+
+## Delete folder/file
+
+The `file.remove()` function can be used to delete files. To delete an empty directory, you can also use `unlink()`.
+
+```{r}
+#| eval: false
+file.remove("testing_folder")
+```
+
+## Copy file
+
+The `file_copy()` function from the `fs` package copies files from one location to another.
+
+```{r}
+#| eval: false
+library(fs)
+file_copy("test.csv", "test2.csv")
+```
+
+## find folder name with Upper Case letter
+
+```{r}
+#| eval: false
+root_path <- "." # or "c:/my_project", "~/GitHub", etc.
+
+## ==== STEP 1 : find folders with uppercase ----------------------------
+dirs <- list.dirs(root_path, recursive = FALSE, full.names = FALSE)
+
+## Drop the root itself so we don't try to rename it
+dirs <- setdiff(dirs, root_path)
+
+## Posix-compliant: only paths whose last component has at least one A-Z
+needs_rename <- dirs[grepl("[A-Z]", basename(dirs))]
+
+if (length(needs_rename) == 0) {
+    message("  no folder needs renaming")
+    quit(save = "no")
+}
+needs_rename
+```
+
+## Rename folder with Upper Case letter to lower case letter
+
+```{r}
+#| eval: false
+for (old_path in needs_rename) {
+    dir_name <- basename(old_path)
+    new_name <- tolower(dir_name)
+    parent_dir <- dirname(old_path)
+    new_path <- file.path(parent_dir, new_name)
+
+    # On case-insensitive filesystems (like macOS default), we can't
+    # rename 'A' to 'a' directly if 'a' is considered the same file as 'A'.
+    # We rename to a temporary name first.
+    temp_path <- file.path(parent_dir, paste0("temp__", new_name))
+
+    # 1. Rename to a temporary name that is guaranteed not to exist (or clash)
+    rename_ok <- file.rename(old_path, temp_path)
+
+    if (rename_ok) {
+        # 2. Rename from temporary to the final lowercase name
+        rename_ok <- file.rename(temp_path, new_path)
+    }
+
+    message(sprintf(
+        "%s -> %s  %s",
+        old_path,
+        new_path,
+        ifelse(rename_ok, "✓", "✗ failed")
+    ))
+}
+```
+
+## Download file from the internet
+
+The `download.file()` function downloads a file from a given URL.
+
+```{r}
+#| eval: false
+url <- "https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-02-11/hotels.csv"
+
+download.file(url = url, destfile = "hotels.csv")
+```
+
+## Download table from the internet
+
+This code scrapes a table from a Wikipedia page. It uses `rvest` to read the HTML content, `html_table` to extract tables, `janitor::clean_names` to clean up column names, and `dplyr` verbs (`filter`, `mutate`) to clean the data.
+
+```{r}
+#| eval: false
+library(tidyverse)
+library(rvest)
+library(janitor)
+
+nba_wiki_url <- "https://en.wikipedia.org/wiki/List_of_NBA_champions"
+
+nba_wiki_data001 <- nba_wiki_url %>%
+    read_html() %>%
+    html_table()
+
+nba_wiki_data002 <- nba_wiki_data001[[2]] %>% clean_names()
+
+nba_wiki_data003 <- nba_wiki_data002 %>%
+    filter(!row_number() %in% c(1, 5)) %>%
+    mutate(year = str_sub(year, 1, 4))
+
+tail(nba_wiki_data003)
+
+```
+
+# Handle errors
+
+`tryCatch` allows you to handle errors gracefully. The code in the first block is executed. If an error occurs, the `error` function is called.
+
+```{r}
+#| eval: false
+tryCatch(
+    {
+        1 + who # This will cause an error because 'who' is not defined
+    },
+    error = function(e) {
+        message(paste0("Here is some error:", e))
+    }
+)
+
+print("end of the code chunk")
+```
+
+# Condition with if/else if/else
+
+This is a standard conditional statement. It checks a condition and executes different code blocks based on whether the condition is true or false.
+
+```{r}
+x <- -5
+if (x > 10) {
+    print("Non-negative number and better than 10")
+} else if (x > 0) {
+    print("Non-negative number and better than 0")
+} else {
+    print("Negative number")
+}
+```
+
+# Loops
+
+## for Loop
+
+A `for` loop iterates over a sequence of values.
+
+```{r}
+for (x in 1:4) {
+    print(x)
+}
+```
+
+`break` exits the loop prematurely.
+
+```{r}
+for (x in 1:6) {
+    if (x == 4) {
+        break
+    }
+    print(x)
+}
+```
+
+`next` skips the current iteration and proceeds to the next one.
+
+```{r}
+for (x in 1:6) {
+    if (x == 4) {
+        next
+    }
+    print(x)
+}
+```
+
+## Using map() function for loops
+
+The `map` functions from the `purrr` package (part of `tidyverse`) provide a more functional approach to iteration. `map` returns a list, `map_dbl` returns a numeric vector, and `map_chr` returns a character vector.
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+map(
+    1:3,
+    \(x) x + 2
+)
+```
+
+```{r}
+map_dbl(
+    1:3,
+    \(x) x + 2
+)
+```
+
+```{r}
+map_chr(
+    1:3,
+    \(x) as.character(x + 2)
+)
+```
+
+## Error handling in a for loop: printing out errors
+
+You can use `tryCatch` inside a loop to handle errors on a per-iteration basis.
+
+```{r}
+stuff <- list(12, 9, 2, "cat", 25, 10, "bird")
+
+loop_num <- 0
+for (i in 1:6) {
+    loop_num <- loop_num + 1
+    tryCatch(print(1 + i), error = function(e) {
+        message(paste("An error occurred for loop num", loop_num, ":\n"), e)
+    })
+}
+```
+
+## while Loop
+
+A `while` loop continues as long as a condition is true.
+
+```{r}
+i <- 1
+while (i < 6) {
+    print(i)
+    i <- i + 1
+}
+```
+
+## Error handling in a while loop: retrying until the error is gone
+
+This example shows a `while` loop that attempts to run code that causes an error. The `tryCatch` block catches the error and modifies a variable, allowing the loop to eventually terminate.
+
+```{r}
+i <- 0
+a <- 0
+while (i < 4) {
+    a <- a + 1
+    print(i)
+    tryCatch(
+        {
+            asdfgaergae5gh5hae5h # This will cause an error
+            i <- i + 1
+        },
+        error = function(msg) {
+            print("eeeeeeee")
+            i <- i - 1
+            print(paste0("new i : ", i))
+        }
+    )
+    if (a > 10) {
+        break
+    } # Safety break to prevent an infinite loop
+}
+```
+
+# Functions
+
+## Without Arguments
+
+This defines and calls a simple function that takes no arguments.
+
+```{r}
+my_function <- function() {
+    print("Hello World!")
+}
+
+my_function()
+```
+
+## With Arguments
+
+This function takes one argument, `x`, and returns its value plus 10.
+
+```{r}
+adding_ten <- function(x) {
+    a <- x + 10
+    return(a)
+}
+
+adding_ten(5)
+```
+
+## With default Arguments
+
+This function has a default value for `x`. If the function is called without an argument for `x`, the default value of 10 is used.
+
+```{r}
+adding_ten <- function(x = 10) {
+    a <- x + 10
+    return(a)
+}
+
+adding_ten()
+```
+
+## Check function Arguments
+
+The `args()` function displays the arguments of a function.
+
+```{r}
+args(adding_ten)
+```
+
+## Warning in function
+
+The `warning()` function issues a warning message without stopping the execution of the function.
+
+```{r}
+adding_ten <- function(x = 10) {
+    a <- x + 10
+    if (a > 50) {
+        warning("it's better than 50")
+    }
+    return(a)
+}
+
+adding_ten(100)
+```
+
+## Stop in function
+
+The `stop()` function halts the execution of the function and prints an error message.
+
+```{r}
+#| eval: false
+adding_ten <- function(x = 10) {
+    a <- x + 10
+    if (a > 50) {
+        stop("it's better than 50")
+    }
+    return(a)
+}
+```
+
+## Use try to bypass errors
+
+The `try()` function is a simplified version of `tryCatch`. It runs an expression and if an error occurs, it returns an object of class `try-error` but allows the script to continue.
+
+```{r}
+try(adding_ten(100))
+5 + 10
+```
+
+# Program running time
+
+This code measures the time it takes to run a piece of code by recording the start and end times.
+
+```{r}
+start_time <- Sys.time()
+
+v <- matrix(1:100000000)
+c <- v * v
+
+end_time <- Sys.time()
+
+end_time - start_time
+```
+
+# Packages
+
+## Install R package
+
+### Install from CRAN
+
+`install.packages()` is the standard way to install packages from CRAN.
+
+```{r}
+#| eval: false
+install.packages("dplyr", repos = "http://cran.us.r-project.org")
+```
+
+### Install old version from CRAN
+
+The `remotes` package allows you to install specific versions of packages.
+
+```{r}
+#| eval: false
+require(remotes)
+install_version("plotly", version = "4.10.2")
+```
+
+### Install from Github
+
+The `pak` package can install packages directly from GitHub repositories.
+
+```{r}
+#| eval: false
+pak::pkg_install("tidymodels/learntidymodels")
+```
+
+## Check one package version
+
+`packageVersion()` returns the version of the specified package.
+
+```{r}
+packageVersion("tidyverse")
+```
+
+## Check package location
+
+`pak::pkg_status()` provides detailed information about a package, including its installation path.
+
+```{r}
+pak::pkg_status("ggplot2") |> t()
+```
+
+## Check package dependencies
+
+`pak::pkg_deps_tree()` shows a tree of the dependencies for a given package.
+
+```{r}
+pak::pkg_deps_tree("tibble")
+```
+
+## Check all installed packages
+
+`installed.packages()` returns a matrix of all installed packages. This code filters it and displays it in an interactive table using `gt`.
+
+```{r}
+library(gt)
+ip <- as.data.frame(installed.packages()[, c(1, 3:4)])
+ip <- ip[is.na(ip$Priority), 1:2, drop = FALSE]
+ip |>
+    gt() |>
+    opt_interactive()
+```
+
+## Check currently loaded packages
+
+`.packages()` returns a character vector of the packages that are currently loaded in your R session.
+
+```{r}
+library(dplyr)
+installed_package <- as.data.frame(installed.packages()[, c(1, 3:4)])
+installed_package <- installed_package[
+    is.na(installed_package$Priority),
+    1:2,
+    drop = FALSE
+]
+installed_package |>
+    filter(Package %in% (.packages())) |>
+    gt() |>
+    opt_interactive()
+```
+
+## List all packages on CRAN
+
+`available.packages()` returns a matrix of all packages available on CRAN.
+
+```{r}
+cran_package_num <- available.packages(repos = "http://cran.us.r-project.org") |>
+    as.data.frame()
+```
+
+## Check local installed old packages compared with CRAN
+
+`old.packages()` checks for installed packages that have newer versions available on CRAN.
+
+```{r}
+old.packages(repos = "http://cran.us.r-project.org") |>
+    as.data.frame() |>
+    head(10) |>
+    gt::gt()
+```
+
+## Update all installed packages
+
+`update.packages()` updates all installed packages to their latest versions.
+
+```{r}
+#| eval: false
+update.packages(ask = FALSE, checkBuilt = TRUE)
+```
+
+## Check package install location
+
+`.libPaths()` shows the library paths where R packages are installed.
+
+```{r}
+.libPaths()
+```
+
+# Version control
+
+The `renv` package helps manage project-specific package libraries, making your projects more reproducible.
+
+## Initialize renv and create renv.lock with currently loaded packages
+
+`renv::init()` initializes `renv` in a project, creating a private library and a `renv.lock` file that records the package versions used.
+
+```{r}
+#| eval: false
+renv::init()
+```
+
+## Update lock file
+
+`renv::snapshot()` updates the `renv.lock` file to reflect the current state of the project's library.
+
+```{r}
+#| eval: false
+renv::snapshot()
+```
+
+## Make all current package versions back to the renv list
+
+`renv::restore()` restores the project library to the state recorded in `renv.lock`.
+
+```{r}
+#| eval: false
+renv::restore()
+```
+
+# Stop when code runs too long
+
+The `withTimeout()` function from the `R.utils` package runs an expression and stops it if it exceeds the specified timeout.
+
+```{r}
+#| warning: true
+#| error: true
+#| eval: false
+library(R.utils)
+foo <- function() {
+    print("Tic")
+    for (kk in 1:100) {
+        print(kk)
+        Sys.sleep(0.1)
+    }
+    print("Tac")
+}
+
+withTimeout(
+    {
+        foo()
+    },
+    timeout = 1.5,
+    onTimeout = "warning"
+)
+```
+
+# Check website connection
+
+The `system()` function can run shell commands. Here, it uses `ping` to check if a website is reachable.
+
+```{r}
+#| eval: false
+url <- "www.bing.com"
+connect_result <- system(paste0("ping -c 1 ", url))
+connect_result
+```
+
+# check internet speed and connection
+
+```{r}
+#| eval: false
+library(httr)
+library(jsonlite)
+
+get_location <- function() {
+    response <- GET("http://ip-api.com/json/")
+
+    # Check if the request was successful (status code 200)
+    if (status_code(response) == 200) {
+        # Parse the JSON content from the response
+        data <- fromJSON(content(response, "text", encoding = "UTF-8"))
+
+        # Print the extracted information
+        cat(paste0("IP Address: ", data$query, "\n"))
+        cat(paste0("City: ", data$city, "\n"))
+        cat(paste0("Region: ", data$regionName, "\n"))
+        cat(paste0("Country: ", data$country, "\n"))
+        cat(paste0("ISP: ", data$isp, "\n"))
+        cat(paste0("Latitude: ", data$lat, ", Longitude: ", data$lon, "\n"))
+    } else {
+        cat("Failed to get location\n")
+    }
+}
+
+# Call the function
+get_location()
+```
+
+# check internet speed and connection
+
+```{r}
+#| eval: false
+test_connection <- function(host, port = 80, timeout = 3) {
+    con <- NULL
+    reachable <- FALSE
+    tryCatch(
+        {
+            # Open a socket connection in read/write mode with timeout
+            con <- socketConnection(
+                host = host,
+                port = port,
+                open = "r+",
+                blocking = TRUE,
+                timeout = timeout
+            )
+            reachable <- TRUE
+        },
+        error = function(e) {
+            reachable <- FALSE
+        },
+        finally = {
+            if (!is.null(con)) close(con)
+        }
+    )
+    return(reachable)
+}
+
+check_sites <- function() {
+    sites <- c("www.baidu.com", "www.google.com")
+    cat("\n🌍 Site Connectivity:\n")
+    for (site in sites) {
+        reachable <- test_connection(site)
+        status <- ifelse(reachable, "✅ Reachable", "❌ Unreachable")
+        cat(sprintf("  %-20s %s\n", site, status))
+    }
+}
+
+check_sites()
+
+
+```
+
+```{r}
+#| eval: false
+library(httr)
+library(curl) # Used for download progress if needed, httr leverages it
+library(jsonlite) # Not strictly needed for this code, but useful for general web tasks
+
+# Suppress SSL/TLS verification warnings for self-signed certificates or similar
+# Use with caution in production. This is analogous to urllib3.disable_warnings
+options(httr_oauth_cache = FALSE) # Prevent caching of auth tokens if any
+# For specific SSL verification issues, you might need to set config(ssl_verifypeer = 0L)
+# or config(ssl_verifyhost = 0L) in httr GET/POST calls, but it's generally not recommended.
+
+# Function to test download speed
+test_download_speed <- function(url, test_size_bytes = 1048576) {
+    # 1MB
+    start_time <- Sys.time()
+
+    # Initiate the GET request with stream=TRUE (equivalent to httr's default streaming)
+    # For large files, curl::curl_download is often more efficient for raw bytes
+    # However, for a test_size_bytes limit, we can manage with httr's GET and content()
+    response <- GET(url)
+
+    # Check if the request was successful
+    if (status_code(response) != 200) {
+        warning("Download request failed with status code: ", status_code(response))
+        return(NA) # Return NA if download failed
+    }
+
+    # Get content as raw bytes
+    downloaded_content <- content(response, "raw")
+    bytes_downloaded <- length(downloaded_content)
+
+    # Only consider bytes up to test_size_bytes
+    if (bytes_downloaded > test_size_bytes) {
+        bytes_downloaded <- test_size_bytes
+    }
+
+    end_time <- Sys.time()
+    duration <- as.numeric(difftime(end_time, start_time, units = "secs"))
+
+    if (duration == 0) {
+        return(Inf) # Avoid division by zero if duration is extremely small
+    }
+
+    # Calculate Mbps: (bytes * 8 bits/byte) / (duration in seconds * 1,000,000 bits/Mb)
+    mbps <- (bytes_downloaded * 8) / (duration * 1e6)
+    return(mbps)
+}
+```
+
+```{r}
+#| eval: false
+# Function to test upload speed
+test_upload_speed <- function(url, test_size_bytes = 1048576) {
+    # 1MB
+    # Create raw data for upload
+    # In R, raw vectors are used for binary data.
+    # This creates a raw vector of 'test_size_bytes' length filled with 0x78 (ASCII 'x')
+    data_to_upload <- as.raw(rep(charToRaw("x"), test_size_bytes))
+
+    start_time <- Sys.time()
+
+    # Perform the POST request. The 'body' argument takes raw data.
+    response <- POST(url, body = data_to_upload, encode = "raw") # encode="raw" sends as-is
+
+    end_time <- Sys.time()
+    duration <- as.numeric(difftime(end_time, start_time, units = "secs"))
+
+    if (duration == 0) {
+        return(Inf) # Avoid division by zero if duration is extremely small
+    }
+
+    # Check if the upload was successful
+    if (status_code(response) != 200) {
+        warning("Upload request failed with status code: ", status_code(response))
+        # Optionally print response content for debugging
+        # print(content(response, "text", encoding = "UTF-8"))
+        return(NA) # Return NA if upload failed
+    }
+
+    # Calculate Mbps: (bytes * 8 bits/byte) / (duration in seconds * 1,000,000 bits/Mb)
+    mbps <- (test_size_bytes * 8) / (duration * 1e6)
+    return(mbps)
+}
+```
+
+```{r}
+#| eval: false
+# Define URLs (these are examples and might not be optimal for China mainland)
+download_url <- "http://speedtest.tele2.net/10MB.zip"
+upload_url <- "http://speedtest.cc.cloudxns.net/speedtest/upload.php"
+```
+
+```{r}
+#| eval: false
+# Test download speed
+message("Testing download speed...") # Use message for user-friendly output
+down_speed <- test_download_speed(download_url)
+if (!is.na(down_speed)) {
+    cat(sprintf("Download speed: %.2f Mbps\n", down_speed))
+} else {
+    cat("Download speed test failed.\n")
+}
+```
+
+```{r}
+#| eval: false
+# Test upload speed
+message("Testing upload speed...")
+up_speed <- test_upload_speed(upload_url)
+if (!is.na(up_speed)) {
+    cat(sprintf("Upload speed: %.2f Mbps\n", up_speed))
+} else {
+    cat("Upload speed test failed.\n")
+}
+```
+
+# Using Python
+
+The `reticulate` package allows you to call Python from within R.
+
+## Select Python version
+
+`reticulate::py_available()` checks if Python is available, and `reticulate::py_config()` shows the Python configuration that `reticulate` is using.
+
+```{r}
+reticulate::py_available()
+```
+
+```{r}
+reticulate::py_config()
+```
+
+## Run Python in R
+
+`source_python()` executes a Python script and makes its objects available in the R environment.
+
+```{r}
+#| eval: false
+source_python("flights.py")
+```
+
+# References
+
+## Official R Documentation
+- [R Project for Statistical Computing](https://www.r-project.org/)
+- [CRAN Package Repository](https://cran.r-project.org/)
+- [R Documentation](https://rdocumentation.org/)
+
+## R Version Management
+- [rig - R Installation Manager](https://github.com/r-lib/rig)
+
+## Package Management
+- [pak Documentation](https://pak.r-lib.org/)
+- [renv - Reproducible Environments](https://rstudio.github.io/renv/)
+
+## Python Integration
+- [reticulate Package](https://rstudio.github.io/reticulate/)
+- [Python-R Integration Guide](https://docs.rstudio.com/tutorials/user/using-python-with-rstudio-and-reticulate/)
+
+## Learning Resources
+- [Quick-R](https://www.statmethods.net/)
+- [R for Data Science](https://r4ds.hadley.nz/)
+- [Advanced R](https://adv-r.hadley.nz/)
+- [Hands-On Programming with R](https://rstudio-education.github.io/hopr/)
+
+## Community
+- [RStudio Community](https://community.rstudio.com/)
+- [Stack Overflow - R](https://stackoverflow.com/questions/tagged/r)
+- [R-bloggers](https://www.r-bloggers.com/)
+
+```{r, attr.output='.details summary="sessionInfo()"'}
+sessionInfo()
+```

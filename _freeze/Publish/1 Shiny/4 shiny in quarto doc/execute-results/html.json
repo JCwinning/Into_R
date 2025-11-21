@@ -1,0 +1,15 @@
+{
+  "hash": "040d8a7b1ac4eee712b9a43717d79827",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Shiny in quarto doc\"\nauthor: \"Tony Duan\"\n\nexecute:\n  warning: false\n  error: false\n  eval: false\nformat:\n  html:\n    toc: true\n    toc-location: right\n    code-fold: show\n    code-tools: true\n    number-sections: true\n    code-block-bg: true\n    code-block-border-left: \"#31BAE9\"\n---\n\n# step 1 add in header\n\n```yaml\n---\n\nformat: html server: shiny\n  \n---\n```\n\n\n\n# step 2 make shinyapp\n::: {.cell context='setup'}\n\n```{.r .cell-code}\nlibrary(bslib)\nlibrary(ggplot2)\n```\n:::\n\n\n\n## server\n\n::: {.cell context='server'}\n\n```{.r .cell-code}\noutput$output_plot <- shiny::renderPlot({\n  palmerpenguins::penguins |> \n    dplyr::filter(\n      species %in% input$select_species,\n      body_mass_g >= input$slider_weight\n    ) |> \n    ggplot(\n      aes(\n        x = bill_length_mm, \n        y = flipper_length_mm, \n        fill = species\n      )\n    ) +\n    geom_point(\n      shape = 21, \n      size = 6, \n      col = 'black'\n    ) +\n    labs(\n      x = 'Bill length (in mm)',\n      y = 'Flipper length (in mm)',\n      fill = 'Species',\n      title = 'Penguins from the Palmer Archipelago'\n    ) +\n    theme_minimal(\n      base_size = 20, \n      base_family = 'Source Sans Pro'\n    ) +\n    scale_fill_manual(\n      values = c(\n        Adelie = '#0072B2', \n        Gentoo = '#009E73',\n        Chinstrap = '#CC79A7'\n      ),\n    ) +\n    coord_cartesian(\n      xlim = c(30, 60), \n      ylim = c(170, 240)\n    )\n})\n```\n:::\n\n\n\n## ui\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\nlayout_sidebar(\n  height = 600,\n  sidebar =  sidebar(\n    shiny::selectizeInput(\n      'select_species', \n      'Highlighted Species', \n      choices = c('Adelie', 'Chinstrap', 'Gentoo'),\n      selected = c('Adelie', 'Chinstrap', 'Gentoo'),\n      multiple = TRUE\n    ),\n    shiny::sliderInput(\n      'slider_weight',\n      'Minimum Weight (g)',\n      min = 1000,\n      max = 5000,\n      value = 3000\n    )\n  ),\n  shiny::plotOutput('output_plot')\n)\n```\n:::\n\n\n![](images/clipboard-3592128566.png)\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

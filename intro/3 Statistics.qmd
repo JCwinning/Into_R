@@ -1,0 +1,153 @@
+---
+title: "Statistics"
+author: "Tony D"
+
+execute:
+  warning: false
+  error: false
+format:
+  html:
+    toc: true
+    toc-location: right
+    code-fold: show
+    code-tools: true
+    number-sections: true
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-copy: true
+---
+
+# Statistics
+
+![](images/clipboard-3130517444.png)
+
+# Variable Types
+
+In statistics, variables are characteristics that can be measured or observed and can vary among different subjects or units.
+
+![](images/clipboard-3451992727.png)
+
+## Categorical Variables
+
+Categorical variables place individuals or items into groups or categories.
+
+**Examples:**
+- Gender (Male, Female, Other)
+- Blood Type (A, B, AB, O)
+- Education Level (High School, Bachelor's, Master's, PhD)
+
+![](images/clipboard-1604956688.png)
+
+## Quantitative Variables
+
+Quantitative variables take numerical values and represent some kind of measurement.
+
+**Examples:**
+- Height (in centimeters or inches)
+- Temperature (in Celsius or Fahrenheit)
+- Income (in dollars or other currency)
+
+![](images/clipboard-292256406.png)
+
+# Measures of Spread
+
+## Variance vs Standard Deviation
+
+Both variance and standard deviation measure how spread out the data points are from the mean.
+
+**Variance**: The average of the squared differences from the mean.
+
+**Standard Deviation**: The square root of the variance, expressed in the same units as the original data.
+
+**Interquartile Range (IQR)**: The range between the 25th and 75th percentiles, representing the middle 50% of the data.
+
+![](images/clipboard-4130404561.png)
+
+
+# Measures of Central Tendency
+
+## Centrality: Mean, Median, Mode
+
+**Mean**: The average of all values, calculated by summing all values and dividing by the count.
+
+**Median**: The middle value when data is ordered from smallest to largest.
+
+**Mode**: The value that appears most frequently in the dataset.
+
+## Covariance and Correlation
+
+When analyzing data, it's often useful to be able to investigate the relationship between two numeric variables to assess trends. For example, you might expect height and weight observations to have a noticeable positive relationship—taller people tend to weigh more. Conversely, you might imagine that handspan and length of hair would have less of an association. One of the simplest and most common ways such associations are quantified and compared is through the idea of correlation, for which you need the covariance. The covariance expresses how much two numeric variables "change together" and the nature of that relationship.
+
+### Example in R
+
+Let's calculate covariance and correlation using the `built-in` `mtcars` dataset.
+
+```{r}
+data(mtcars)
+cov(mtcars$wt, mtcars$mpg)  # Covariance between weight and mpg
+cor(mtcars$wt, mtcars$mpg)  # Correlation between weight and mpg
+```
+
+Negative correlation: as weight increases, mpg decreases.
+
+#### Scatterplot to visualize
+
+```{r}
+plot(mtcars$wt, mtcars$mpg, xlab = "Weight", ylab = "Miles per Gallon")
+abline(lm(mpg ~ wt, data = mtcars), col = "red")  # Regression line
+```
+
+### Variance, Standard Deviation, Mean, Median
+
+Using the `mtcars` dataset for demonstration.
+
+```{r}
+mean(mtcars$mpg)   # Mean
+median(mtcars$mpg) # Median
+var(mtcars$mpg)    # Variance
+sd(mtcars$mpg)     # Standard Deviation
+IQR(mtcars$mpg)    # Interquartile Range
+```
+
+#### Histogram for distribution
+
+```{r}
+hist(mtcars$mpg, main = "Histogram of MPG", xlab = "Miles per Gallon")
+```
+
+## Correlation, Pearson's product-moment correlation coefficient
+
+Pearson's sample correlation coefficient ρxy is computed by dividing the sample covariance by the product of the standard deviation of each data set.
+
+![](images/clipboard-1822919442.png)
+
+Some Correlation Example:
+
+![](images/clipboard-775702636.png)
+
+
+
+
+# References
+
+## Video Tutorials
+- [Statistics Fundamentals](https://www.youtube.com/watch?v=MXaJ7sa7q-8)
+
+## Books
+- **Statistics in Plain English** by Timothy C. Urdan
+- **The Elements of Statistical Learning** by Hastie, Tibshirani, and Friedman
+- **Practical Statistics for Data Scientists** by Peter Bruce and Andrew Bruce
+- **An Introduction to Statistical Learning** by James, Witten, Hastie, and Tibshirani - [Free online](https://www.statlearning.com/)
+
+## Online Resources
+- [Khan Academy - Statistics and Probability](https://www.khanacademy.org/math/statistics-probability)
+- [Seeing Theory - Visual Introduction to Probability and Statistics](https://seeing-theory.brown.edu/)
+- [Penn State STAT 500](https://online.stat.psu.edu/stat500/)
+
+## R Resources
+- [Quick-R - Descriptive Statistics](https://www.statmethods.net/stats/descriptives.html)
+- [R Documentation - stats package](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/00Index.html)
+
+```{r, attr.output='.details summary="sessionInfo()"'}
+sessionInfo()
+```

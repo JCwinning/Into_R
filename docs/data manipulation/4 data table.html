@@ -1,0 +1,2038 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Tony D">
+
+<title>Data Tables in R – R Handbook</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../Rlogo.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-8116483b35b7c59d831d40773437fcbf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<link href="../site_libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+<script src="../site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<link href="../site_libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet">
+<script src="../site_libs/datatables-binding-0.33/datatables.js"></script>
+<script src="../site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<link href="../site_libs/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
+<link href="../site_libs/dt-core-1.13.6/css/jquery.dataTables.extra.css" rel="stylesheet">
+<script src="../site_libs/dt-core-1.13.6/js/jquery.dataTables.min.js"></script>
+<link href="../site_libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet">
+<script src="../site_libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
+<script src="../site_libs/jszip-1.13.6/jszip.min.js"></script>
+<script src="../site_libs/pdfmake-1.13.6/pdfmake.js"></script>
+<script src="../site_libs/pdfmake-1.13.6/vfs_fonts.js"></script>
+<link href="../site_libs/dt-ext-buttons-1.13.6/css/buttons.dataTables.min.css" rel="stylesheet">
+<script src="../site_libs/dt-ext-buttons-1.13.6/js/dataTables.buttons.min.js"></script>
+<script src="../site_libs/dt-ext-buttons-1.13.6/js/buttons.html5.min.js"></script>
+<script src="../site_libs/dt-ext-buttons-1.13.6/js/buttons.colVis.min.js"></script>
+<script src="../site_libs/dt-ext-buttons-1.13.6/js/buttons.print.min.js"></script>
+<script src="../site_libs/core-js-2.5.3/shim.min.js"></script>
+<script src="../site_libs/react-18.2.0/react.min.js"></script>
+<script src="../site_libs/react-18.2.0/react-dom.min.js"></script>
+<script src="../site_libs/reactwidget-2.0.0/react-tools.js"></script>
+<link href="../site_libs/reactable-0.4.4/reactable.css" rel="stylesheet">
+<script src="../site_libs/reactable-binding-0.4.4/reactable.js"></script>
+<script src="../site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="../site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+<link href="../site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="../site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="../site_libs/tabwid-1.1.3/tabwid.css" rel="stylesheet">
+<script src="../site_libs/tabwid-1.1.3/tabwid.js"></script>
+
+
+<link rel="stylesheet" href="../styles.css">
+<meta name="twitter:title" content="Data Tables in R – R Handbook">
+<meta name="twitter:description" content="">
+<meta name="twitter:image" content="images/clipboard-141935303.png">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../Rlogo.png" alt="" class="navbar-logo light-content">
+    <img src="../Rlogo.png" alt="" class="navbar-logo dark-content">
+    </a>
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">R Handbook</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../index.html" aria-current="page"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-intro" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">intro</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-intro">    
+        <li class="dropdown-header">Intro</li>
+        <li>
+    <a class="dropdown-item" href="../intro/1 basic R.html">
+ <span class="dropdown-text">Basic R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../intro/2 probability.html">
+ <span class="dropdown-text">Probability</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../intro/3 Statistics.html">
+ <span class="dropdown-text">Statistics</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../intro/5 R book.html">
+ <span class="dropdown-text">R Books</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../intro/6 data analytic in R book.html">
+ <span class="dropdown-text">Data Analytics in R - Recommended Books</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../intro/7 error handling.html">
+ <span class="dropdown-text">Error handling</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-data" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Data</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-data">    
+        <li class="dropdown-header">data manipulation</li>
+        <li>
+    <a class="dropdown-item" href="../data manipulation/1 input output.html">
+ <span class="dropdown-text">Input &amp; Output in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../data manipulation/2 data_structure.html">
+ <span class="dropdown-text">Data Structures in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../data manipulation/3 data manipulation with tidyverse.html">
+ <span class="dropdown-text">Data Manipulation with tidyverse</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../data manipulation/4 data table.html">
+ <span class="dropdown-text">Data Tables in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../data manipulation/5 recipe.html">
+ <span class="dropdown-text">Recipe in tidymodels</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../data manipulation/6 resample.html">
+ <span class="dropdown-text">Resampling Methods in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../data manipulation/7 SQL database.html">
+ <span class="dropdown-text">Working with SQL Databases in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../data manipulation/8 data management.html">
+ <span class="dropdown-text">Data management</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-ploting" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Ploting</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-ploting">    
+        <li class="dropdown-header">Plot</li>
+        <li>
+    <a class="dropdown-item" href="../Plot/1 ggplot2.html">
+ <span class="dropdown-text">ggplot2 in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../Plot/2 plotly.html">
+ <span class="dropdown-text">Plotly in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../Plot/3 image processing.html">
+ <span class="dropdown-text">image processing</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../Plot/4 Financial data.html">
+ <span class="dropdown-text">Plot Financial data</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../Plot/Map/1 leaflet.html">
+ <span class="dropdown-text">Map</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-publishing" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Publishing</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-publishing">    
+        <li class="dropdown-header">Publish</li>
+        <li>
+    <a class="dropdown-item" href="../Publish/email/email.html">
+ <span class="dropdown-text">Email</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../Publish/git/git.html">
+ <span class="dropdown-text">Git</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../Publish/quarto/1 quarto intro.html">
+ <span class="dropdown-text">Quarto</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../Publish/Shiny/1 shiny weight tracking.html">
+ <span class="dropdown-text">Shiny</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-other" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Other</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-other">    
+        <li class="dropdown-header">Other</li>
+        <li>
+    <a class="dropdown-item" href="../other/google analytics/1 google analytics.html">
+ <span class="dropdown-text">google analytics</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../other/other/1 chromote.html">
+ <span class="dropdown-text">Other</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../other/web scrap/1 web scrap with rvest.html">
+ <span class="dropdown-text">web scrap</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../data manipulation/1 input output.html">data manipulation</a></li><li class="breadcrumb-item"><a href="../data manipulation/4 data table.html">Data Tables in R</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="../index.html" class="sidebar-logo-link">
+      </a>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">data manipulation</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../data manipulation/1 input output.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Input &amp; Output in R</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../data manipulation/2 data_structure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data Structures in R</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../data manipulation/3 data manipulation with tidyverse.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data Manipulation with tidyverse</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../data manipulation/4 data table.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Data Tables in R</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../data manipulation/5 recipe.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Recipe in tidymodels</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../data manipulation/6 resample.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Resampling Methods in R</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../data manipulation/7 SQL database.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Working with SQL Databases in R</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../data manipulation/8 data management.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data management</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#gt-for-beautiful-presentation-ready-tables" id="toc-gt-for-beautiful-presentation-ready-tables" class="nav-link active" data-scroll-target="#gt-for-beautiful-presentation-ready-tables"><span class="header-section-number">1</span> 1. <code>gt</code>: For Beautiful, Presentation-Ready Tables</a></li>
+  <li><a href="#dt-for-interactive-data-exploration" id="toc-dt-for-interactive-data-exploration" class="nav-link" data-scroll-target="#dt-for-interactive-data-exploration"><span class="header-section-number">2</span> 2. <code>DT</code>: For Interactive Data Exploration</a>
+  <ul class="collapse">
+  <li><a href="#advanced-formatting-and-styling" id="toc-advanced-formatting-and-styling" class="nav-link" data-scroll-target="#advanced-formatting-and-styling"><span class="header-section-number">2.0.1</span> Advanced Formatting and Styling</a></li>
+  <li><a href="#table-export-buttons" id="toc-table-export-buttons" class="nav-link" data-scroll-target="#table-export-buttons"><span class="header-section-number">2.0.2</span> Table Export Buttons</a></li>
+  </ul></li>
+  <li><a href="#reactable-for-modern-and-feature-rich-interactive-tables" id="toc-reactable-for-modern-and-feature-rich-interactive-tables" class="nav-link" data-scroll-target="#reactable-for-modern-and-feature-rich-interactive-tables"><span class="header-section-number">3</span> 3. <code>reactable</code>: For Modern and Feature-Rich Interactive Tables</a></li>
+  <li><a href="#knitrkable-for-simple-static-tables" id="toc-knitrkable-for-simple-static-tables" class="nav-link" data-scroll-target="#knitrkable-for-simple-static-tables"><span class="header-section-number">4</span> 4. <code>knitr::kable</code>: For Simple, Static Tables</a></li>
+  <li><a href="#flextable-for-publication-ready-tables-in-office-documents" id="toc-flextable-for-publication-ready-tables-in-office-documents" class="nav-link" data-scroll-target="#flextable-for-publication-ready-tables-in-office-documents"><span class="header-section-number">5</span> 5. <code>flextable</code>: For Publication-Ready Tables in Office Documents</a></li>
+  <li><a href="#conclusion-which-package-should-you-use" id="toc-conclusion-which-package-should-you-use" class="nav-link" data-scroll-target="#conclusion-which-package-should-you-use"><span class="header-section-number">6</span> 6. Conclusion: Which Package Should You Use?</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">7</span> 7. References</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../data manipulation/1 input output.html">data manipulation</a></li><li class="breadcrumb-item"><a href="../data manipulation/4 data table.html">Data Tables in R</a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Data Tables in R</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Tony D </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>This document provides a comprehensive guide to creating a wide variety of tables in R, from simple static tables to complex, interactive, and publication-ready displays. We will explore several powerful packages, each with its own strengths.</p>
+<section id="gt-for-beautiful-presentation-ready-tables" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> 1. <code>gt</code>: For Beautiful, Presentation-Ready Tables</h1>
+<p><img src="https://gt.rstudio.com/reference/figures/logo.svg" class="img-fluid" width="200"></p>
+<p>The <code>gt</code> package is designed for creating beautiful and highly customizable tables. It follows a “grammar of tables” philosophy, allowing you to build a table layer by layer, from the data to the header, footer, and cell formatting. This makes it ideal for tables in reports, presentations, and publications where appearance and clarity are paramount.</p>
+<p><img src="https://gt.rstudio.com/reference/figures/gt_parts_of_a_table.svg" class="img-fluid"></p>
+<p>This example demonstrates how to create a rich, informative table from the <code>sp500</code> dataset included with <code>gt</code>.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glue)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the start and end dates for the data range</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>start_date <span class="ot">&lt;-</span> <span class="st">"2010-06-07"</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>end_date <span class="ot">&lt;-</span> <span class="st">"2010-06-14"</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a gt table from preprocessed sp500 data</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>sp500 <span class="sc">|&gt;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">&gt;=</span> start_date <span class="sc">&amp;</span> date <span class="sc">&lt;=</span> end_date) <span class="sc">|&gt;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>adj_close) <span class="sc">|&gt;</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">|&gt;</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add a title and subtitle using markdown for formatting</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_header</span>(</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="fu">md</span>(<span class="st">"**S&amp;P 500 Daily Prices**"</span>),</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="fu">glue</span>(<span class="st">"Data from {start_date} to {end_date}"</span>)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Format columns for currency, dates, and large numbers</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_currency</span>(<span class="at">columns =</span> <span class="fu">c</span>(open, high, low, close)) <span class="sc">|&gt;</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_date</span>(<span class="at">columns =</span> date, <span class="at">date_style =</span> <span class="st">"wd_m_day_year"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_number</span>(<span class="at">columns =</span> volume, <span class="at">suffixing =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add a source note with a link</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_source_note</span>(</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">source_note =</span> <span class="fu">html</span>(<span class="st">"Source: &lt;a href='https://www.spglobal.com/'&gt;S&amp;P Global&lt;/a&gt;"</span>)</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Center-align all columns</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_align</span>(</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">align =</span> <span class="st">"center"</span>,</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> <span class="fu">everything</span>()</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add a color scale to the `close` column to highlight values</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_color</span>(</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> close,</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">colors =</span> scales<span class="sc">::</span><span class="fu">col_numeric</span>(</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>      <span class="at">palette =</span> <span class="fu">c</span>(<span class="st">"#FEEBDB"</span>, <span class="st">"#FDD8B0"</span>, <span class="st">"#FDC686"</span>, <span class="st">"#FDB35B"</span>, <span class="st">"#FD9F2C"</span>),</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>      <span class="at">domain =</span> <span class="fu">range</span>(sp500<span class="sc">$</span>close)</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div id="oleexyffbf" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#oleexyffbf table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#oleexyffbf thead, #oleexyffbf tbody, #oleexyffbf tfoot, #oleexyffbf tr, #oleexyffbf td, #oleexyffbf th {
+  border-style: none;
+}
+
+#oleexyffbf p {
+  margin: 0;
+  padding: 0;
+}
+
+#oleexyffbf .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#oleexyffbf .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#oleexyffbf .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#oleexyffbf .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#oleexyffbf .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#oleexyffbf .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#oleexyffbf .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#oleexyffbf .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#oleexyffbf .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#oleexyffbf .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#oleexyffbf .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#oleexyffbf .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#oleexyffbf .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#oleexyffbf .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#oleexyffbf .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#oleexyffbf .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#oleexyffbf .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#oleexyffbf .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#oleexyffbf .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#oleexyffbf .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#oleexyffbf .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#oleexyffbf .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#oleexyffbf .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#oleexyffbf .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#oleexyffbf .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#oleexyffbf .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#oleexyffbf .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#oleexyffbf .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#oleexyffbf .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#oleexyffbf .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#oleexyffbf .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#oleexyffbf .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#oleexyffbf .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#oleexyffbf .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#oleexyffbf .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#oleexyffbf .gt_left {
+  text-align: left;
+}
+
+#oleexyffbf .gt_center {
+  text-align: center;
+}
+
+#oleexyffbf .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#oleexyffbf .gt_font_normal {
+  font-weight: normal;
+}
+
+#oleexyffbf .gt_font_bold {
+  font-weight: bold;
+}
+
+#oleexyffbf .gt_font_italic {
+  font-style: italic;
+}
+
+#oleexyffbf .gt_super {
+  font-size: 65%;
+}
+
+#oleexyffbf .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#oleexyffbf .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#oleexyffbf .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#oleexyffbf .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#oleexyffbf .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#oleexyffbf .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#oleexyffbf .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#oleexyffbf .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#oleexyffbf div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_heading header">
+<td colspan="6" class="gt_heading gt_title gt_font_normal"><strong>S&amp;P 500 Daily Prices</strong></td>
+</tr>
+<tr class="gt_heading even">
+<td colspan="6" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border">Data from 2010-06-07 to 2010-06-14</td>
+</tr>
+<tr class="gt_col_headings header">
+<th id="date" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">date</th>
+<th id="open" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">open</th>
+<th id="high" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">high</th>
+<th id="low" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">low</th>
+<th id="close" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">close</th>
+<th id="volume" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">volume</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_center" headers="date">Mon, Jun 14, 2010</td>
+<td class="gt_row gt_center" headers="open">$1,095.00</td>
+<td class="gt_row gt_center" headers="high">$1,105.91</td>
+<td class="gt_row gt_center" headers="low">$1,089.03</td>
+<td class="gt_row gt_center" headers="close" style="background-color: #FDC585; color: #000000">$1,089.63</td>
+<td class="gt_row gt_center" headers="volume">4.43B</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="date">Fri, Jun 11, 2010</td>
+<td class="gt_row gt_center" headers="open">$1,082.65</td>
+<td class="gt_row gt_center" headers="high">$1,092.25</td>
+<td class="gt_row gt_center" headers="low">$1,077.12</td>
+<td class="gt_row gt_center" headers="close" style="background-color: #FDC585; color: #000000">$1,091.60</td>
+<td class="gt_row gt_center" headers="volume">4.06B</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="date">Thu, Jun 10, 2010</td>
+<td class="gt_row gt_center" headers="open">$1,058.77</td>
+<td class="gt_row gt_center" headers="high">$1,087.85</td>
+<td class="gt_row gt_center" headers="low">$1,058.77</td>
+<td class="gt_row gt_center" headers="close" style="background-color: #FDC685; color: #000000">$1,086.84</td>
+<td class="gt_row gt_center" headers="volume">5.14B</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="date">Wed, Jun 9, 2010</td>
+<td class="gt_row gt_center" headers="open">$1,062.75</td>
+<td class="gt_row gt_center" headers="high">$1,077.74</td>
+<td class="gt_row gt_center" headers="low">$1,052.25</td>
+<td class="gt_row gt_center" headers="close" style="background-color: #FDC787; color: #000000">$1,055.69</td>
+<td class="gt_row gt_center" headers="volume">5.98B</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="date">Tue, Jun 8, 2010</td>
+<td class="gt_row gt_center" headers="open">$1,050.81</td>
+<td class="gt_row gt_center" headers="high">$1,063.15</td>
+<td class="gt_row gt_center" headers="low">$1,042.17</td>
+<td class="gt_row gt_center" headers="close" style="background-color: #FDC687; color: #000000">$1,062.00</td>
+<td class="gt_row gt_center" headers="volume">6.19B</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="date">Mon, Jun 7, 2010</td>
+<td class="gt_row gt_center" headers="open">$1,065.84</td>
+<td class="gt_row gt_center" headers="high">$1,071.36</td>
+<td class="gt_row gt_center" headers="low">$1,049.86</td>
+<td class="gt_row gt_center" headers="close" style="background-color: #FDC788; color: #000000">$1,050.47</td>
+<td class="gt_row gt_center" headers="volume">5.47B</td>
+</tr>
+</tbody><tfoot class="gt_sourcenotes">
+<tr class="odd">
+<td colspan="6" class="gt_sourcenote">Source: <a href="https://www.spglobal.com/">S&amp;P Global</a></td>
+</tr>
+</tfoot>
+
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="dt-for-interactive-data-exploration" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> 2. <code>DT</code>: For Interactive Data Exploration</h1>
+<p>The <code>DT</code> package provides an R interface to the powerful JavaScript library DataTables. It turns a standard R data frame into an interactive HTML table that supports live filtering, pagination, sorting, and exporting. It is perfect for data exploration in R Markdown documents and Shiny apps.</p>
+<p><img src="images/clipboard-141935303.png" class="img-fluid" width="212"></p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DT)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>This is a basic example of an interactive table using the <code>iris</code> dataset.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">|&gt;</span> <span class="fu">datatable</span>(<span class="at">options =</span> <span class="fu">list</span>(<span class="at">pageLength =</span> <span class="dv">5</span>, <span class="at">scrollX =</span> <span class="cn">TRUE</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div class="datatables html-widget html-fill-item" id="htmlwidget-c3ea85a4b01f36f832a7" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-c3ea85a4b01f36f832a7">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72","73","74","75","76","77","78","79","80","81","82","83","84","85","86","87","88","89","90","91","92","93","94","95","96","97","98","99","100","101","102","103","104","105","106","107","108","109","110","111","112","113","114","115","116","117","118","119","120","121","122","123","124","125","126","127","128","129","130","131","132","133","134","135","136","137","138","139","140","141","142","143","144","145","146","147","148","149","150"],[5.1,4.9,4.7,4.6,5,5.4,4.6,5,4.4,4.9,5.4,4.8,4.8,4.3,5.8,5.7,5.4,5.1,5.7,5.1,5.4,5.1,4.6,5.1,4.8,5,5,5.2,5.2,4.7,4.8,5.4,5.2,5.5,4.9,5,5.5,4.9,4.4,5.1,5,4.5,4.4,5,5.1,4.8,5.1,4.6,5.3,5,7,6.4,6.9,5.5,6.5,5.7,6.3,4.9,6.6,5.2,5,5.9,6,6.1,5.6,6.7,5.6,5.8,6.2,5.6,5.9,6.1,6.3,6.1,6.4,6.6,6.8,6.7,6,5.7,5.5,5.5,5.8,6,5.4,6,6.7,6.3,5.6,5.5,5.5,6.1,5.8,5,5.6,5.7,5.7,6.2,5.1,5.7,6.3,5.8,7.1,6.3,6.5,7.6,4.9,7.3,6.7,7.2,6.5,6.4,6.8,5.7,5.8,6.4,6.5,7.7,7.7,6,6.9,5.6,7.7,6.3,6.7,7.2,6.2,6.1,6.4,7.2,7.4,7.9,6.4,6.3,6.1,7.7,6.3,6.4,6,6.9,6.7,6.9,5.8,6.8,6.7,6.7,6.3,6.5,6.2,5.9],[3.5,3,3.2,3.1,3.6,3.9,3.4,3.4,2.9,3.1,3.7,3.4,3,3,4,4.4,3.9,3.5,3.8,3.8,3.4,3.7,3.6,3.3,3.4,3,3.4,3.5,3.4,3.2,3.1,3.4,4.1,4.2,3.1,3.2,3.5,3.6,3,3.4,3.5,2.3,3.2,3.5,3.8,3,3.8,3.2,3.7,3.3,3.2,3.2,3.1,2.3,2.8,2.8,3.3,2.4,2.9,2.7,2,3,2.2,2.9,2.9,3.1,3,2.7,2.2,2.5,3.2,2.8,2.5,2.8,2.9,3,2.8,3,2.9,2.6,2.4,2.4,2.7,2.7,3,3.4,3.1,2.3,3,2.5,2.6,3,2.6,2.3,2.7,3,2.9,2.9,2.5,2.8,3.3,2.7,3,2.9,3,3,2.5,2.9,2.5,3.6,3.2,2.7,3,2.5,2.8,3.2,3,3.8,2.6,2.2,3.2,2.8,2.8,2.7,3.3,3.2,2.8,3,2.8,3,2.8,3.8,2.8,2.8,2.6,3,3.4,3.1,3,3.1,3.1,3.1,2.7,3.2,3.3,3,2.5,3,3.4,3],[1.4,1.4,1.3,1.5,1.4,1.7,1.4,1.5,1.4,1.5,1.5,1.6,1.4,1.1,1.2,1.5,1.3,1.4,1.7,1.5,1.7,1.5,1,1.7,1.9,1.6,1.6,1.5,1.4,1.6,1.6,1.5,1.5,1.4,1.5,1.2,1.3,1.4,1.3,1.5,1.3,1.3,1.3,1.6,1.9,1.4,1.6,1.4,1.5,1.4,4.7,4.5,4.9,4,4.6,4.5,4.7,3.3,4.6,3.9,3.5,4.2,4,4.7,3.6,4.4,4.5,4.1,4.5,3.9,4.8,4,4.9,4.7,4.3,4.4,4.8,5,4.5,3.5,3.8,3.7,3.9,5.1,4.5,4.5,4.7,4.4,4.1,4,4.4,4.6,4,3.3,4.2,4.2,4.2,4.3,3,4.1,6,5.1,5.9,5.6,5.8,6.6,4.5,6.3,5.8,6.1,5.1,5.3,5.5,5,5.1,5.3,5.5,6.7,6.9,5,5.7,4.9,6.7,4.9,5.7,6,4.8,4.9,5.6,5.8,6.1,6.4,5.6,5.1,5.6,6.1,5.6,5.5,4.8,5.4,5.6,5.1,5.1,5.9,5.7,5.2,5,5.2,5.4,5.1],[0.2,0.2,0.2,0.2,0.2,0.4,0.3,0.2,0.2,0.1,0.2,0.2,0.1,0.1,0.2,0.4,0.4,0.3,0.3,0.3,0.2,0.4,0.2,0.5,0.2,0.2,0.4,0.2,0.2,0.2,0.2,0.4,0.1,0.2,0.2,0.2,0.2,0.1,0.2,0.2,0.3,0.3,0.2,0.6,0.4,0.3,0.2,0.2,0.2,0.2,1.4,1.5,1.5,1.3,1.5,1.3,1.6,1,1.3,1.4,1,1.5,1,1.4,1.3,1.4,1.5,1,1.5,1.1,1.8,1.3,1.5,1.2,1.3,1.4,1.4,1.7,1.5,1,1.1,1,1.2,1.6,1.5,1.6,1.5,1.3,1.3,1.3,1.2,1.4,1.2,1,1.3,1.2,1.3,1.3,1.1,1.3,2.5,1.9,2.1,1.8,2.2,2.1,1.7,1.8,1.8,2.5,2,1.9,2.1,2,2.4,2.3,1.8,2.2,2.3,1.5,2.3,2,2,1.8,2.1,1.8,1.8,1.8,2.1,1.6,1.9,2,2.2,1.5,1.4,2.3,2.4,1.8,1.8,2.1,2.4,2.3,1.9,2.3,2.5,2.3,1.9,2,2.3,1.8],["setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sepal.Length<\/th>\n      <th>Sepal.Width<\/th>\n      <th>Petal.Length<\/th>\n      <th>Petal.Width<\/th>\n      <th>Species<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"scrollX":true,"columnDefs":[{"className":"dt-right","targets":[1,2,3,4]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sepal.Length","targets":1},{"name":"Sepal.Width","targets":2},{"name":"Petal.Length","targets":3},{"name":"Petal.Width","targets":4},{"name":"Species","targets":5}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<section id="advanced-formatting-and-styling" class="level3" data-number="2.0.1">
+<h3 data-number="2.0.1" class="anchored" data-anchor-id="advanced-formatting-and-styling"><span class="header-section-number">2.0.1</span> Advanced Formatting and Styling</h3>
+<p><code>DT</code> allows for extensive styling using the <code>format*()</code> family of functions. You can add color bars, conditional formatting, and more.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Take a sample of the iris dataset for a cleaner look</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>sample_iris <span class="ot">&lt;-</span> iris[<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">51</span><span class="sc">:</span><span class="dv">55</span>, <span class="dv">101</span><span class="sc">:</span><span class="dv">105</span>), ]</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>sample_iris <span class="sc">|&gt;</span> </span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">datatable</span>(<span class="at">options =</span> <span class="fu">list</span>(<span class="at">pageLength =</span> <span class="dv">5</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Bold the Sepal.Length for values &gt; 5</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">formatStyle</span>(<span class="st">'Sepal.Length'</span>, <span class="at">fontWeight =</span> <span class="fu">styleInterval</span>(<span class="dv">5</span>, <span class="fu">c</span>(<span class="st">'normal'</span>, <span class="st">'bold'</span>))) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Apply conditional colors to Sepal.Width</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">formatStyle</span>(</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Sepal.Width'</span>,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="fu">styleInterval</span>(<span class="fu">c</span>(<span class="fl">3.0</span>, <span class="fl">3.5</span>), <span class="fu">c</span>(<span class="st">'red'</span>, <span class="st">'orange'</span>, <span class="st">'green'</span>)),</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">backgroundColor =</span> <span class="fu">styleInterval</span>(<span class="fl">3.0</span>, <span class="fu">c</span>(<span class="st">'lightgray'</span>, <span class="st">'lightyellow'</span>))</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add a background color bar to Petal.Length</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">formatStyle</span>(</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Petal.Length'</span>,</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">background =</span> <span class="fu">styleColorBar</span>(<span class="fu">range</span>(iris<span class="sc">$</span>Petal.Length), <span class="st">'steelblue'</span>),</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">backgroundSize =</span> <span class="st">'100% 90%'</span>,</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">backgroundRepeat =</span> <span class="st">'no-repeat'</span>,</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">backgroundPosition =</span> <span class="st">'center'</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Style the Species column</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">formatStyle</span>(</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Species'</span>,</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">backgroundColor =</span> <span class="fu">styleEqual</span>(</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>      <span class="fu">unique</span>(iris<span class="sc">$</span>Species), <span class="fu">c</span>(<span class="st">'lightblue'</span>, <span class="st">'lightgreen'</span>, <span class="st">'lightpink'</span>)</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div class="datatables html-widget html-fill-item" id="htmlwidget-e811030681f0583c2e43" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-e811030681f0583c2e43">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","51","52","53","54","55","101","102","103","104","105"],[5.1,4.9,4.7,4.6,5,7,6.4,6.9,5.5,6.5,6.3,5.8,7.1,6.3,6.5],[3.5,3,3.2,3.1,3.6,3.2,3.2,3.1,2.3,2.8,3.3,2.7,3,2.9,3],[1.4,1.4,1.3,1.5,1.4,4.7,4.5,4.9,4,4.6,6,5.1,5.9,5.6,5.8],[0.2,0.2,0.2,0.2,0.2,1.4,1.5,1.5,1.3,1.5,2.5,1.9,2.1,1.8,2.2],["setosa","setosa","setosa","setosa","setosa","versicolor","versicolor","versicolor","versicolor","versicolor","virginica","virginica","virginica","virginica","virginica"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sepal.Length<\/th>\n      <th>Sepal.Width<\/th>\n      <th>Petal.Length<\/th>\n      <th>Petal.Width<\/th>\n      <th>Species<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"columnDefs":[{"className":"dt-right","targets":[1,2,3,4]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sepal.Length","targets":1},{"name":"Sepal.Width","targets":2},{"name":"Petal.Length","targets":3},{"name":"Petal.Width","targets":4},{"name":"Species","targets":5}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100],"rowCallback":"function(row, data, displayNum, displayIndex, dataIndex) {\nvar value=data[1]; $(this.api().cell(row, 1).node()).css({'font-weight':isNaN(parseFloat(value)) ? '' : value <= 5 ? \"normal\" : \"bold\"});\nvar value=data[2]; $(this.api().cell(row, 2).node()).css({'color':isNaN(parseFloat(value)) ? '' : value <= 3 ? \"red\" : value <= 3.5 ? \"orange\" : \"green\",'background-color':isNaN(parseFloat(value)) ? '' : value <= 3 ? \"lightgray\" : \"lightyellow\"});\nvar value=data[3]; $(this.api().cell(row, 3).node()).css({'background':isNaN(parseFloat(value)) || value <= 1.000000 ? '' : 'linear-gradient(90.000000deg, transparent ' + Math.max(6.900000 - value, 0)/5.900000 * 100 + '%, steelblue ' + Math.max(6.900000 - value, 0)/5.900000 * 100 + '%)','background-size':'100% 90%','background-repeat':'no-repeat','background-position':'center'});\nvar value=data[5]; $(this.api().cell(row, 5).node()).css({'background-color':value == \"setosa\" ? \"lightblue\" : value == \"versicolor\" ? \"lightgreen\" : value == \"virginica\" ? \"lightpink\" : null});\n}"}},"evals":["options.rowCallback"],"jsHooks":[]}</script>
+</div>
+</div>
+</section>
+<section id="table-export-buttons" class="level3" data-number="2.0.2">
+<h3 data-number="2.0.2" class="anchored" data-anchor-id="table-export-buttons"><span class="header-section-number">2.0.2</span> Table Export Buttons</h3>
+<p>The <code>Buttons</code> extension adds buttons to the table for exporting the data to formats like CSV, Excel, and PDF, or for copying to the clipboard.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">|&gt;</span> <span class="fu">datatable</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">extensions =</span> <span class="st">'Buttons'</span>, </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">options =</span> <span class="fu">list</span>(</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">dom =</span> <span class="st">'Bfrtip'</span>, <span class="co"># Defines the layout, B is for buttons</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">buttons =</span> <span class="fu">c</span>(<span class="st">'copy'</span>, <span class="st">'csv'</span>, <span class="st">'excel'</span>, <span class="st">'pdf'</span>, <span class="st">'print'</span>),</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">pageLength =</span> <span class="dv">5</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div class="datatables html-widget html-fill-item" id="htmlwidget-3f2c1eed6375d729e0e3" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-3f2c1eed6375d729e0e3">{"x":{"filter":"none","vertical":false,"extensions":["Buttons"],"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72","73","74","75","76","77","78","79","80","81","82","83","84","85","86","87","88","89","90","91","92","93","94","95","96","97","98","99","100","101","102","103","104","105","106","107","108","109","110","111","112","113","114","115","116","117","118","119","120","121","122","123","124","125","126","127","128","129","130","131","132","133","134","135","136","137","138","139","140","141","142","143","144","145","146","147","148","149","150"],[5.1,4.9,4.7,4.6,5,5.4,4.6,5,4.4,4.9,5.4,4.8,4.8,4.3,5.8,5.7,5.4,5.1,5.7,5.1,5.4,5.1,4.6,5.1,4.8,5,5,5.2,5.2,4.7,4.8,5.4,5.2,5.5,4.9,5,5.5,4.9,4.4,5.1,5,4.5,4.4,5,5.1,4.8,5.1,4.6,5.3,5,7,6.4,6.9,5.5,6.5,5.7,6.3,4.9,6.6,5.2,5,5.9,6,6.1,5.6,6.7,5.6,5.8,6.2,5.6,5.9,6.1,6.3,6.1,6.4,6.6,6.8,6.7,6,5.7,5.5,5.5,5.8,6,5.4,6,6.7,6.3,5.6,5.5,5.5,6.1,5.8,5,5.6,5.7,5.7,6.2,5.1,5.7,6.3,5.8,7.1,6.3,6.5,7.6,4.9,7.3,6.7,7.2,6.5,6.4,6.8,5.7,5.8,6.4,6.5,7.7,7.7,6,6.9,5.6,7.7,6.3,6.7,7.2,6.2,6.1,6.4,7.2,7.4,7.9,6.4,6.3,6.1,7.7,6.3,6.4,6,6.9,6.7,6.9,5.8,6.8,6.7,6.7,6.3,6.5,6.2,5.9],[3.5,3,3.2,3.1,3.6,3.9,3.4,3.4,2.9,3.1,3.7,3.4,3,3,4,4.4,3.9,3.5,3.8,3.8,3.4,3.7,3.6,3.3,3.4,3,3.4,3.5,3.4,3.2,3.1,3.4,4.1,4.2,3.1,3.2,3.5,3.6,3,3.4,3.5,2.3,3.2,3.5,3.8,3,3.8,3.2,3.7,3.3,3.2,3.2,3.1,2.3,2.8,2.8,3.3,2.4,2.9,2.7,2,3,2.2,2.9,2.9,3.1,3,2.7,2.2,2.5,3.2,2.8,2.5,2.8,2.9,3,2.8,3,2.9,2.6,2.4,2.4,2.7,2.7,3,3.4,3.1,2.3,3,2.5,2.6,3,2.6,2.3,2.7,3,2.9,2.9,2.5,2.8,3.3,2.7,3,2.9,3,3,2.5,2.9,2.5,3.6,3.2,2.7,3,2.5,2.8,3.2,3,3.8,2.6,2.2,3.2,2.8,2.8,2.7,3.3,3.2,2.8,3,2.8,3,2.8,3.8,2.8,2.8,2.6,3,3.4,3.1,3,3.1,3.1,3.1,2.7,3.2,3.3,3,2.5,3,3.4,3],[1.4,1.4,1.3,1.5,1.4,1.7,1.4,1.5,1.4,1.5,1.5,1.6,1.4,1.1,1.2,1.5,1.3,1.4,1.7,1.5,1.7,1.5,1,1.7,1.9,1.6,1.6,1.5,1.4,1.6,1.6,1.5,1.5,1.4,1.5,1.2,1.3,1.4,1.3,1.5,1.3,1.3,1.3,1.6,1.9,1.4,1.6,1.4,1.5,1.4,4.7,4.5,4.9,4,4.6,4.5,4.7,3.3,4.6,3.9,3.5,4.2,4,4.7,3.6,4.4,4.5,4.1,4.5,3.9,4.8,4,4.9,4.7,4.3,4.4,4.8,5,4.5,3.5,3.8,3.7,3.9,5.1,4.5,4.5,4.7,4.4,4.1,4,4.4,4.6,4,3.3,4.2,4.2,4.2,4.3,3,4.1,6,5.1,5.9,5.6,5.8,6.6,4.5,6.3,5.8,6.1,5.1,5.3,5.5,5,5.1,5.3,5.5,6.7,6.9,5,5.7,4.9,6.7,4.9,5.7,6,4.8,4.9,5.6,5.8,6.1,6.4,5.6,5.1,5.6,6.1,5.6,5.5,4.8,5.4,5.6,5.1,5.1,5.9,5.7,5.2,5,5.2,5.4,5.1],[0.2,0.2,0.2,0.2,0.2,0.4,0.3,0.2,0.2,0.1,0.2,0.2,0.1,0.1,0.2,0.4,0.4,0.3,0.3,0.3,0.2,0.4,0.2,0.5,0.2,0.2,0.4,0.2,0.2,0.2,0.2,0.4,0.1,0.2,0.2,0.2,0.2,0.1,0.2,0.2,0.3,0.3,0.2,0.6,0.4,0.3,0.2,0.2,0.2,0.2,1.4,1.5,1.5,1.3,1.5,1.3,1.6,1,1.3,1.4,1,1.5,1,1.4,1.3,1.4,1.5,1,1.5,1.1,1.8,1.3,1.5,1.2,1.3,1.4,1.4,1.7,1.5,1,1.1,1,1.2,1.6,1.5,1.6,1.5,1.3,1.3,1.3,1.2,1.4,1.2,1,1.3,1.2,1.3,1.3,1.1,1.3,2.5,1.9,2.1,1.8,2.2,2.1,1.7,1.8,1.8,2.5,2,1.9,2.1,2,2.4,2.3,1.8,2.2,2.3,1.5,2.3,2,2,1.8,2.1,1.8,1.8,1.8,2.1,1.6,1.9,2,2.2,1.5,1.4,2.3,2.4,1.8,1.8,2.1,2.4,2.3,1.9,2.3,2.5,2.3,1.9,2,2.3,1.8],["setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","versicolor","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica","virginica"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sepal.Length<\/th>\n      <th>Sepal.Width<\/th>\n      <th>Petal.Length<\/th>\n      <th>Petal.Width<\/th>\n      <th>Species<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"Bfrtip","buttons":["copy","csv","excel","pdf","print"],"pageLength":5,"columnDefs":[{"className":"dt-right","targets":[1,2,3,4]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sepal.Length","targets":1},{"name":"Sepal.Width","targets":2},{"name":"Petal.Length","targets":3},{"name":"Petal.Width","targets":4},{"name":"Species","targets":5}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</section>
+</section>
+<section id="reactable-for-modern-and-feature-rich-interactive-tables" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> 3. <code>reactable</code>: For Modern and Feature-Rich Interactive Tables</h1>
+<p><code>reactable</code> is another excellent package for creating interactive tables, known for its modern look, rich feature set, and ease of use. It supports sorting, filtering, grouping, and aggregation out of the box.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(reactable)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(reactablefmtr)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="st">"car_name"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(car_name, mpg, cyl, hp, gear) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">reactable</span>(</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">filterable =</span> <span class="cn">TRUE</span>, <span class="co"># Add column filters</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">searchable =</span> <span class="cn">TRUE</span>,   <span class="co"># Add a global search box</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">groupBy =</span> <span class="st">"cyl"</span>,     <span class="co"># Group by number of cylinders</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> <span class="fu">list</span>(</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">hp =</span> <span class="fu">colDef</span>(<span class="at">aggregate =</span> <span class="st">"mean"</span>, <span class="at">format =</span> <span class="fu">colFormat</span>(<span class="at">digits =</span> <span class="dv">1</span>)), <span class="co"># Show mean HP for each group</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">gear =</span> <span class="fu">colDef</span>(<span class="at">aggregate =</span> <span class="st">"max"</span>), <span class="co"># Show max gears for each group</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Custom cell rendering to add a bar chart for mpg</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">mpg =</span> <span class="fu">colDef</span>(<span class="at">cell =</span> <span class="fu">data_bars</span>(., <span class="at">text_position =</span> <span class="st">"above"</span>, <span class="at">box_shadow =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">defaultPageSize =</span> <span class="dv">10</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_title</span>(<span class="at">title =</span> <span class="st">'MTCars Dataset Summary'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_subtitle</span>(<span class="at">subtitle =</span> <span class="st">'Grouped by Cylinders'</span>, <span class="at">font_weight =</span> <span class="st">'normal'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<h1 style="color:#000;background:#FFFFFF;text-align:left;font-size:32px;font-style:normal;font-weight:bold;text-decoration:;letter-spacing:px;word-spacing:px;text-transform:;text-shadow:;margin-top:0px;margin-right:0px;margin-bottom:0px;margin-left:0px">MTCars Dataset Summary</h1>
+<h2 style="color:#000;background:#FFFFFF;text-align:left;font-size:24px;font-style:normal;font-weight:normal;text-decoration:;letter-spacing:px;word-spacing:px;text-transform:;text-shadow:;margin-top:0px;margin-right:0px;margin-bottom:0px;margin-left:0px" class="anchored" data-anchor-id="reactable-for-modern-and-feature-rich-interactive-tables">Grouped by Cylinders</h2>
+<div class="reactable html-widget html-fill-item" id="htmlwidget-99395cad0f214cbe161b" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-99395cad0f214cbe161b">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"car_name":["Mazda RX4","Mazda RX4 Wag","Datsun 710","Hornet 4 Drive","Hornet Sportabout","Valiant","Duster 360","Merc 240D","Merc 230","Merc 280","Merc 280C","Merc 450SE","Merc 450SL","Merc 450SLC","Cadillac Fleetwood","Lincoln Continental","Chrysler Imperial","Fiat 128","Honda Civic","Toyota Corolla","Toyota Corona","Dodge Challenger","AMC Javelin","Camaro Z28","Pontiac Firebird","Fiat X1-9","Porsche 914-2","Lotus Europa","Ford Pantera L","Ferrari Dino","Maserati Bora","Volvo 142E"],"mpg":[21,21,22.8,21.4,18.7,18.1,14.3,24.4,22.8,19.2,17.8,16.4,17.3,15.2,10.4,10.4,14.7,32.4,30.4,33.9,21.5,15.5,15.2,13.3,19.2,27.3,26,30.4,15.8,19.7,15,21.4],"cyl":[6,6,4,6,8,6,8,4,4,6,6,8,8,8,8,8,8,4,4,4,4,8,8,8,8,4,4,4,8,6,8,4],"hp":[110,110,93,110,175,105,245,62,95,123,123,180,180,180,205,215,230,66,52,65,97,150,150,245,175,66,91,113,264,175,335,109],"gear":[4,4,4,3,3,3,3,4,4,4,4,3,3,3,3,3,3,4,4,4,3,3,3,3,3,4,5,5,5,5,5,4]},"columns":[{"id":"car_name","name":"car_name","type":"character"},{"id":"mpg","name":"mpg","type":"numeric","cell":[{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center","justifyContent":"flex-start","textAlign":"left","color":"black","fontWeight":"normal","fontSize":null}},"children":["21"]},{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","boxShadow":"0 6px 6px -4px #888888","border":"  ","background":"#15607AFF","backgroundImage":null,"width":"61.9469026548673%","height":5,"transition":"width 1s ease"}},"children":[]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center","justifyContent":"flex-start","textAlign":"left","color":"black","fontWeight":"normal","fontSize":null}},"children":["21"]},{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","boxShadow":"0 6px 6px -4px #888888","border":"  ","background":"#15607AFF","backgroundImage":null,"width":"61.9469026548673%","height":5,"transition":"width 1s ease"}},"children":[]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center","justifyContent":"flex-start","textAlign":"left","color":"black","fontWeight":"normal","fontSize":null}},"children":["22.8"]},{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","boxShadow":"0 6px 6px -4px #888888","border":"  ","background":"#15607AFF","backgroundImage":null,"width":"67.2566371681416%","height":5,"transition":"width 1s ease"}},"children":[]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center","justifyContent":"flex-start","textAlign":"left","color":"black","fontWeight":"normal","fontSize":null}},"children":["21.4"]},{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","boxShadow":"0 6px 6px -4px #888888","border":"  ","background":"#15607AFF","backgroundImage":null,"width":"63.1268436578171%","height":5,"transition":"width 1s ease"}},"children":[]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center","justifyContent":"flex-start","textAlign":"left","color":"black","fontWeight":"normal","fontSize":null}},"children":["18.7"]},{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","boxShadow":"0 6px 6px -4px #888888","border":"  ","background":"#15607AFF","backgroundImage":null,"width":"55.1622418879056%","height":5,"transition":"width 1s ease"}},"children":[]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center","justifyContent":"flex-start","textAlign":"left","color":"black","fontWeight":"normal","fontSize":null}},"children":["18.1"]},{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","boxShadow":"0 6px 6px -4px #888888","border":"  ","background":"#15607AFF","backgroundImage":null,"width":"53.3923303834808%","height":5,"transition":"width 1s ease"}},"children":[]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center","justifyContent":"flex-start","textAlign":"left","color":"black","fontWeight":"normal","fontSize":null}},"children":["14.3"]},{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","boxShadow":"0 6px 6px -4px #888888","border":"  ","background":"#15607AFF","backgroundImage":null,"width":"42.1828908554572%","height":5,"transition":"width 1s ease"}},"children":[]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center","justifyContent":"flex-start","textAlign":"left","color":"black","fontWeight":"normal","fontSize":null}},"children":["24.4"]},{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","boxShadow":"0 6px 6px -4px #888888","border":"  ","background":"#15607AFF","backgroundImage":null,"width":"71.976401179941%","height":5,"transition":"width 1s ease"}},"children":[]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center","justifyContent":"flex-start","textAlign":"left","color":"black","fontWeight":"normal","fontSize":null}},"children":["22.8"]},{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","boxShadow":"0 6px 6px -4px #888888","border":"  ","background":"#15607AFF","backgroundImage":null,"width":"67.2566371681416%","height":5,"transition":"width 1s ease"}},"children":[]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center","justifyContent":"flex-start","textAlign":"left","color":"black","fontWeight":"normal","fontSize":null}},"children":["19.2"]},{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","boxShadow":"0 6px 6px -4px #888888","border":"  ","background":"#15607AFF","backgroundImage":null,"width":"56.6371681415929%","height":5,"transition":"width 1s ease"}},"children":[]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center","justifyContent":"flex-start","textAlign":"left","color":"black","fontWeight":"normal","fontSize":null}},"children":["17.8"]},{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","boxShadow":"0 6px 6px -4px #888888","border":"  ","background":"#15607AFF","backgroundImage":null,"width":"52.5073746312684%","height":5,"transition":"width 1s ease"}},"children":[]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center","justifyContent":"flex-start","textAlign":"left","color":"black","fontWeight":"normal","fontSize":null}},"children":["16.4"]},{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","boxShadow":"0 6px 6px -4px #888888","border":"  ","background":"#15607AFF","backgroundImage":null,"width":"48.377581120944%","height":5,"transition":"width 1s ease"}},"children":[]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center","justifyContent":"flex-start","textAlign":"left","color":"black","fontWeight":"normal","fontSize":null}},"children":["17.3"]},{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","boxShadow":"0 6px 6px -4px #888888","border":"  ","background":"#15607AFF","backgroundImage":null,"width":"51.0324483775811%","height":5,"transition":"width 1s ease"}},"children":[]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center","justifyContent":"flex-start","textAlign":"left","color":"black","fontWeight":"normal","fontSize":null}},"children":["15.2"]},{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","boxShadow":"0 6px 6px -4px #888888","border":"  ","background":"#15607AFF","backgroundImage":null,"width":"44.8377581120944%","height":5,"transition":"width 1s ease"}},"children":[]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center","justifyContent":"flex-start","textAlign":"left","color":"black","fontWeight":"normal","fontSize":null}},"children":["10.4"]},{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","boxShadow":"0 6px 6px -4px #888888","border":"  ","background":"#15607AFF","backgroundImage":null,"width":"30.6784660766962%","height":5,"transition":"width 1s ease"}},"children":[]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center","justifyContent":"flex-start","textAlign":"left","color":"black","fontWeight":"normal","fontSize":null}},"children":["10.4"]},{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","boxShadow":"0 6px 6px -4px #888888","border":"  ","background":"#15607AFF","backgroundImage":null,"width":"30.6784660766962%","height":5,"transition":"width 1s ease"}},"children":[]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center","justifyContent":"flex-start","textAlign":"left","color":"black","fontWeight":"normal","fontSize":null}},"children":["14.7"]},{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","boxShadow":"0 6px 6px -4px #888888","border":"  ","background":"#15607AFF","backgroundImage":null,"width":"43.3628318584071%","height":5,"transition":"width 1s ease"}},"children":[]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center","justifyContent":"flex-start","textAlign":"left","color":"black","fontWeight":"normal","fontSize":null}},"children":["32.4"]},{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","boxShadow":"0 6px 6px -4px #888888","border":"  ","background":"#15607AFF","backgroundImage":null,"width":"95.575221238938%","height":5,"transition":"width 1s ease"}},"children":[]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center","justifyContent":"flex-start","textAlign":"left","color":"black","fontWeight":"normal","fontSize":null}},"children":["30.4"]},{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","boxShadow":"0 6px 6px -4px #888888","border":"  ","background":"#15607AFF","backgroundImage":null,"width":"89.6755162241888%","height":5,"transition":"width 1s ease"}},"children":[]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center","justifyContent":"flex-start","textAlign":"left","color":"black","fontWeight":"normal","fontSize":null}},"children":["33.9"]},{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","boxShadow":"0 6px 6px -4px #888888","border":"  ","background":"#15607AFF","backgroundImage":null,"width":"100%","height":5,"transition":"width 1s ease"}},"children":[]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center","justifyContent":"flex-start","textAlign":"left","color":"black","fontWeight":"normal","fontSize":null}},"children":["21.5"]},{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","boxShadow":"0 6px 6px -4px #888888","border":"  ","background":"#15607AFF","backgroundImage":null,"width":"63.4218289085546%","height":5,"transition":"width 1s ease"}},"children":[]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center","justifyContent":"flex-start","textAlign":"left","color":"black","fontWeight":"normal","fontSize":null}},"children":["15.5"]},{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","boxShadow":"0 6px 6px -4px #888888","border":"  ","background":"#15607AFF","backgroundImage":null,"width":"45.7227138643068%","height":5,"transition":"width 1s ease"}},"children":[]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center","justifyContent":"flex-start","textAlign":"left","color":"black","fontWeight":"normal","fontSize":null}},"children":["15.2"]},{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","boxShadow":"0 6px 6px -4px #888888","border":"  ","background":"#15607AFF","backgroundImage":null,"width":"44.8377581120944%","height":5,"transition":"width 1s ease"}},"children":[]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center","justifyContent":"flex-start","textAlign":"left","color":"black","fontWeight":"normal","fontSize":null}},"children":["13.3"]},{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","boxShadow":"0 6px 6px -4px #888888","border":"  ","background":"#15607AFF","backgroundImage":null,"width":"39.2330383480826%","height":5,"transition":"width 1s ease"}},"children":[]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center","justifyContent":"flex-start","textAlign":"left","color":"black","fontWeight":"normal","fontSize":null}},"children":["19.2"]},{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","boxShadow":"0 6px 6px -4px #888888","border":"  ","background":"#15607AFF","backgroundImage":null,"width":"56.6371681415929%","height":5,"transition":"width 1s ease"}},"children":[]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center","justifyContent":"flex-start","textAlign":"left","color":"black","fontWeight":"normal","fontSize":null}},"children":["27.3"]},{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","boxShadow":"0 6px 6px -4px #888888","border":"  ","background":"#15607AFF","backgroundImage":null,"width":"80.5309734513274%","height":5,"transition":"width 1s ease"}},"children":[]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center","justifyContent":"flex-start","textAlign":"left","color":"black","fontWeight":"normal","fontSize":null}},"children":["26"]},{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","boxShadow":"0 6px 6px -4px #888888","border":"  ","background":"#15607AFF","backgroundImage":null,"width":"76.6961651917404%","height":5,"transition":"width 1s ease"}},"children":[]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center","justifyContent":"flex-start","textAlign":"left","color":"black","fontWeight":"normal","fontSize":null}},"children":["30.4"]},{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","boxShadow":"0 6px 6px -4px #888888","border":"  ","background":"#15607AFF","backgroundImage":null,"width":"89.6755162241888%","height":5,"transition":"width 1s ease"}},"children":[]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center","justifyContent":"flex-start","textAlign":"left","color":"black","fontWeight":"normal","fontSize":null}},"children":["15.8"]},{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","boxShadow":"0 6px 6px -4px #888888","border":"  ","background":"#15607AFF","backgroundImage":null,"width":"46.6076696165192%","height":5,"transition":"width 1s ease"}},"children":[]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center","justifyContent":"flex-start","textAlign":"left","color":"black","fontWeight":"normal","fontSize":null}},"children":["19.7"]},{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","boxShadow":"0 6px 6px -4px #888888","border":"  ","background":"#15607AFF","backgroundImage":null,"width":"58.1120943952802%","height":5,"transition":"width 1s ease"}},"children":[]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center","justifyContent":"flex-start","textAlign":"left","color":"black","fontWeight":"normal","fontSize":null}},"children":["15"]},{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","boxShadow":"0 6px 6px -4px #888888","border":"  ","background":"#15607AFF","backgroundImage":null,"width":"44.2477876106195%","height":5,"transition":"width 1s ease"}},"children":[]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center","justifyContent":"flex-start","textAlign":"left","color":"black","fontWeight":"normal","fontSize":null}},"children":["21.4"]},{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","boxShadow":"0 6px 6px -4px #888888","border":"  ","background":"#15607AFF","backgroundImage":null,"width":"63.1268436578171%","height":5,"transition":"width 1s ease"}},"children":[]}]}]}]},{"id":"cyl","name":"cyl","type":"numeric"},{"id":"hp","name":"hp","type":"numeric","aggregate":"mean","format":{"cell":{"digits":1},"aggregated":{"digits":1}}},{"id":"gear","name":"gear","type":"numeric","aggregate":"max"}],"groupBy":["cyl"],"filterable":true,"searchable":true,"defaultPageSize":10,"dataKey":"21fcf6c65b139d6b42ccbece5ed2d17b"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</section>
+<section id="knitrkable-for-simple-static-tables" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> 4. <code>knitr::kable</code>: For Simple, Static Tables</h1>
+<p><code>knitr::kable()</code> is a simple and lightweight function for creating clean, static tables in various formats like HTML, LaTeX, and Markdown. It’s perfect for quick reports and documents where interactivity is not needed. The <code>kableExtra</code> package adds many styling options.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption =</span> <span class="st">"A Simple Static Table with kable"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hover"</span>), <span class="at">full_width =</span> F)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>A Simple Static Table with kable</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">mpg</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">cyl</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">disp</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">hp</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">drat</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">wt</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">qsec</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">vs</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">am</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">gear</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">carb</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Mazda RX4</td>
+<td style="text-align: right;">21.0</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">160</td>
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">3.90</td>
+<td style="text-align: right;">2.620</td>
+<td style="text-align: right;">16.46</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Mazda RX4 Wag</td>
+<td style="text-align: right;">21.0</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">160</td>
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">3.90</td>
+<td style="text-align: right;">2.875</td>
+<td style="text-align: right;">17.02</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Datsun 710</td>
+<td style="text-align: right;">22.8</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">108</td>
+<td style="text-align: right;">93</td>
+<td style="text-align: right;">3.85</td>
+<td style="text-align: right;">2.320</td>
+<td style="text-align: right;">18.61</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Hornet 4 Drive</td>
+<td style="text-align: right;">21.4</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">258</td>
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">3.08</td>
+<td style="text-align: right;">3.215</td>
+<td style="text-align: right;">19.44</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Hornet Sportabout</td>
+<td style="text-align: right;">18.7</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">360</td>
+<td style="text-align: right;">175</td>
+<td style="text-align: right;">3.15</td>
+<td style="text-align: right;">3.440</td>
+<td style="text-align: right;">17.02</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Valiant</td>
+<td style="text-align: right;">18.1</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">225</td>
+<td style="text-align: right;">105</td>
+<td style="text-align: right;">2.76</td>
+<td style="text-align: right;">3.460</td>
+<td style="text-align: right;">20.22</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>For longer tables, <code>rmarkdown::paged_table()</code> creates a scrollable, paged version, which is more user-friendly than a very long static table.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rmarkdown)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">paged_table</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["mpg"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["cyl"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["disp"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["hp"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["drat"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["wt"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["qsec"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["vs"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["am"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["gear"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["carb"],"name":[11],"type":["dbl"],"align":["right"]}],"data":[{"1":"21.0","2":"6","3":"160.0","4":"110","5":"3.90","6":"2.620","7":"16.46","8":"0","9":"1","10":"4","11":"4","_rn_":"Mazda RX4"},{"1":"21.0","2":"6","3":"160.0","4":"110","5":"3.90","6":"2.875","7":"17.02","8":"0","9":"1","10":"4","11":"4","_rn_":"Mazda RX4 Wag"},{"1":"22.8","2":"4","3":"108.0","4":"93","5":"3.85","6":"2.320","7":"18.61","8":"1","9":"1","10":"4","11":"1","_rn_":"Datsun 710"},{"1":"21.4","2":"6","3":"258.0","4":"110","5":"3.08","6":"3.215","7":"19.44","8":"1","9":"0","10":"3","11":"1","_rn_":"Hornet 4 Drive"},{"1":"18.7","2":"8","3":"360.0","4":"175","5":"3.15","6":"3.440","7":"17.02","8":"0","9":"0","10":"3","11":"2","_rn_":"Hornet Sportabout"},{"1":"18.1","2":"6","3":"225.0","4":"105","5":"2.76","6":"3.460","7":"20.22","8":"1","9":"0","10":"3","11":"1","_rn_":"Valiant"},{"1":"14.3","2":"8","3":"360.0","4":"245","5":"3.21","6":"3.570","7":"15.84","8":"0","9":"0","10":"3","11":"4","_rn_":"Duster 360"},{"1":"24.4","2":"4","3":"146.7","4":"62","5":"3.69","6":"3.190","7":"20.00","8":"1","9":"0","10":"4","11":"2","_rn_":"Merc 240D"},{"1":"22.8","2":"4","3":"140.8","4":"95","5":"3.92","6":"3.150","7":"22.90","8":"1","9":"0","10":"4","11":"2","_rn_":"Merc 230"},{"1":"19.2","2":"6","3":"167.6","4":"123","5":"3.92","6":"3.440","7":"18.30","8":"1","9":"0","10":"4","11":"4","_rn_":"Merc 280"},{"1":"17.8","2":"6","3":"167.6","4":"123","5":"3.92","6":"3.440","7":"18.90","8":"1","9":"0","10":"4","11":"4","_rn_":"Merc 280C"},{"1":"16.4","2":"8","3":"275.8","4":"180","5":"3.07","6":"4.070","7":"17.40","8":"0","9":"0","10":"3","11":"3","_rn_":"Merc 450SE"},{"1":"17.3","2":"8","3":"275.8","4":"180","5":"3.07","6":"3.730","7":"17.60","8":"0","9":"0","10":"3","11":"3","_rn_":"Merc 450SL"},{"1":"15.2","2":"8","3":"275.8","4":"180","5":"3.07","6":"3.780","7":"18.00","8":"0","9":"0","10":"3","11":"3","_rn_":"Merc 450SLC"},{"1":"10.4","2":"8","3":"472.0","4":"205","5":"2.93","6":"5.250","7":"17.98","8":"0","9":"0","10":"3","11":"4","_rn_":"Cadillac Fleetwood"},{"1":"10.4","2":"8","3":"460.0","4":"215","5":"3.00","6":"5.424","7":"17.82","8":"0","9":"0","10":"3","11":"4","_rn_":"Lincoln Continental"},{"1":"14.7","2":"8","3":"440.0","4":"230","5":"3.23","6":"5.345","7":"17.42","8":"0","9":"0","10":"3","11":"4","_rn_":"Chrysler Imperial"},{"1":"32.4","2":"4","3":"78.7","4":"66","5":"4.08","6":"2.200","7":"19.47","8":"1","9":"1","10":"4","11":"1","_rn_":"Fiat 128"},{"1":"30.4","2":"4","3":"75.7","4":"52","5":"4.93","6":"1.615","7":"18.52","8":"1","9":"1","10":"4","11":"2","_rn_":"Honda Civic"},{"1":"33.9","2":"4","3":"71.1","4":"65","5":"4.22","6":"1.835","7":"19.90","8":"1","9":"1","10":"4","11":"1","_rn_":"Toyota Corolla"},{"1":"21.5","2":"4","3":"120.1","4":"97","5":"3.70","6":"2.465","7":"20.01","8":"1","9":"0","10":"3","11":"1","_rn_":"Toyota Corona"},{"1":"15.5","2":"8","3":"318.0","4":"150","5":"2.76","6":"3.520","7":"16.87","8":"0","9":"0","10":"3","11":"2","_rn_":"Dodge Challenger"},{"1":"15.2","2":"8","3":"304.0","4":"150","5":"3.15","6":"3.435","7":"17.30","8":"0","9":"0","10":"3","11":"2","_rn_":"AMC Javelin"},{"1":"13.3","2":"8","3":"350.0","4":"245","5":"3.73","6":"3.840","7":"15.41","8":"0","9":"0","10":"3","11":"4","_rn_":"Camaro Z28"},{"1":"19.2","2":"8","3":"400.0","4":"175","5":"3.08","6":"3.845","7":"17.05","8":"0","9":"0","10":"3","11":"2","_rn_":"Pontiac Firebird"},{"1":"27.3","2":"4","3":"79.0","4":"66","5":"4.08","6":"1.935","7":"18.90","8":"1","9":"1","10":"4","11":"1","_rn_":"Fiat X1-9"},{"1":"26.0","2":"4","3":"120.3","4":"91","5":"4.43","6":"2.140","7":"16.70","8":"0","9":"1","10":"5","11":"2","_rn_":"Porsche 914-2"},{"1":"30.4","2":"4","3":"95.1","4":"113","5":"3.77","6":"1.513","7":"16.90","8":"1","9":"1","10":"5","11":"2","_rn_":"Lotus Europa"},{"1":"15.8","2":"8","3":"351.0","4":"264","5":"4.22","6":"3.170","7":"14.50","8":"0","9":"1","10":"5","11":"4","_rn_":"Ford Pantera L"},{"1":"19.7","2":"6","3":"145.0","4":"175","5":"3.62","6":"2.770","7":"15.50","8":"0","9":"1","10":"5","11":"6","_rn_":"Ferrari Dino"},{"1":"15.0","2":"8","3":"301.0","4":"335","5":"3.54","6":"3.570","7":"14.60","8":"0","9":"1","10":"5","11":"8","_rn_":"Maserati Bora"},{"1":"21.4","2":"4","3":"121.0","4":"109","5":"4.11","6":"2.780","7":"18.60","8":"1","9":"1","10":"4","11":"2","_rn_":"Volvo 142E"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+</section>
+<section id="flextable-for-publication-ready-tables-in-office-documents" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> 5. <code>flextable</code>: For Publication-Ready Tables in Office Documents</h1>
+<p>The <code>flextable</code> package is designed to create tables for reporting, with a focus on producing high-quality output for Microsoft Word, PowerPoint, and HTML documents. It offers a high degree of control over formatting, including cell merging, borders, and fonts.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(flextable)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a basic flextable</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>ft <span class="ot">&lt;-</span> <span class="fu">flextable</span>(<span class="fu">head</span>(mtcars))</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply formatting</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>ft <span class="ot">&lt;-</span> ft <span class="sc">%&gt;%</span> </span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_header_labels</span>(<span class="at">mpg =</span> <span class="st">"Miles per Gallon"</span>, <span class="at">cyl =</span> <span class="st">"Cylinders"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_booktabs</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autofit</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_caption</span>(<span class="st">"A Publication-Ready Table with flextable"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">color</span>(<span class="at">j =</span> <span class="sc">~</span> mpg, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bold</span>(<span class="at">j =</span> <span class="sc">~</span> cyl, <span class="at">bold =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>ft</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div class="tabwid"><style>.cl-d5bfaace{}.cl-d5bbfbe0{font-family:'Helvetica';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-d5bbfbf4{font-family:'Helvetica';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(255, 0, 0, 1.00);background-color:transparent;}.cl-d5bbfbfe{font-family:'Helvetica';font-size:11pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-d5bd6714{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-d5bd76b4{width:1.389in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd76b5{width:0.922in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd76be{width:0.565in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd76bf{width:0.54in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd76c0{width:0.583in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd76c8{width:0.668in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd76c9{width:0.438in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd76ca{width:0.497in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd76d2{width:0.591in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd76d3{width:0.582in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd76d4{width:1.389in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd76dc{width:0.922in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd76dd{width:0.565in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd76de{width:0.54in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd76e6{width:0.583in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd76f0{width:0.668in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd76f1{width:0.438in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd76f2{width:0.497in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd76f3{width:0.591in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd76fa{width:0.582in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd76fb{width:1.389in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd76fc{width:0.922in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd76fd{width:0.565in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd7704{width:0.54in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd7705{width:0.583in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd7706{width:0.668in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd7707{width:0.438in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd770e{width:0.497in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd770f{width:0.591in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd7710{width:0.582in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd7718{width:1.389in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd7719{width:0.922in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd771a{width:0.565in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd771b{width:0.54in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd7722{width:0.583in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd7723{width:0.668in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd7724{width:0.438in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd7725{width:0.497in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd772c{width:0.591in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd772d{width:0.582in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd772e{width:1.389in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd772f{width:0.922in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd7736{width:0.565in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd7737{width:0.54in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd7740{width:0.583in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd7741{width:0.668in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd7742{width:0.438in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd7743{width:0.497in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd7744{width:0.591in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5bd774a{width:0.582in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table data-quarto-disable-processing="true" class="cl-d5bfaace"><thead><tr style="overflow-wrap:break-word;"><th class="cl-d5bd76b4"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">Miles per Gallon</span></p></th><th class="cl-d5bd76b5"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">Cylinders</span></p></th><th class="cl-d5bd76be"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">disp</span></p></th><th class="cl-d5bd76bf"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">hp</span></p></th><th class="cl-d5bd76c0"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">drat</span></p></th><th class="cl-d5bd76c8"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">wt</span></p></th><th class="cl-d5bd76c8"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">qsec</span></p></th><th class="cl-d5bd76c9"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">vs</span></p></th><th class="cl-d5bd76ca"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">am</span></p></th><th class="cl-d5bd76d2"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">gear</span></p></th><th class="cl-d5bd76d3"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">carb</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-d5bd76d4"><p class="cl-d5bd6714"><span class="cl-d5bbfbf4">21.0</span></p></td><td class="cl-d5bd76dc"><p class="cl-d5bd6714"><span class="cl-d5bbfbfe">6</span></p></td><td class="cl-d5bd76dd"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">160</span></p></td><td class="cl-d5bd76de"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">110</span></p></td><td class="cl-d5bd76e6"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">3.90</span></p></td><td class="cl-d5bd76f0"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">2.620</span></p></td><td class="cl-d5bd76f0"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">16.46</span></p></td><td class="cl-d5bd76f1"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">0</span></p></td><td class="cl-d5bd76f2"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">1</span></p></td><td class="cl-d5bd76f3"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">4</span></p></td><td class="cl-d5bd76fa"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">4</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-d5bd76fb"><p class="cl-d5bd6714"><span class="cl-d5bbfbf4">21.0</span></p></td><td class="cl-d5bd76fc"><p class="cl-d5bd6714"><span class="cl-d5bbfbfe">6</span></p></td><td class="cl-d5bd76fd"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">160</span></p></td><td class="cl-d5bd7704"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">110</span></p></td><td class="cl-d5bd7705"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">3.90</span></p></td><td class="cl-d5bd7706"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">2.875</span></p></td><td class="cl-d5bd7706"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">17.02</span></p></td><td class="cl-d5bd7707"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">0</span></p></td><td class="cl-d5bd770e"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">1</span></p></td><td class="cl-d5bd770f"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">4</span></p></td><td class="cl-d5bd7710"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">4</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-d5bd7718"><p class="cl-d5bd6714"><span class="cl-d5bbfbf4">22.8</span></p></td><td class="cl-d5bd7719"><p class="cl-d5bd6714"><span class="cl-d5bbfbfe">4</span></p></td><td class="cl-d5bd771a"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">108</span></p></td><td class="cl-d5bd771b"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">93</span></p></td><td class="cl-d5bd7722"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">3.85</span></p></td><td class="cl-d5bd7723"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">2.320</span></p></td><td class="cl-d5bd7723"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">18.61</span></p></td><td class="cl-d5bd7724"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">1</span></p></td><td class="cl-d5bd7725"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">1</span></p></td><td class="cl-d5bd772c"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">4</span></p></td><td class="cl-d5bd772d"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">1</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-d5bd76fb"><p class="cl-d5bd6714"><span class="cl-d5bbfbf4">21.4</span></p></td><td class="cl-d5bd76fc"><p class="cl-d5bd6714"><span class="cl-d5bbfbfe">6</span></p></td><td class="cl-d5bd76fd"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">258</span></p></td><td class="cl-d5bd7704"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">110</span></p></td><td class="cl-d5bd7705"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">3.08</span></p></td><td class="cl-d5bd7706"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">3.215</span></p></td><td class="cl-d5bd7706"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">19.44</span></p></td><td class="cl-d5bd7707"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">1</span></p></td><td class="cl-d5bd770e"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">0</span></p></td><td class="cl-d5bd770f"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">3</span></p></td><td class="cl-d5bd7710"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">1</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-d5bd76d4"><p class="cl-d5bd6714"><span class="cl-d5bbfbf4">18.7</span></p></td><td class="cl-d5bd76dc"><p class="cl-d5bd6714"><span class="cl-d5bbfbfe">8</span></p></td><td class="cl-d5bd76dd"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">360</span></p></td><td class="cl-d5bd76de"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">175</span></p></td><td class="cl-d5bd76e6"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">3.15</span></p></td><td class="cl-d5bd76f0"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">3.440</span></p></td><td class="cl-d5bd76f0"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">17.02</span></p></td><td class="cl-d5bd76f1"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">0</span></p></td><td class="cl-d5bd76f2"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">0</span></p></td><td class="cl-d5bd76f3"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">3</span></p></td><td class="cl-d5bd76fa"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">2</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-d5bd772e"><p class="cl-d5bd6714"><span class="cl-d5bbfbf4">18.1</span></p></td><td class="cl-d5bd772f"><p class="cl-d5bd6714"><span class="cl-d5bbfbfe">6</span></p></td><td class="cl-d5bd7736"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">225</span></p></td><td class="cl-d5bd7737"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">105</span></p></td><td class="cl-d5bd7740"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">2.76</span></p></td><td class="cl-d5bd7741"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">3.460</span></p></td><td class="cl-d5bd7741"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">20.22</span></p></td><td class="cl-d5bd7742"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">1</span></p></td><td class="cl-d5bd7743"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">0</span></p></td><td class="cl-d5bd7744"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">3</span></p></td><td class="cl-d5bd774a"><p class="cl-d5bd6714"><span class="cl-d5bbfbe0">1</span></p></td></tr></tbody></table></div>
+</div>
+</div>
+</section>
+<section id="conclusion-which-package-should-you-use" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> 6. Conclusion: Which Package Should You Use?</h1>
+<ul>
+<li><strong>For beautiful, static reports and publications:</strong> Use <code>gt</code>.</li>
+<li><strong>For interactive data exploration in R Markdown or Shiny:</strong> Use <code>DT</code> or <code>reactable</code>. <code>reactable</code> has a more modern feel and powerful grouping features, while <code>DT</code> is very mature and has a rich ecosystem of extensions.</li>
+<li><strong>For quick, simple static tables:</strong> Use <code>knitr::kable</code> with <code>kableExtra</code> for styling.</li>
+<li><strong>For reports destined for Microsoft Office (Word, PowerPoint):</strong> Use <code>flextable</code>.</li>
+</ul>
+</section>
+<section id="references" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> 7. References</h1>
+<ul>
+<li><a href="https://gt.rstudio.com/">gt Package</a></li>
+<li><a href="https://rstudio.github.io/DT/">DT Package</a></li>
+<li><a href="https://glin.github.io/reactable/">reactable Package</a></li>
+<li><a href="https://davidgohel.github.io/flextable/">flextable Package</a></li>
+</ul>
+
+
+<!-- -->
+
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Data Tables in R"</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> "Tony D"</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co">  error: false</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-location: right</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: show</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co">    number-sections: true</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co">    code-block-bg: true</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="co">    code-block-border-left: "#31BAE9"</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="co">    code-copy: true</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>This document provides a comprehensive guide to creating a wide variety of tables in R, from simple static tables to complex, interactive, and publication-ready displays. We will explore several powerful packages, each with its own strengths.</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="fu"># 1. `gt`: For Beautiful, Presentation-Ready Tables</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="al">![](https://gt.rstudio.com/reference/figures/logo.svg)</span>{width="200"}</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>The <span class="in">`gt`</span> package is designed for creating beautiful and highly customizable tables. It follows a "grammar of tables" philosophy, allowing you to build a table layer by layer, from the data to the header, footer, and cell formatting. This makes it ideal for tables in reports, presentations, and publications where appearance and clarity are paramount.</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a><span class="al">![](https://gt.rstudio.com/reference/figures/gt_parts_of_a_table.svg)</span></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>This example demonstrates how to create a rich, informative table from the <span class="in">`sp500`</span> dataset included with <span class="in">`gt`</span>.</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glue)</span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the start and end dates for the data range</span></span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>start_date <span class="ot">&lt;-</span> <span class="st">"2010-06-07"</span></span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>end_date <span class="ot">&lt;-</span> <span class="st">"2010-06-14"</span></span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a gt table from preprocessed sp500 data</span></span>
+<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a>sp500 <span class="sc">|&gt;</span></span>
+<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">&gt;=</span> start_date <span class="sc">&amp;</span> date <span class="sc">&lt;=</span> end_date) <span class="sc">|&gt;</span></span>
+<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>adj_close) <span class="sc">|&gt;</span></span>
+<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">|&gt;</span></span>
+<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add a title and subtitle using markdown for formatting</span></span>
+<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_header</span>(</span>
+<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="fu">md</span>(<span class="st">"**S&amp;P 500 Daily Prices**"</span>),</span>
+<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="fu">glue</span>(<span class="st">"Data from {start_date} to {end_date}"</span>)</span>
+<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Format columns for currency, dates, and large numbers</span></span>
+<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_currency</span>(<span class="at">columns =</span> <span class="fu">c</span>(open, high, low, close)) <span class="sc">|&gt;</span></span>
+<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_date</span>(<span class="at">columns =</span> date, <span class="at">date_style =</span> <span class="st">"wd_m_day_year"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_number</span>(<span class="at">columns =</span> volume, <span class="at">suffixing =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add a source note with a link</span></span>
+<span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_source_note</span>(</span>
+<span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a>    <span class="at">source_note =</span> <span class="fu">html</span>(<span class="st">"Source: &lt;a href='https://www.spglobal.com/'&gt;S&amp;P Global&lt;/a&gt;"</span>)</span>
+<span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Center-align all columns</span></span>
+<span id="cb10-61"><a href="#cb10-61" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_align</span>(</span>
+<span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a>    <span class="at">align =</span> <span class="st">"center"</span>,</span>
+<span id="cb10-63"><a href="#cb10-63" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> <span class="fu">everything</span>()</span>
+<span id="cb10-64"><a href="#cb10-64" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb10-65"><a href="#cb10-65" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add a color scale to the `close` column to highlight values</span></span>
+<span id="cb10-66"><a href="#cb10-66" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_color</span>(</span>
+<span id="cb10-67"><a href="#cb10-67" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> close,</span>
+<span id="cb10-68"><a href="#cb10-68" aria-hidden="true" tabindex="-1"></a>    <span class="at">colors =</span> scales<span class="sc">::</span><span class="fu">col_numeric</span>(</span>
+<span id="cb10-69"><a href="#cb10-69" aria-hidden="true" tabindex="-1"></a>      <span class="at">palette =</span> <span class="fu">c</span>(<span class="st">"#FEEBDB"</span>, <span class="st">"#FDD8B0"</span>, <span class="st">"#FDC686"</span>, <span class="st">"#FDB35B"</span>, <span class="st">"#FD9F2C"</span>),</span>
+<span id="cb10-70"><a href="#cb10-70" aria-hidden="true" tabindex="-1"></a>      <span class="at">domain =</span> <span class="fu">range</span>(sp500<span class="sc">$</span>close)</span>
+<span id="cb10-71"><a href="#cb10-71" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb10-72"><a href="#cb10-72" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb10-73"><a href="#cb10-73" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-74"><a href="#cb10-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-75"><a href="#cb10-75" aria-hidden="true" tabindex="-1"></a><span class="fu"># 2. `DT`: For Interactive Data Exploration</span></span>
+<span id="cb10-76"><a href="#cb10-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-77"><a href="#cb10-77" aria-hidden="true" tabindex="-1"></a>The <span class="in">`DT`</span> package provides an R interface to the powerful JavaScript library DataTables. It turns a standard R data frame into an interactive HTML table that supports live filtering, pagination, sorting, and exporting. It is perfect for data exploration in R Markdown documents and Shiny apps.</span>
+<span id="cb10-78"><a href="#cb10-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-79"><a href="#cb10-79" aria-hidden="true" tabindex="-1"></a><span class="al">![](images/clipboard-141935303.png)</span>{width="212"}</span>
+<span id="cb10-80"><a href="#cb10-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-83"><a href="#cb10-83" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb10-84"><a href="#cb10-84" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DT)</span>
+<span id="cb10-85"><a href="#cb10-85" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-86"><a href="#cb10-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-87"><a href="#cb10-87" aria-hidden="true" tabindex="-1"></a>This is a basic example of an interactive table using the <span class="in">`iris`</span> dataset.</span>
+<span id="cb10-88"><a href="#cb10-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-91"><a href="#cb10-91" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb10-92"><a href="#cb10-92" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">|&gt;</span> <span class="fu">datatable</span>(<span class="at">options =</span> <span class="fu">list</span>(<span class="at">pageLength =</span> <span class="dv">5</span>, <span class="at">scrollX =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb10-93"><a href="#cb10-93" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-94"><a href="#cb10-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-95"><a href="#cb10-95" aria-hidden="true" tabindex="-1"></a><span class="fu">### Advanced Formatting and Styling</span></span>
+<span id="cb10-96"><a href="#cb10-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-97"><a href="#cb10-97" aria-hidden="true" tabindex="-1"></a><span class="in">`DT`</span> allows for extensive styling using the <span class="in">`format*()`</span> family of functions. You can add color bars, conditional formatting, and more.</span>
+<span id="cb10-98"><a href="#cb10-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-101"><a href="#cb10-101" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb10-102"><a href="#cb10-102" aria-hidden="true" tabindex="-1"></a><span class="co"># Take a sample of the iris dataset for a cleaner look</span></span>
+<span id="cb10-103"><a href="#cb10-103" aria-hidden="true" tabindex="-1"></a>sample_iris <span class="ot">&lt;-</span> iris[<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">51</span><span class="sc">:</span><span class="dv">55</span>, <span class="dv">101</span><span class="sc">:</span><span class="dv">105</span>), ]</span>
+<span id="cb10-104"><a href="#cb10-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-105"><a href="#cb10-105" aria-hidden="true" tabindex="-1"></a>sample_iris <span class="sc">|&gt;</span> </span>
+<span id="cb10-106"><a href="#cb10-106" aria-hidden="true" tabindex="-1"></a>  <span class="fu">datatable</span>(<span class="at">options =</span> <span class="fu">list</span>(<span class="at">pageLength =</span> <span class="dv">5</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-107"><a href="#cb10-107" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Bold the Sepal.Length for values &gt; 5</span></span>
+<span id="cb10-108"><a href="#cb10-108" aria-hidden="true" tabindex="-1"></a>  <span class="fu">formatStyle</span>(<span class="st">'Sepal.Length'</span>, <span class="at">fontWeight =</span> <span class="fu">styleInterval</span>(<span class="dv">5</span>, <span class="fu">c</span>(<span class="st">'normal'</span>, <span class="st">'bold'</span>))) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-109"><a href="#cb10-109" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Apply conditional colors to Sepal.Width</span></span>
+<span id="cb10-110"><a href="#cb10-110" aria-hidden="true" tabindex="-1"></a>  <span class="fu">formatStyle</span>(</span>
+<span id="cb10-111"><a href="#cb10-111" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Sepal.Width'</span>,</span>
+<span id="cb10-112"><a href="#cb10-112" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="fu">styleInterval</span>(<span class="fu">c</span>(<span class="fl">3.0</span>, <span class="fl">3.5</span>), <span class="fu">c</span>(<span class="st">'red'</span>, <span class="st">'orange'</span>, <span class="st">'green'</span>)),</span>
+<span id="cb10-113"><a href="#cb10-113" aria-hidden="true" tabindex="-1"></a>    <span class="at">backgroundColor =</span> <span class="fu">styleInterval</span>(<span class="fl">3.0</span>, <span class="fu">c</span>(<span class="st">'lightgray'</span>, <span class="st">'lightyellow'</span>))</span>
+<span id="cb10-114"><a href="#cb10-114" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-115"><a href="#cb10-115" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add a background color bar to Petal.Length</span></span>
+<span id="cb10-116"><a href="#cb10-116" aria-hidden="true" tabindex="-1"></a>  <span class="fu">formatStyle</span>(</span>
+<span id="cb10-117"><a href="#cb10-117" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Petal.Length'</span>,</span>
+<span id="cb10-118"><a href="#cb10-118" aria-hidden="true" tabindex="-1"></a>    <span class="at">background =</span> <span class="fu">styleColorBar</span>(<span class="fu">range</span>(iris<span class="sc">$</span>Petal.Length), <span class="st">'steelblue'</span>),</span>
+<span id="cb10-119"><a href="#cb10-119" aria-hidden="true" tabindex="-1"></a>    <span class="at">backgroundSize =</span> <span class="st">'100% 90%'</span>,</span>
+<span id="cb10-120"><a href="#cb10-120" aria-hidden="true" tabindex="-1"></a>    <span class="at">backgroundRepeat =</span> <span class="st">'no-repeat'</span>,</span>
+<span id="cb10-121"><a href="#cb10-121" aria-hidden="true" tabindex="-1"></a>    <span class="at">backgroundPosition =</span> <span class="st">'center'</span></span>
+<span id="cb10-122"><a href="#cb10-122" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-123"><a href="#cb10-123" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Style the Species column</span></span>
+<span id="cb10-124"><a href="#cb10-124" aria-hidden="true" tabindex="-1"></a>  <span class="fu">formatStyle</span>(</span>
+<span id="cb10-125"><a href="#cb10-125" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Species'</span>,</span>
+<span id="cb10-126"><a href="#cb10-126" aria-hidden="true" tabindex="-1"></a>    <span class="at">backgroundColor =</span> <span class="fu">styleEqual</span>(</span>
+<span id="cb10-127"><a href="#cb10-127" aria-hidden="true" tabindex="-1"></a>      <span class="fu">unique</span>(iris<span class="sc">$</span>Species), <span class="fu">c</span>(<span class="st">'lightblue'</span>, <span class="st">'lightgreen'</span>, <span class="st">'lightpink'</span>)</span>
+<span id="cb10-128"><a href="#cb10-128" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb10-129"><a href="#cb10-129" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb10-130"><a href="#cb10-130" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-131"><a href="#cb10-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-132"><a href="#cb10-132" aria-hidden="true" tabindex="-1"></a><span class="fu">### Table Export Buttons</span></span>
+<span id="cb10-133"><a href="#cb10-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-134"><a href="#cb10-134" aria-hidden="true" tabindex="-1"></a>The <span class="in">`Buttons`</span> extension adds buttons to the table for exporting the data to formats like CSV, Excel, and PDF, or for copying to the clipboard.</span>
+<span id="cb10-135"><a href="#cb10-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-138"><a href="#cb10-138" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb10-139"><a href="#cb10-139" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">|&gt;</span> <span class="fu">datatable</span>(</span>
+<span id="cb10-140"><a href="#cb10-140" aria-hidden="true" tabindex="-1"></a>  <span class="at">extensions =</span> <span class="st">'Buttons'</span>, </span>
+<span id="cb10-141"><a href="#cb10-141" aria-hidden="true" tabindex="-1"></a>  <span class="at">options =</span> <span class="fu">list</span>(</span>
+<span id="cb10-142"><a href="#cb10-142" aria-hidden="true" tabindex="-1"></a>    <span class="at">dom =</span> <span class="st">'Bfrtip'</span>, <span class="co"># Defines the layout, B is for buttons</span></span>
+<span id="cb10-143"><a href="#cb10-143" aria-hidden="true" tabindex="-1"></a>    <span class="at">buttons =</span> <span class="fu">c</span>(<span class="st">'copy'</span>, <span class="st">'csv'</span>, <span class="st">'excel'</span>, <span class="st">'pdf'</span>, <span class="st">'print'</span>),</span>
+<span id="cb10-144"><a href="#cb10-144" aria-hidden="true" tabindex="-1"></a>    <span class="at">pageLength =</span> <span class="dv">5</span></span>
+<span id="cb10-145"><a href="#cb10-145" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb10-146"><a href="#cb10-146" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-147"><a href="#cb10-147" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-148"><a href="#cb10-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-149"><a href="#cb10-149" aria-hidden="true" tabindex="-1"></a><span class="fu"># 3. `reactable`: For Modern and Feature-Rich Interactive Tables</span></span>
+<span id="cb10-150"><a href="#cb10-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-151"><a href="#cb10-151" aria-hidden="true" tabindex="-1"></a><span class="in">`reactable`</span> is another excellent package for creating interactive tables, known for its modern look, rich feature set, and ease of use. It supports sorting, filtering, grouping, and aggregation out of the box.</span>
+<span id="cb10-152"><a href="#cb10-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-155"><a href="#cb10-155" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb10-156"><a href="#cb10-156" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(reactable)</span>
+<span id="cb10-157"><a href="#cb10-157" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(reactablefmtr)</span>
+<span id="cb10-158"><a href="#cb10-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-159"><a href="#cb10-159" aria-hidden="true" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> </span>
+<span id="cb10-160"><a href="#cb10-160" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="st">"car_name"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-161"><a href="#cb10-161" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(car_name, mpg, cyl, hp, gear) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-162"><a href="#cb10-162" aria-hidden="true" tabindex="-1"></a>  <span class="fu">reactable</span>(</span>
+<span id="cb10-163"><a href="#cb10-163" aria-hidden="true" tabindex="-1"></a>    <span class="at">filterable =</span> <span class="cn">TRUE</span>, <span class="co"># Add column filters</span></span>
+<span id="cb10-164"><a href="#cb10-164" aria-hidden="true" tabindex="-1"></a>    <span class="at">searchable =</span> <span class="cn">TRUE</span>,   <span class="co"># Add a global search box</span></span>
+<span id="cb10-165"><a href="#cb10-165" aria-hidden="true" tabindex="-1"></a>    <span class="at">groupBy =</span> <span class="st">"cyl"</span>,     <span class="co"># Group by number of cylinders</span></span>
+<span id="cb10-166"><a href="#cb10-166" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> <span class="fu">list</span>(</span>
+<span id="cb10-167"><a href="#cb10-167" aria-hidden="true" tabindex="-1"></a>      <span class="at">hp =</span> <span class="fu">colDef</span>(<span class="at">aggregate =</span> <span class="st">"mean"</span>, <span class="at">format =</span> <span class="fu">colFormat</span>(<span class="at">digits =</span> <span class="dv">1</span>)), <span class="co"># Show mean HP for each group</span></span>
+<span id="cb10-168"><a href="#cb10-168" aria-hidden="true" tabindex="-1"></a>      <span class="at">gear =</span> <span class="fu">colDef</span>(<span class="at">aggregate =</span> <span class="st">"max"</span>), <span class="co"># Show max gears for each group</span></span>
+<span id="cb10-169"><a href="#cb10-169" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Custom cell rendering to add a bar chart for mpg</span></span>
+<span id="cb10-170"><a href="#cb10-170" aria-hidden="true" tabindex="-1"></a>      <span class="at">mpg =</span> <span class="fu">colDef</span>(<span class="at">cell =</span> <span class="fu">data_bars</span>(., <span class="at">text_position =</span> <span class="st">"above"</span>, <span class="at">box_shadow =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb10-171"><a href="#cb10-171" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb10-172"><a href="#cb10-172" aria-hidden="true" tabindex="-1"></a>    <span class="at">defaultPageSize =</span> <span class="dv">10</span></span>
+<span id="cb10-173"><a href="#cb10-173" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-174"><a href="#cb10-174" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_title</span>(<span class="at">title =</span> <span class="st">'MTCars Dataset Summary'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-175"><a href="#cb10-175" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_subtitle</span>(<span class="at">subtitle =</span> <span class="st">'Grouped by Cylinders'</span>, <span class="at">font_weight =</span> <span class="st">'normal'</span>)</span>
+<span id="cb10-176"><a href="#cb10-176" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-177"><a href="#cb10-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-178"><a href="#cb10-178" aria-hidden="true" tabindex="-1"></a><span class="fu"># 4. `knitr::kable`: For Simple, Static Tables</span></span>
+<span id="cb10-179"><a href="#cb10-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-180"><a href="#cb10-180" aria-hidden="true" tabindex="-1"></a><span class="in">`knitr::kable()`</span> is a simple and lightweight function for creating clean, static tables in various formats like HTML, LaTeX, and Markdown. It's perfect for quick reports and documents where interactivity is not needed. The <span class="in">`kableExtra`</span> package adds many styling options.</span>
+<span id="cb10-181"><a href="#cb10-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-184"><a href="#cb10-184" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb10-185"><a href="#cb10-185" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb10-186"><a href="#cb10-186" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
+<span id="cb10-187"><a href="#cb10-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-188"><a href="#cb10-188" aria-hidden="true" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> </span>
+<span id="cb10-189"><a href="#cb10-189" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb10-190"><a href="#cb10-190" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption =</span> <span class="st">"A Simple Static Table with kable"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-191"><a href="#cb10-191" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hover"</span>), <span class="at">full_width =</span> F)</span>
+<span id="cb10-192"><a href="#cb10-192" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-193"><a href="#cb10-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-194"><a href="#cb10-194" aria-hidden="true" tabindex="-1"></a>For longer tables, <span class="in">`rmarkdown::paged_table()`</span> creates a scrollable, paged version, which is more user-friendly than a very long static table.</span>
+<span id="cb10-195"><a href="#cb10-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-198"><a href="#cb10-198" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb10-199"><a href="#cb10-199" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rmarkdown)</span>
+<span id="cb10-200"><a href="#cb10-200" aria-hidden="true" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">paged_table</span>()</span>
+<span id="cb10-201"><a href="#cb10-201" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-202"><a href="#cb10-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-203"><a href="#cb10-203" aria-hidden="true" tabindex="-1"></a><span class="fu"># 5. `flextable`: For Publication-Ready Tables in Office Documents</span></span>
+<span id="cb10-204"><a href="#cb10-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-205"><a href="#cb10-205" aria-hidden="true" tabindex="-1"></a>The <span class="in">`flextable`</span> package is designed to create tables for reporting, with a focus on producing high-quality output for Microsoft Word, PowerPoint, and HTML documents. It offers a high degree of control over formatting, including cell merging, borders, and fonts.</span>
+<span id="cb10-206"><a href="#cb10-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-209"><a href="#cb10-209" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb10-210"><a href="#cb10-210" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(flextable)</span>
+<span id="cb10-211"><a href="#cb10-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-212"><a href="#cb10-212" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a basic flextable</span></span>
+<span id="cb10-213"><a href="#cb10-213" aria-hidden="true" tabindex="-1"></a>ft <span class="ot">&lt;-</span> <span class="fu">flextable</span>(<span class="fu">head</span>(mtcars))</span>
+<span id="cb10-214"><a href="#cb10-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-215"><a href="#cb10-215" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply formatting</span></span>
+<span id="cb10-216"><a href="#cb10-216" aria-hidden="true" tabindex="-1"></a>ft <span class="ot">&lt;-</span> ft <span class="sc">%&gt;%</span> </span>
+<span id="cb10-217"><a href="#cb10-217" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_header_labels</span>(<span class="at">mpg =</span> <span class="st">"Miles per Gallon"</span>, <span class="at">cyl =</span> <span class="st">"Cylinders"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-218"><a href="#cb10-218" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_booktabs</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb10-219"><a href="#cb10-219" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autofit</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb10-220"><a href="#cb10-220" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_caption</span>(<span class="st">"A Publication-Ready Table with flextable"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-221"><a href="#cb10-221" aria-hidden="true" tabindex="-1"></a>  <span class="fu">color</span>(<span class="at">j =</span> <span class="sc">~</span> mpg, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-222"><a href="#cb10-222" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bold</span>(<span class="at">j =</span> <span class="sc">~</span> cyl, <span class="at">bold =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb10-223"><a href="#cb10-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-224"><a href="#cb10-224" aria-hidden="true" tabindex="-1"></a>ft</span>
+<span id="cb10-225"><a href="#cb10-225" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-226"><a href="#cb10-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-227"><a href="#cb10-227" aria-hidden="true" tabindex="-1"></a><span class="fu"># 6. Conclusion: Which Package Should You Use?</span></span>
+<span id="cb10-228"><a href="#cb10-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-229"><a href="#cb10-229" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**For beautiful, static reports and publications:** Use <span class="in">`gt`</span>.</span>
+<span id="cb10-230"><a href="#cb10-230" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**For interactive data exploration in R Markdown or Shiny:** Use <span class="in">`DT`</span> or <span class="in">`reactable`</span>. <span class="in">`reactable`</span> has a more modern feel and powerful grouping features, while <span class="in">`DT`</span> is very mature and has a rich ecosystem of extensions.</span>
+<span id="cb10-231"><a href="#cb10-231" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**For quick, simple static tables:** Use <span class="in">`knitr::kable`</span> with <span class="in">`kableExtra`</span> for styling.</span>
+<span id="cb10-232"><a href="#cb10-232" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**For reports destined for Microsoft Office (Word, PowerPoint):** Use <span class="in">`flextable`</span>.</span>
+<span id="cb10-233"><a href="#cb10-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-234"><a href="#cb10-234" aria-hidden="true" tabindex="-1"></a><span class="fu"># 7. References</span></span>
+<span id="cb10-235"><a href="#cb10-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-236"><a href="#cb10-236" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">gt Package</span><span class="co">](https://gt.rstudio.com/)</span></span>
+<span id="cb10-237"><a href="#cb10-237" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">DT Package</span><span class="co">](https://rstudio.github.io/DT/)</span></span>
+<span id="cb10-238"><a href="#cb10-238" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">reactable Package</span><span class="co">](https://glin.github.io/reactable/)</span></span>
+<span id="cb10-239"><a href="#cb10-239" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">flextable Package</span><span class="co">](https://davidgohel.github.io/flextable/)</span></span>
+</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>This website is built with ❤️ and <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
