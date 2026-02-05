@@ -54,6 +54,10 @@ A board is the storage location for your pins. For this example, we will create 
 board <- board_folder("my_local_board")
 ```
 
+
+
+
+
 You can check the path of your board.
 
 ```{r}

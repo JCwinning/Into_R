@@ -2250,7 +2250,7 @@
     "href": "data manipulation/8 data management.html",
     "title": "Data management",
     "section": "",
-    "text": "1. Introduction to Data Management\nEffective data management is crucial for reproducible and collaborative data science. It involves organizing, storing, and sharing data in a way that is efficient, secure, and easy to manage. In R, the pins package provides a powerful and straightforward solution for this challenge.\n\nThe pins package allows you to “pin” data objects—like data frames, models, or plots—to a “board.” A board is a location where you store your pins, which can be a local folder, a network drive, or a cloud service like Amazon S3, Google Cloud Storage, or Posit Connect. This makes it easy to share and access data across different projects, colleagues, or even between R and Python environments.\nThe key idea is to treat data like a package. You can publish data to a board, and then others (or your future self) can install and use that data with a simple command, without worrying about file paths or where the data is stored.\n\n\n2. Getting Started with pins\nFirst, you need to install the package from CRAN.\n\n\nCode\ninstall.packages(\"pins\")\n\n\nThen, load the necessary libraries. We will use pins and tidyverse.\n\n\nCode\nlibrary(pins)\nlibrary(tidyverse)\n\n\n\n\n3. Creating a Board\nA board is the storage location for your pins. For this example, we will create a simple board in a local folder. This is great for managing data for your own projects on a single machine.\n\n\nCode\n# Create a board in a subfolder named 'my_local_board'\n# This folder will be created in your current working directory.\nboard &lt;- board_folder(\"my_local_board\")\n\n\nYou can check the path of your board.\n\n\nCode\nboard\n\n\nPin board &lt;pins_board_folder&gt;\nPath: 'my_local_board'\nCache size: 0\n\n\n\n\n4. Pinning Data\n“Pinning” data means saving an R object to your board with a specific name. Let’s pin the built-in mtcars dataset.\nThe pin_write() function is used for this. It takes three main arguments: - x: The R object you want to pin. - name: A unique name for the pin. - board: The board where you want to store the pin. - type: The file format to save the pin as (e.g., “rds”, “csv”, “parquet”). pins will choose a sensible default if you don’t specify.\n\n\nCode\n# Pin the mtcars data frame to our local board\n# We can also add a description for context\npin_write(board, mtcars, name = \"mtcars_data\", description = \"Motor Trend Car Road Tests dataset\", type = \"rds\")\n\n\nYou can list the pins on your board to see what’s available.\n\n\nCode\npin_list(board)\n\n\n[1] \"mtcars_data\"\n\n\nYou can also search for pins with pin_search().\n\n\nCode\npin_search(board, \"mtcars\")\n\n\n# A tibble: 1 × 6\n  name        type  title               created             file_size meta      \n  &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;               &lt;dttm&gt;              &lt;fs::byt&gt; &lt;list&gt;    \n1 mtcars_data rds   mtcars_data: a pin… 2025-07-01 13:38:30     1.19K &lt;pins_met&gt;\n\n\n\n\n5. Reading Data from a Pin\nOnce data is pinned, you can easily read it back into your R session using pin_read(). This is incredibly useful for starting a new analysis without having to re-run a long data preparation script.\n\n\nCode\n# Read the 'mtcars_data' pin from our board\nmy_mtcars_data &lt;- pin_read(board, \"mtcars_data\")\n\nhead(my_mtcars_data)\n\n\n                   mpg cyl disp  hp drat    wt  qsec vs am gear carb\nMazda RX4         21.0   6  160 110 3.90 2.620 16.46  0  1    4    4\nMazda RX4 Wag     21.0   6  160 110 3.90 2.875 17.02  0  1    4    4\nDatsun 710        22.8   4  108  93 3.85 2.320 18.61  1  1    4    1\nHornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1\nHornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2\nValiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1\n\n\n\n\n6. Sharing Data with Others\nThe real power of pins comes from sharing data. While a local folder board is good for personal use, you can use other board types to collaborate with a team. Common choices include:\n\nboard_folder(): For a shared network drive.\nboard_s3(): For Amazon S3.\nboard_gcs(): For Google Cloud Storage.\nboard_connect(): For Posit Connect (formerly RStudio Connect), which is an excellent choice for teams within an organization.\n\nThe workflow remains the same regardless of the board type. For example, to pin to an S3 bucket, your code would look like this (after setting up authentication):\n\n\nCode\n# Connect to an S3 board (requires AWS credentials to be configured)\ns3_board &lt;- board_s3(\"my-team-s3-bucket\")\n\n# Write and read from the S3 board just like a local one\npin_write(s3_board, mtcars, name = \"shared_mtcars\")\nshared_data &lt;- pin_read(s3_board, \"shared_mtcars\")\n\n\nThis makes your data assets portable and accessible, whether you are working on your laptop, a cloud virtual machine, or a production server.\n\n\n7. Versioning\npins automatically versions your data. If you write to a pin with the same name multiple times, pins will save each version. This is a powerful feature for tracking changes and ensuring reproducibility. You can always go back to a previous version of your data if needed.\nLet’s modify our mtcars data and pin it again.\n\n\nCode\nmtcars_modified &lt;- mtcars %&gt;% mutate(hp_per_cyl = hp / cyl)\npin_write(board, mtcars_modified, name = \"mtcars_data\")\n\n\nNow, you can list the available versions for the “mtcars_data” pin.\n\n\nCode\npin_versions(board, \"mtcars_data\")\n\n\n# A tibble: 1 × 3\n  version                created             hash \n  &lt;chr&gt;                  &lt;dttm&gt;              &lt;chr&gt;\n1 20250701T053830Z-9365e 2025-07-01 13:38:30 9365e\n\n\nYou can read a specific version by providing its version hash to pin_read().\n\n\nCode\n# Get the hash for the first version we saved\nfirst_version_hash &lt;- pin_versions(board, \"mtcars_data\")$version[1]\n\n# Read the original data using the version hash\noriginal_data &lt;- pin_read(board, \"mtcars_data\", version = first_version_hash)\n\n# Check that it doesn't have the new column\nhead(original_data)\n\n\n                   mpg cyl disp  hp drat    wt  qsec vs am gear carb hp_per_cyl\nMazda RX4         21.0   6  160 110 3.90 2.620 16.46  0  1    4    4   18.33333\nMazda RX4 Wag     21.0   6  160 110 3.90 2.875 17.02  0  1    4    4   18.33333\nDatsun 710        22.8   4  108  93 3.85 2.320 18.61  1  1    4    1   23.25000\nHornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1   18.33333\nHornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2   21.87500\nValiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1   17.50000\n\n\n\n\n8. References\n\npins for R Official Website\nGetting Started with pins\nManaging and Sharing Data with pins Blog Post\n\n\n\n\n\n\n\n Back to top",
+    "text": "1. Introduction to Data Management\nEffective data management is crucial for reproducible and collaborative data science. It involves organizing, storing, and sharing data in a way that is efficient, secure, and easy to manage. In R, the pins package provides a powerful and straightforward solution for this challenge.\n\nThe pins package allows you to “pin” data objects—like data frames, models, or plots—to a “board.” A board is a location where you store your pins, which can be a local folder, a network drive, or a cloud service like Amazon S3, Google Cloud Storage, or Posit Connect. This makes it easy to share and access data across different projects, colleagues, or even between R and Python environments.\nThe key idea is to treat data like a package. You can publish data to a board, and then others (or your future self) can install and use that data with a simple command, without worrying about file paths or where the data is stored.\n\n\n2. Getting Started with pins\nFirst, you need to install the package from CRAN.\n\n\nCode\ninstall.packages(\"pins\")\n\n\nThen, load the necessary libraries. We will use pins and tidyverse.\n\n\nCode\nlibrary(pins)\nlibrary(tidyverse)\n\n\n\n\n3. Creating a Board\nA board is the storage location for your pins. For this example, we will create a simple board in a local folder. This is great for managing data for your own projects on a single machine.\n\n\nCode\n# Create a board in a subfolder named 'my_local_board'\n# This folder will be created in your current working directory.\nboard &lt;- board_folder(\"my_local_board\")\n\n\nYou can check the path of your board.\n\n\nCode\nboard\n\n\nPin board &lt;pins_board_folder&gt;\nPath: 'my_local_board'\nCache size: 0\n\n\n\n\n4. Pinning Data\n“Pinning” data means saving an R object to your board with a specific name. Let’s pin the built-in mtcars dataset.\nThe pin_write() function is used for this. It takes three main arguments: - x: The R object you want to pin. - name: A unique name for the pin. - board: The board where you want to store the pin. - type: The file format to save the pin as (e.g., “rds”, “csv”, “parquet”). pins will choose a sensible default if you don’t specify.\n\n\nCode\n# Pin the mtcars data frame to our local board\n# We can also add a description for context\npin_write(board, mtcars, name = \"mtcars_data\", description = \"Motor Trend Car Road Tests dataset\", type = \"rds\")\n\n\nYou can list the pins on your board to see what’s available.\n\n\nCode\npin_list(board)\n\n\n[1] \"mtcars_data\"\n\n\nYou can also search for pins with pin_search().\n\n\nCode\npin_search(board, \"mtcars\")\n\n\n# A tibble: 1 × 6\n  name        type  title               created             file_size meta      \n  &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;               &lt;dttm&gt;              &lt;fs::byt&gt; &lt;list&gt;    \n1 mtcars_data rds   mtcars_data: a pin… 2026-01-07 22:09:17     1.19K &lt;pins_met&gt;\n\n\n\n\n5. Reading Data from a Pin\nOnce data is pinned, you can easily read it back into your R session using pin_read(). This is incredibly useful for starting a new analysis without having to re-run a long data preparation script.\n\n\nCode\n# Read the 'mtcars_data' pin from our board\nmy_mtcars_data &lt;- pin_read(board, \"mtcars_data\")\n\nhead(my_mtcars_data)\n\n\n                   mpg cyl disp  hp drat    wt  qsec vs am gear carb\nMazda RX4         21.0   6  160 110 3.90 2.620 16.46  0  1    4    4\nMazda RX4 Wag     21.0   6  160 110 3.90 2.875 17.02  0  1    4    4\nDatsun 710        22.8   4  108  93 3.85 2.320 18.61  1  1    4    1\nHornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1\nHornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2\nValiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1\n\n\n\n\n6. Sharing Data with Others\nThe real power of pins comes from sharing data. While a local folder board is good for personal use, you can use other board types to collaborate with a team. Common choices include:\n\nboard_folder(): For a shared network drive.\nboard_s3(): For Amazon S3.\nboard_gcs(): For Google Cloud Storage.\nboard_connect(): For Posit Connect (formerly RStudio Connect), which is an excellent choice for teams within an organization.\n\nThe workflow remains the same regardless of the board type. For example, to pin to an S3 bucket, your code would look like this (after setting up authentication):\n\n\nCode\n# Connect to an S3 board (requires AWS credentials to be configured)\ns3_board &lt;- board_s3(\"my-team-s3-bucket\")\n\n# Write and read from the S3 board just like a local one\npin_write(s3_board, mtcars, name = \"shared_mtcars\")\nshared_data &lt;- pin_read(s3_board, \"shared_mtcars\")\n\n\nThis makes your data assets portable and accessible, whether you are working on your laptop, a cloud virtual machine, or a production server.\n\n\n7. Versioning\npins automatically versions your data. If you write to a pin with the same name multiple times, pins will save each version. This is a powerful feature for tracking changes and ensuring reproducibility. You can always go back to a previous version of your data if needed.\nLet’s modify our mtcars data and pin it again.\n\n\nCode\nmtcars_modified &lt;- mtcars %&gt;% mutate(hp_per_cyl = hp / cyl)\npin_write(board, mtcars_modified, name = \"mtcars_data\")\n\n\nNow, you can list the available versions for the “mtcars_data” pin.\n\n\nCode\npin_versions(board, \"mtcars_data\")\n\n\n# A tibble: 1 × 3\n  version                created             hash \n  &lt;chr&gt;                  &lt;dttm&gt;              &lt;chr&gt;\n1 20260107T140917Z-9365e 2026-01-07 22:09:17 9365e\n\n\nYou can read a specific version by providing its version hash to pin_read().\n\n\nCode\n# Get the hash for the first version we saved\nfirst_version_hash &lt;- pin_versions(board, \"mtcars_data\")$version[1]\n\n# Read the original data using the version hash\noriginal_data &lt;- pin_read(board, \"mtcars_data\", version = first_version_hash)\n\n# Check that it doesn't have the new column\nhead(original_data)\n\n\n                   mpg cyl disp  hp drat    wt  qsec vs am gear carb hp_per_cyl\nMazda RX4         21.0   6  160 110 3.90 2.620 16.46  0  1    4    4   18.33333\nMazda RX4 Wag     21.0   6  160 110 3.90 2.875 17.02  0  1    4    4   18.33333\nDatsun 710        22.8   4  108  93 3.85 2.320 18.61  1  1    4    1   23.25000\nHornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1   18.33333\nHornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2   21.87500\nValiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1   17.50000\n\n\n\n\n8. References\n\npins for R Official Website\nGetting Started with pins\nManaging and Sharing Data with pins Blog Post\n\n\n\n\n\n\n\n Back to top",
     "crumbs": [
       "data manipulation",
       "Data management"
@@ -2437,7 +2437,7 @@
     "href": "Plot/2 plotly.html",
     "title": "Plotly in R",
     "section": "",
-    "text": "This document provides a comprehensive guide to creating interactive visualizations in R using the plotly package. Plotly is a powerful graphing library that allows you to create a wide range of interactive plots, including scatter plots, line plots, histograms, bar charts, box plots, and more. These plots are rendered as HTML widgets, which means they can be easily embedded in web pages and R Markdown documents, and they offer interactive features like tooltips, zooming, and panning right out of the box.\nWe will cover various types of plots and their customization options, demonstrating how to leverage Plotly’s capabilities for effective data visualization.\nCode\n# Load necessary libraries\nlibrary(gapminder)\nlibrary(plotly)\nlibrary(reshape2)\nlibrary(ggplot2)\nlibrary(dplyr)\n\n# It's good practice to check the version of the package you are using.\npackageVersion(\"plotly\")\n\n\n[1] '4.11.0'",
+    "text": "This document provides a comprehensive guide to creating interactive visualizations in R using the plotly package. Plotly is a powerful graphing library that allows you to create a wide range of interactive plots, including scatter plots, line plots, histograms, bar charts, box plots, and more. These plots are rendered as HTML widgets, which means they can be easily embedded in web pages and R Markdown documents, and they offer interactive features like tooltips, zooming, and panning right out of the box.\nWe will cover various types of plots and their customization options, demonstrating how to leverage Plotly’s capabilities for effective data visualization.\nCode\n# Load necessary libraries\nlibrary(gapminder)\nlibrary(plotly)\nlibrary(reshape2)\nlibrary(ggplot2)\nlibrary(dplyr)\n\n# It's good practice to check the version of the package you are using.\npackageVersion(\"plotly\")\n\n\n[1] '4.11.0'\nThe plot_ly() function is the main function for creating Plotly graphs. It takes a data frame as input and you specify the mappings from variables in the data to the visual properties of the plot using the x, y, color, size, etc. arguments. The tilde (~) is used to indicate that the variable is from the specified data frame.",
     "crumbs": [
       "Plot",
       "Plotly in R"
@@ -3580,5 +3580,159 @@
     "title": "About",
     "section": "References",
     "text": "References\n\nR Resources\n\nThe R Project\nR for Data Science (2e)\nAdvanced R\nCRAN Task Views\n\n\n\nQuarto Documentation\n\nQuarto Official Guide\nQuarto Gallery\n\n\n\nCommunity\n\nRStudio Community\nStack Overflow - R"
+  },
+  {
+    "objectID": "Plot/2 plotly.html#sankey-diagram",
+    "href": "Plot/2 plotly.html#sankey-diagram",
+    "title": "Plotly in R",
+    "section": "Sankey Diagram",
+    "text": "Sankey Diagram\n\n\nCode\nlibrary(plotly)\n\n# 1. Nodes Data\nlabels &lt;- c(\n    \"Search&lt;br&gt;$63.1B\", \"YouTube&lt;br&gt;$11.4B\", \"AdMob&lt;br&gt;$7.8B\", # 0, 1, 2\n    \"Google Play&lt;br&gt;$13.6B\", \"Google Cloud&lt;br&gt;$17.7B\", \"Other&lt;br&gt;$0.3B\", # 3, 4, 5\n    \"Ad Revenue&lt;br&gt;$82.3B\", # 6\n    \"Revenue&lt;br&gt;$113.8B\", # 7\n    \"Gross profit&lt;br&gt;$68.1B\", \"Cost of revenues&lt;br&gt;($45.8B)\", # 8, 9\n    \"Operating profit&lt;br&gt;$35.9B\", \"Operating expenses&lt;br&gt;($32.1B)\", # 10, 11\n    \"Net profit&lt;br&gt;$34.5B\", \"Tax&lt;br&gt;($4.7B)\", # 12, 13\n    \"Other CoR&lt;br&gt;($29.2B)\", \"TAC&lt;br&gt;($16.6B)\", # 14, 15\n    \"R&D&lt;br&gt;($18.6B)\", \"S&M&lt;br&gt;($8.2B)\", \"G&A&lt;br&gt;($5.3B)\", # 16, 17, 18\n    \"Other&lt;br&gt;$3.2B\" # 19\n)\n\n# 2. Manual Positions\nx_pos &lt;- c(\n    0.001, 0.001, 0.001, # Search, YT, AdMob\n    0.001, 0.001, 0.001, # Play, Cloud, Other\n    0.20, # Ad Revenue\n    0.35, # Revenue\n    0.55, 0.55, # Gross, Cost\n    0.75, 0.75, # Op Profit, Op Expenses\n    0.99, 0.99, # Net, Tax\n    0.85, 0.85, # Other CoR, TAC\n    0.99, 0.99, 0.99, # R&D, S&M, G&A\n    0.75 # Other Inc\n)\n\ny_pos &lt;- c(\n    0.05, 0.20, 0.35, # Search, YT, AdMob (Top-Left)\n    0.55, 0.70, 0.85, # Play, Cloud, Other (Bottom-Left)\n    0.20, # Ad Rev (Merges top three)\n    0.45, # Revenue (Center)\n    0.30, 0.80, # Gross (Top), Cost (Bottom)\n    0.25, 0.65, # Op Prof (Top), Op Ex (Mid)\n    0.20, 0.40, # Net (Top), Tax (Below Net)\n    0.90, 0.80, # Other CoR (Bottom), TAC (Above it)\n    0.55, 0.65, 0.75, # R&D, S&M, G&A\n    0.10 # Other Inc\n)\n\n# 3. Node Colors\nnode_colors &lt;- c(\n    \"#4285F4\", \"#4285F4\", \"#4285F4\", # Sources Blue\n    \"#FBBC05\", \"#FBBC05\", \"#FBBC05\", # Play/Cloud/Other Yellow\n    \"#4285F4\", # Ad Rev Blue\n    \"#4285F4\", # Revenue Blue\n    \"#34A853\", \"#EA4335\", # Gross Green, Cost Red\n    \"#34A853\", \"#EA4335\", # Op Prof Green, Op Ex Red\n    \"#34A853\", \"#EA4335\", # Net Green, Tax Red\n    \"#EA4335\", \"#EA4335\", # Other CoR, TAC Red\n    \"#EA4335\", \"#EA4335\", \"#EA4335\", # R&D... Red\n    \"#34A853\" # Other Inc Green\n)\n\n# 4. Links Data\nsource &lt;- c(0, 1, 2, 6, 3, 4, 5, 7, 7, 9, 9, 8, 8, 11, 11, 11, 10, 10, 19)\ntarget &lt;- c(6, 6, 6, 7, 7, 7, 7, 9, 8, 15, 14, 11, 10, 16, 17, 18, 12, 13, 12)\nvalues &lt;- c(63.1, 11.4, 7.8, 82.3, 13.6, 17.7, 0.3, 45.8, 68.1, 16.6, 29.2, 32.1, 35.9, 18.6, 8.2, 5.3, 31.2, 4.7, 3.2)\n\nlink_colors &lt;- c(\n    \"rgba(66, 133, 244, 0.4)\", \"rgba(66, 133, 244, 0.4)\", \"rgba(66, 133, 244, 0.4)\", # -&gt; AdRev\n    \"rgba(66, 133, 244, 0.6)\", # AdRev -&gt; Rev\n    \"rgba(251, 188, 5, 0.4)\", \"rgba(251, 188, 5, 0.4)\", \"rgba(251, 188, 5, 0.4)\", # -&gt; Rev\n    \"rgba(234, 67, 53, 0.4)\", \"rgba(52, 168, 83, 0.4)\", # Rev -&gt; Cost / Gross\n    \"rgba(234, 67, 53, 0.4)\", \"rgba(234, 67, 53, 0.4)\", # Cost -&gt; TAC / Other\n    \"rgba(234, 67, 53, 0.4)\", \"rgba(52, 168, 83, 0.4)\", # Gross -&gt; OpEx / OpProfit\n    \"rgba(234, 67, 53, 0.4)\", \"rgba(234, 67, 53, 0.4)\", \"rgba(234, 67, 53, 0.4)\", # OpEx -&gt; R&D...\n    \"rgba(52, 168, 83, 0.4)\", \"rgba(234, 67, 53, 0.4)\", # OpProfit -&gt; Net / Tax\n    \"rgba(52, 168, 83, 0.4)\" # OtherInc -&gt; Net\n)\n\nfig &lt;- plot_ly(\n    type = \"sankey\",\n    orientation = \"h\",\n    arrangement = \"fixed\",\n    node = list(\n      pad = 15,\n      thickness = 20,\n      line = list(\n        color = \"black\",\n        width = 0.5\n      ),\n      label = labels,\n      color = node_colors,\n      x = x_pos,\n      y = y_pos\n    ),\n    link = list(\n      source = source,\n      target = target,\n      value = values,\n      color = link_colors\n    )\n)\n\nfig &lt;- fig %&gt;% layout(\n    title = list(text = \"Alphabet Q4 FY25 Income Statement\", x = 0.5),\n    font = list(size = 10),\n    height = 600\n)\n\nfig",
+    "crumbs": [
+      "Plot",
+      "Plotly in R"
+    ]
+  },
+  {
+    "objectID": "Plot/2 plotly.html#official-documentation",
+    "href": "Plot/2 plotly.html#official-documentation",
+    "title": "Plotly in R",
+    "section": "Official Documentation",
+    "text": "Official Documentation\n\nPlotly R Library\nPlotly R Figure Reference\nPlotly R GitHub",
+    "crumbs": [
+      "Plot",
+      "Plotly in R"
+    ]
+  },
+  {
+    "objectID": "Plot/2 plotly.html#tutorials-and-guides",
+    "href": "Plot/2 plotly.html#tutorials-and-guides",
+    "title": "Plotly in R",
+    "section": "Tutorials and Guides",
+    "text": "Tutorials and Guides\n\nGetting Started with Plotly in R\nPlotly for R Book\nInteractive Web-Based Data Visualization with R",
+    "crumbs": [
+      "Plot",
+      "Plotly in R"
+    ]
+  },
+  {
+    "objectID": "Plot/2 plotly.html#integration-with-other-tools",
+    "href": "Plot/2 plotly.html#integration-with-other-tools",
+    "title": "Plotly in R",
+    "section": "Integration with Other Tools",
+    "text": "Integration with Other Tools\n\nUsing Plotly with Shiny\nggplot2 to Plotly\nPlotly Dash for R",
+    "crumbs": [
+      "Plot",
+      "Plotly in R"
+    ]
+  },
+  {
+    "objectID": "Plot/2 plotly.html#color-by-group",
+    "href": "Plot/2 plotly.html#color-by-group",
+    "title": "Plotly in R",
+    "section": "Color by Group",
+    "text": "Color by Group\nYou can easily add a third variable to the scatter plot by mapping it to the color aesthetic. This helps in visualizing relationships within different categories.\n\n\nCode\nfig &lt;- plot_ly(data = tips, x = ~total_bill, y = ~tip, color = ~sex, type = 'scatter', mode = 'markers')\nfig",
+    "crumbs": [
+      "Plot",
+      "Plotly in R"
+    ]
+  },
+  {
+    "objectID": "Plot/2 plotly.html#size-by-group",
+    "href": "Plot/2 plotly.html#size-by-group",
+    "title": "Plotly in R",
+    "section": "Size by Group",
+    "text": "Size by Group\nSimilarly, a fourth variable can be mapped to the size of the points, providing another dimension for data exploration.\n\n\nCode\nfig &lt;- plot_ly(data = tips, x = ~total_bill, y = ~tip, color = ~sex, size = ~size, type = 'scatter', mode = 'markers')\nfig",
+    "crumbs": [
+      "Plot",
+      "Plotly in R"
+    ]
+  },
+  {
+    "objectID": "Plot/2 plotly.html#line-width-and-color",
+    "href": "Plot/2 plotly.html#line-width-and-color",
+    "title": "Plotly in R",
+    "section": "Line Width and Color",
+    "text": "Line Width and Color\nYou can customize the appearance of the lines, such as their color and width, using the line argument within plot_ly().\n\n\nCode\nfig &lt;- plot_ly(data = data002 %&gt;% filter(continent == 'Asia'), x = ~year, y = ~pop, type = 'scatter', mode = 'lines', line = list(color = 'rgb(205, 12, 24)', width = 8))\nfig",
+    "crumbs": [
+      "Plot",
+      "Plotly in R"
+    ]
+  },
+  {
+    "objectID": "Plot/2 plotly.html#color-by-group-1",
+    "href": "Plot/2 plotly.html#color-by-group-1",
+    "title": "Plotly in R",
+    "section": "Color by Group",
+    "text": "Color by Group\nTo display multiple lines, one for each group, you can map a categorical variable to the color argument.\n\n\nCode\nfig &lt;- plot_ly(data = data002, x = ~year, y = ~pop, color = ~continent, type = 'scatter', mode = 'lines')\nfig",
+    "crumbs": [
+      "Plot",
+      "Plotly in R"
+    ]
+  },
+  {
+    "objectID": "Plot/2 plotly.html#set-bin-number",
+    "href": "Plot/2 plotly.html#set-bin-number",
+    "title": "Plotly in R",
+    "section": "Set Bin Number",
+    "text": "Set Bin Number\nYou can control the number of bins in a histogram using the nbinsx argument, which affects the granularity of the distribution visualization.\n\n\nCode\nfig &lt;- plot_ly(data = tips, x = ~total_bill, type = \"histogram\", nbinsx = 5)\nfig",
+    "crumbs": [
+      "Plot",
+      "Plotly in R"
+    ]
+  },
+  {
+    "objectID": "Plot/2 plotly.html#color-by-group-2",
+    "href": "Plot/2 plotly.html#color-by-group-2",
+    "title": "Plotly in R",
+    "section": "Color by Group",
+    "text": "Color by Group\nSimilar to scatter plots, you can color histogram bars by a categorical variable to compare distributions across different groups.\n\n\nCode\nfig &lt;- plot_ly(data = tips, x = ~total_bill, color = ~sex, type = \"histogram\")\nfig",
+    "crumbs": [
+      "Plot",
+      "Plotly in R"
+    ]
+  },
+  {
+    "objectID": "Plot/2 plotly.html#show-numbers-on-bars",
+    "href": "Plot/2 plotly.html#show-numbers-on-bars",
+    "title": "Plotly in R",
+    "section": "Show Numbers on Bars",
+    "text": "Show Numbers on Bars\nYou can display the exact values on top of the bars using the text argument.\n\n\nCode\nfig &lt;- plot_ly(data = tips2, x = ~sex, y = ~total_bill, text = ~total_bill, type = \"bar\")\nfig",
+    "crumbs": [
+      "Plot",
+      "Plotly in R"
+    ]
+  },
+  {
+    "objectID": "Plot/2 plotly.html#horizontal-bar-plot",
+    "href": "Plot/2 plotly.html#horizontal-bar-plot",
+    "title": "Plotly in R",
+    "section": "Horizontal Bar Plot",
+    "text": "Horizontal Bar Plot\nTo create a horizontal bar chart, simply swap the x and y arguments.\n\n\nCode\nfig &lt;- plot_ly(data = tips2, y = ~sex, x = ~total_bill, color = ~sex, type = \"bar\", orientation = 'h')\nfig",
+    "crumbs": [
+      "Plot",
+      "Plotly in R"
+    ]
+  },
+  {
+    "objectID": "Plot/2 plotly.html#bar-chart-order",
+    "href": "Plot/2 plotly.html#bar-chart-order",
+    "title": "Plotly in R",
+    "section": "Bar Chart Order",
+    "text": "Bar Chart Order\nYou can control the order of categories on the x-axis using layout(xaxis = list(categoryorder = ...)). Options include \"total ascending\" and \"total descending\".\n\n\nCode\nfig &lt;- plot_ly(data = tips2, x = ~sex, y = ~total_bill, color = ~sex, type = \"bar\") %&gt;% \n  layout(xaxis = list(categoryorder = \"total ascending\"))\nfig\n\n\n\n\n\n\n\n\nCode\nfig &lt;- plot_ly(data = tips2, x = ~sex, y = ~total_bill, color = ~sex, type = \"bar\") %&gt;% \n  layout(xaxis = list(categoryorder = \"total descending\"))\nfig",
+    "crumbs": [
+      "Plot",
+      "Plotly in R"
+    ]
+  },
+  {
+    "objectID": "Plot/2 plotly.html#color-by-group-3",
+    "href": "Plot/2 plotly.html#color-by-group-3",
+    "title": "Plotly in R",
+    "section": "Color by Group",
+    "text": "Color by Group\nYou can create separate box plots for different groups by mapping a categorical variable to the x-axis and coloring by it.\n\n\nCode\nfig &lt;- plot_ly(data = tips, x = ~sex, y = ~total_bill, color = ~sex, type = \"box\")\nfig",
+    "crumbs": [
+      "Plot",
+      "Plotly in R"
+    ]
   }
 ]

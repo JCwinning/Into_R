@@ -77,7 +77,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-8116483b35b7c59d831d40773437fcbf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-e4e28bd8fd914869820e4be676568200.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -504,7 +504,7 @@ Cache size: 0</code></pre>
 <pre><code># A tibble: 1 × 6
   name        type  title               created             file_size meta      
   &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;               &lt;dttm&gt;              &lt;fs::byt&gt; &lt;list&gt;    
-1 mtcars_data rds   mtcars_data: a pin… 2025-11-21 15:30:00     1.19K &lt;pins_met&gt;</code></pre>
+1 mtcars_data rds   mtcars_data: a pin… 2026-01-07 22:09:17     1.19K &lt;pins_met&gt;</code></pre>
 </div>
 </div>
 </section>
@@ -574,7 +574,7 @@ Valiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1</code></pre
 <pre><code># A tibble: 1 × 3
   version                created             hash 
   &lt;chr&gt;                  &lt;dttm&gt;              &lt;chr&gt;
-1 20251121T073000Z-9365e 2025-11-21 15:30:00 9365e</code></pre>
+1 20260107T140917Z-9365e 2026-01-07 22:09:17 9365e</code></pre>
 </div>
 </div>
 <p>You can read a specific version by providing its version hash to <code>pin_read()</code>.</p>
@@ -1122,110 +1122,114 @@ Valiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1   17.50000<
 <span id="cb19-60"><a href="#cb19-60" aria-hidden="true" tabindex="-1"></a>board <span class="ot">&lt;-</span> <span class="fu">board_folder</span>(<span class="st">"my_local_board"</span>)</span>
 <span id="cb19-61"><a href="#cb19-61" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb19-62"><a href="#cb19-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-63"><a href="#cb19-63" aria-hidden="true" tabindex="-1"></a>You can check the path of your board.</span>
+<span id="cb19-63"><a href="#cb19-63" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-64"><a href="#cb19-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-67"><a href="#cb19-67" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb19-68"><a href="#cb19-68" aria-hidden="true" tabindex="-1"></a>board</span>
-<span id="cb19-69"><a href="#cb19-69" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb19-70"><a href="#cb19-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-71"><a href="#cb19-71" aria-hidden="true" tabindex="-1"></a><span class="fu"># 4. Pinning Data</span></span>
-<span id="cb19-72"><a href="#cb19-72" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-73"><a href="#cb19-73" aria-hidden="true" tabindex="-1"></a>"Pinning" data means saving an R object to your board with a specific name. Let's pin the built-in <span class="in">`mtcars`</span> dataset.</span>
+<span id="cb19-65"><a href="#cb19-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-66"><a href="#cb19-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-67"><a href="#cb19-67" aria-hidden="true" tabindex="-1"></a>You can check the path of your board.</span>
+<span id="cb19-68"><a href="#cb19-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-71"><a href="#cb19-71" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-72"><a href="#cb19-72" aria-hidden="true" tabindex="-1"></a>board</span>
+<span id="cb19-73"><a href="#cb19-73" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb19-74"><a href="#cb19-74" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-75"><a href="#cb19-75" aria-hidden="true" tabindex="-1"></a>The <span class="in">`pin_write()`</span> function is used for this. It takes three main arguments:</span>
-<span id="cb19-76"><a href="#cb19-76" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`x`</span>: The R object you want to pin.</span>
-<span id="cb19-77"><a href="#cb19-77" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`name`</span>: A unique name for the pin.</span>
-<span id="cb19-78"><a href="#cb19-78" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`board`</span>: The board where you want to store the pin.</span>
-<span id="cb19-79"><a href="#cb19-79" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`type`</span>: The file format to save the pin as (e.g., "rds", "csv", "parquet"). <span class="in">`pins`</span> will choose a sensible default if you don't specify.</span>
-<span id="cb19-80"><a href="#cb19-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-83"><a href="#cb19-83" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb19-84"><a href="#cb19-84" aria-hidden="true" tabindex="-1"></a><span class="co"># Pin the mtcars data frame to our local board</span></span>
-<span id="cb19-85"><a href="#cb19-85" aria-hidden="true" tabindex="-1"></a><span class="co"># We can also add a description for context</span></span>
-<span id="cb19-86"><a href="#cb19-86" aria-hidden="true" tabindex="-1"></a><span class="fu">pin_write</span>(board, mtcars, <span class="at">name =</span> <span class="st">"mtcars_data"</span>, <span class="at">description =</span> <span class="st">"Motor Trend Car Road Tests dataset"</span>, <span class="at">type =</span> <span class="st">"rds"</span>)</span>
-<span id="cb19-87"><a href="#cb19-87" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb19-88"><a href="#cb19-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-89"><a href="#cb19-89" aria-hidden="true" tabindex="-1"></a>You can list the pins on your board to see what's available.</span>
-<span id="cb19-90"><a href="#cb19-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-93"><a href="#cb19-93" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb19-94"><a href="#cb19-94" aria-hidden="true" tabindex="-1"></a><span class="fu">pin_list</span>(board)</span>
-<span id="cb19-95"><a href="#cb19-95" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb19-96"><a href="#cb19-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-97"><a href="#cb19-97" aria-hidden="true" tabindex="-1"></a>You can also search for pins with <span class="in">`pin_search()`</span>.</span>
-<span id="cb19-98"><a href="#cb19-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-101"><a href="#cb19-101" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb19-102"><a href="#cb19-102" aria-hidden="true" tabindex="-1"></a><span class="fu">pin_search</span>(board, <span class="st">"mtcars"</span>)</span>
-<span id="cb19-103"><a href="#cb19-103" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb19-104"><a href="#cb19-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-105"><a href="#cb19-105" aria-hidden="true" tabindex="-1"></a><span class="fu"># 5. Reading Data from a Pin</span></span>
-<span id="cb19-106"><a href="#cb19-106" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-107"><a href="#cb19-107" aria-hidden="true" tabindex="-1"></a>Once data is pinned, you can easily read it back into your R session using <span class="in">`pin_read()`</span>. This is incredibly useful for starting a new analysis without having to re-run a long data preparation script.</span>
+<span id="cb19-75"><a href="#cb19-75" aria-hidden="true" tabindex="-1"></a><span class="fu"># 4. Pinning Data</span></span>
+<span id="cb19-76"><a href="#cb19-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-77"><a href="#cb19-77" aria-hidden="true" tabindex="-1"></a>"Pinning" data means saving an R object to your board with a specific name. Let's pin the built-in <span class="in">`mtcars`</span> dataset.</span>
+<span id="cb19-78"><a href="#cb19-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-79"><a href="#cb19-79" aria-hidden="true" tabindex="-1"></a>The <span class="in">`pin_write()`</span> function is used for this. It takes three main arguments:</span>
+<span id="cb19-80"><a href="#cb19-80" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`x`</span>: The R object you want to pin.</span>
+<span id="cb19-81"><a href="#cb19-81" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`name`</span>: A unique name for the pin.</span>
+<span id="cb19-82"><a href="#cb19-82" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`board`</span>: The board where you want to store the pin.</span>
+<span id="cb19-83"><a href="#cb19-83" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`type`</span>: The file format to save the pin as (e.g., "rds", "csv", "parquet"). <span class="in">`pins`</span> will choose a sensible default if you don't specify.</span>
+<span id="cb19-84"><a href="#cb19-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-87"><a href="#cb19-87" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-88"><a href="#cb19-88" aria-hidden="true" tabindex="-1"></a><span class="co"># Pin the mtcars data frame to our local board</span></span>
+<span id="cb19-89"><a href="#cb19-89" aria-hidden="true" tabindex="-1"></a><span class="co"># We can also add a description for context</span></span>
+<span id="cb19-90"><a href="#cb19-90" aria-hidden="true" tabindex="-1"></a><span class="fu">pin_write</span>(board, mtcars, <span class="at">name =</span> <span class="st">"mtcars_data"</span>, <span class="at">description =</span> <span class="st">"Motor Trend Car Road Tests dataset"</span>, <span class="at">type =</span> <span class="st">"rds"</span>)</span>
+<span id="cb19-91"><a href="#cb19-91" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-92"><a href="#cb19-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-93"><a href="#cb19-93" aria-hidden="true" tabindex="-1"></a>You can list the pins on your board to see what's available.</span>
+<span id="cb19-94"><a href="#cb19-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-97"><a href="#cb19-97" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-98"><a href="#cb19-98" aria-hidden="true" tabindex="-1"></a><span class="fu">pin_list</span>(board)</span>
+<span id="cb19-99"><a href="#cb19-99" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-100"><a href="#cb19-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-101"><a href="#cb19-101" aria-hidden="true" tabindex="-1"></a>You can also search for pins with <span class="in">`pin_search()`</span>.</span>
+<span id="cb19-102"><a href="#cb19-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-105"><a href="#cb19-105" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-106"><a href="#cb19-106" aria-hidden="true" tabindex="-1"></a><span class="fu">pin_search</span>(board, <span class="st">"mtcars"</span>)</span>
+<span id="cb19-107"><a href="#cb19-107" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb19-108"><a href="#cb19-108" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-111"><a href="#cb19-111" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb19-112"><a href="#cb19-112" aria-hidden="true" tabindex="-1"></a><span class="co"># Read the 'mtcars_data' pin from our board</span></span>
-<span id="cb19-113"><a href="#cb19-113" aria-hidden="true" tabindex="-1"></a>my_mtcars_data <span class="ot">&lt;-</span> <span class="fu">pin_read</span>(board, <span class="st">"mtcars_data"</span>)</span>
-<span id="cb19-114"><a href="#cb19-114" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-115"><a href="#cb19-115" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(my_mtcars_data)</span>
-<span id="cb19-116"><a href="#cb19-116" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb19-117"><a href="#cb19-117" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-118"><a href="#cb19-118" aria-hidden="true" tabindex="-1"></a><span class="fu"># 6. Sharing Data with Others</span></span>
-<span id="cb19-119"><a href="#cb19-119" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-120"><a href="#cb19-120" aria-hidden="true" tabindex="-1"></a>The real power of <span class="in">`pins`</span> comes from sharing data. While a local folder board is good for personal use, you can use other board types to collaborate with a team. Common choices include:</span>
+<span id="cb19-109"><a href="#cb19-109" aria-hidden="true" tabindex="-1"></a><span class="fu"># 5. Reading Data from a Pin</span></span>
+<span id="cb19-110"><a href="#cb19-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-111"><a href="#cb19-111" aria-hidden="true" tabindex="-1"></a>Once data is pinned, you can easily read it back into your R session using <span class="in">`pin_read()`</span>. This is incredibly useful for starting a new analysis without having to re-run a long data preparation script.</span>
+<span id="cb19-112"><a href="#cb19-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-115"><a href="#cb19-115" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-116"><a href="#cb19-116" aria-hidden="true" tabindex="-1"></a><span class="co"># Read the 'mtcars_data' pin from our board</span></span>
+<span id="cb19-117"><a href="#cb19-117" aria-hidden="true" tabindex="-1"></a>my_mtcars_data <span class="ot">&lt;-</span> <span class="fu">pin_read</span>(board, <span class="st">"mtcars_data"</span>)</span>
+<span id="cb19-118"><a href="#cb19-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-119"><a href="#cb19-119" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(my_mtcars_data)</span>
+<span id="cb19-120"><a href="#cb19-120" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb19-121"><a href="#cb19-121" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-122"><a href="#cb19-122" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`board_folder()`</span>: For a shared network drive.</span>
-<span id="cb19-123"><a href="#cb19-123" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`board_s3()`</span>: For Amazon S3.</span>
-<span id="cb19-124"><a href="#cb19-124" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`board_gcs()`</span>: For Google Cloud Storage.</span>
-<span id="cb19-125"><a href="#cb19-125" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`board_connect()`</span>: For Posit Connect (formerly RStudio Connect), which is an excellent choice for teams within an organization.</span>
-<span id="cb19-126"><a href="#cb19-126" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-127"><a href="#cb19-127" aria-hidden="true" tabindex="-1"></a>The workflow remains the same regardless of the board type. For example, to pin to an S3 bucket, your code would look like this (after setting up authentication):</span>
-<span id="cb19-128"><a href="#cb19-128" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-131"><a href="#cb19-131" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb19-132"><a href="#cb19-132" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb19-133"><a href="#cb19-133" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-134"><a href="#cb19-134" aria-hidden="true" tabindex="-1"></a><span class="co"># Connect to an S3 board (requires AWS credentials to be configured)</span></span>
-<span id="cb19-135"><a href="#cb19-135" aria-hidden="true" tabindex="-1"></a>s3_board <span class="ot">&lt;-</span> <span class="fu">board_s3</span>(<span class="st">"my-team-s3-bucket"</span>)</span>
-<span id="cb19-136"><a href="#cb19-136" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-137"><a href="#cb19-137" aria-hidden="true" tabindex="-1"></a><span class="co"># Write and read from the S3 board just like a local one</span></span>
-<span id="cb19-138"><a href="#cb19-138" aria-hidden="true" tabindex="-1"></a><span class="fu">pin_write</span>(s3_board, mtcars, <span class="at">name =</span> <span class="st">"shared_mtcars"</span>)</span>
-<span id="cb19-139"><a href="#cb19-139" aria-hidden="true" tabindex="-1"></a>shared_data <span class="ot">&lt;-</span> <span class="fu">pin_read</span>(s3_board, <span class="st">"shared_mtcars"</span>)</span>
-<span id="cb19-140"><a href="#cb19-140" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb19-141"><a href="#cb19-141" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-142"><a href="#cb19-142" aria-hidden="true" tabindex="-1"></a>This makes your data assets portable and accessible, whether you are working on your laptop, a cloud virtual machine, or a production server.</span>
-<span id="cb19-143"><a href="#cb19-143" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-144"><a href="#cb19-144" aria-hidden="true" tabindex="-1"></a><span class="fu"># 7. Versioning</span></span>
+<span id="cb19-122"><a href="#cb19-122" aria-hidden="true" tabindex="-1"></a><span class="fu"># 6. Sharing Data with Others</span></span>
+<span id="cb19-123"><a href="#cb19-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-124"><a href="#cb19-124" aria-hidden="true" tabindex="-1"></a>The real power of <span class="in">`pins`</span> comes from sharing data. While a local folder board is good for personal use, you can use other board types to collaborate with a team. Common choices include:</span>
+<span id="cb19-125"><a href="#cb19-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-126"><a href="#cb19-126" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`board_folder()`</span>: For a shared network drive.</span>
+<span id="cb19-127"><a href="#cb19-127" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`board_s3()`</span>: For Amazon S3.</span>
+<span id="cb19-128"><a href="#cb19-128" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`board_gcs()`</span>: For Google Cloud Storage.</span>
+<span id="cb19-129"><a href="#cb19-129" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`board_connect()`</span>: For Posit Connect (formerly RStudio Connect), which is an excellent choice for teams within an organization.</span>
+<span id="cb19-130"><a href="#cb19-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-131"><a href="#cb19-131" aria-hidden="true" tabindex="-1"></a>The workflow remains the same regardless of the board type. For example, to pin to an S3 bucket, your code would look like this (after setting up authentication):</span>
+<span id="cb19-132"><a href="#cb19-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-135"><a href="#cb19-135" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-136"><a href="#cb19-136" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb19-137"><a href="#cb19-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-138"><a href="#cb19-138" aria-hidden="true" tabindex="-1"></a><span class="co"># Connect to an S3 board (requires AWS credentials to be configured)</span></span>
+<span id="cb19-139"><a href="#cb19-139" aria-hidden="true" tabindex="-1"></a>s3_board <span class="ot">&lt;-</span> <span class="fu">board_s3</span>(<span class="st">"my-team-s3-bucket"</span>)</span>
+<span id="cb19-140"><a href="#cb19-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-141"><a href="#cb19-141" aria-hidden="true" tabindex="-1"></a><span class="co"># Write and read from the S3 board just like a local one</span></span>
+<span id="cb19-142"><a href="#cb19-142" aria-hidden="true" tabindex="-1"></a><span class="fu">pin_write</span>(s3_board, mtcars, <span class="at">name =</span> <span class="st">"shared_mtcars"</span>)</span>
+<span id="cb19-143"><a href="#cb19-143" aria-hidden="true" tabindex="-1"></a>shared_data <span class="ot">&lt;-</span> <span class="fu">pin_read</span>(s3_board, <span class="st">"shared_mtcars"</span>)</span>
+<span id="cb19-144"><a href="#cb19-144" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb19-145"><a href="#cb19-145" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-146"><a href="#cb19-146" aria-hidden="true" tabindex="-1"></a><span class="in">`pins`</span> automatically versions your data. If you write to a pin with the same name multiple times, <span class="in">`pins`</span> will save each version. This is a powerful feature for tracking changes and ensuring reproducibility. You can always go back to a previous version of your data if needed.</span>
+<span id="cb19-146"><a href="#cb19-146" aria-hidden="true" tabindex="-1"></a>This makes your data assets portable and accessible, whether you are working on your laptop, a cloud virtual machine, or a production server.</span>
 <span id="cb19-147"><a href="#cb19-147" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-148"><a href="#cb19-148" aria-hidden="true" tabindex="-1"></a>Let's modify our <span class="in">`mtcars`</span> data and pin it again.</span>
+<span id="cb19-148"><a href="#cb19-148" aria-hidden="true" tabindex="-1"></a><span class="fu"># 7. Versioning</span></span>
 <span id="cb19-149"><a href="#cb19-149" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-152"><a href="#cb19-152" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb19-153"><a href="#cb19-153" aria-hidden="true" tabindex="-1"></a>mtcars_modified <span class="ot">&lt;-</span> mtcars <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">hp_per_cyl =</span> hp <span class="sc">/</span> cyl)</span>
-<span id="cb19-154"><a href="#cb19-154" aria-hidden="true" tabindex="-1"></a><span class="fu">pin_write</span>(board, mtcars_modified, <span class="at">name =</span> <span class="st">"mtcars_data"</span>)</span>
-<span id="cb19-155"><a href="#cb19-155" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb19-156"><a href="#cb19-156" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-157"><a href="#cb19-157" aria-hidden="true" tabindex="-1"></a>Now, you can list the available versions for the "mtcars_data" pin.</span>
-<span id="cb19-158"><a href="#cb19-158" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-161"><a href="#cb19-161" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb19-162"><a href="#cb19-162" aria-hidden="true" tabindex="-1"></a><span class="fu">pin_versions</span>(board, <span class="st">"mtcars_data"</span>)</span>
-<span id="cb19-163"><a href="#cb19-163" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb19-164"><a href="#cb19-164" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-165"><a href="#cb19-165" aria-hidden="true" tabindex="-1"></a>You can read a specific version by providing its version hash to <span class="in">`pin_read()`</span>.</span>
-<span id="cb19-166"><a href="#cb19-166" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-169"><a href="#cb19-169" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb19-170"><a href="#cb19-170" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the hash for the first version we saved</span></span>
-<span id="cb19-171"><a href="#cb19-171" aria-hidden="true" tabindex="-1"></a>first_version_hash <span class="ot">&lt;-</span> <span class="fu">pin_versions</span>(board, <span class="st">"mtcars_data"</span>)<span class="sc">$</span>version[<span class="dv">1</span>]</span>
-<span id="cb19-172"><a href="#cb19-172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-173"><a href="#cb19-173" aria-hidden="true" tabindex="-1"></a><span class="co"># Read the original data using the version hash</span></span>
-<span id="cb19-174"><a href="#cb19-174" aria-hidden="true" tabindex="-1"></a>original_data <span class="ot">&lt;-</span> <span class="fu">pin_read</span>(board, <span class="st">"mtcars_data"</span>, <span class="at">version =</span> first_version_hash)</span>
-<span id="cb19-175"><a href="#cb19-175" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-176"><a href="#cb19-176" aria-hidden="true" tabindex="-1"></a><span class="co"># Check that it doesn't have the new column</span></span>
-<span id="cb19-177"><a href="#cb19-177" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(original_data)</span>
-<span id="cb19-178"><a href="#cb19-178" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-150"><a href="#cb19-150" aria-hidden="true" tabindex="-1"></a><span class="in">`pins`</span> automatically versions your data. If you write to a pin with the same name multiple times, <span class="in">`pins`</span> will save each version. This is a powerful feature for tracking changes and ensuring reproducibility. You can always go back to a previous version of your data if needed.</span>
+<span id="cb19-151"><a href="#cb19-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-152"><a href="#cb19-152" aria-hidden="true" tabindex="-1"></a>Let's modify our <span class="in">`mtcars`</span> data and pin it again.</span>
+<span id="cb19-153"><a href="#cb19-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-156"><a href="#cb19-156" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-157"><a href="#cb19-157" aria-hidden="true" tabindex="-1"></a>mtcars_modified <span class="ot">&lt;-</span> mtcars <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">hp_per_cyl =</span> hp <span class="sc">/</span> cyl)</span>
+<span id="cb19-158"><a href="#cb19-158" aria-hidden="true" tabindex="-1"></a><span class="fu">pin_write</span>(board, mtcars_modified, <span class="at">name =</span> <span class="st">"mtcars_data"</span>)</span>
+<span id="cb19-159"><a href="#cb19-159" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-160"><a href="#cb19-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-161"><a href="#cb19-161" aria-hidden="true" tabindex="-1"></a>Now, you can list the available versions for the "mtcars_data" pin.</span>
+<span id="cb19-162"><a href="#cb19-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-165"><a href="#cb19-165" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-166"><a href="#cb19-166" aria-hidden="true" tabindex="-1"></a><span class="fu">pin_versions</span>(board, <span class="st">"mtcars_data"</span>)</span>
+<span id="cb19-167"><a href="#cb19-167" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-168"><a href="#cb19-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-169"><a href="#cb19-169" aria-hidden="true" tabindex="-1"></a>You can read a specific version by providing its version hash to <span class="in">`pin_read()`</span>.</span>
+<span id="cb19-170"><a href="#cb19-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-173"><a href="#cb19-173" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-174"><a href="#cb19-174" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the hash for the first version we saved</span></span>
+<span id="cb19-175"><a href="#cb19-175" aria-hidden="true" tabindex="-1"></a>first_version_hash <span class="ot">&lt;-</span> <span class="fu">pin_versions</span>(board, <span class="st">"mtcars_data"</span>)<span class="sc">$</span>version[<span class="dv">1</span>]</span>
+<span id="cb19-176"><a href="#cb19-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-177"><a href="#cb19-177" aria-hidden="true" tabindex="-1"></a><span class="co"># Read the original data using the version hash</span></span>
+<span id="cb19-178"><a href="#cb19-178" aria-hidden="true" tabindex="-1"></a>original_data <span class="ot">&lt;-</span> <span class="fu">pin_read</span>(board, <span class="st">"mtcars_data"</span>, <span class="at">version =</span> first_version_hash)</span>
 <span id="cb19-179"><a href="#cb19-179" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-180"><a href="#cb19-180" aria-hidden="true" tabindex="-1"></a><span class="fu"># 8. References</span></span>
-<span id="cb19-181"><a href="#cb19-181" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-182"><a href="#cb19-182" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">pins for R Official Website</span><span class="co">](https://pins.rstudio.com/)</span></span>
-<span id="cb19-183"><a href="#cb19-183" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">Getting Started with pins</span><span class="co">](https://pins.rstudio.com/articles/pins.html)</span></span>
-<span id="cb19-184"><a href="#cb19-184" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">Managing and Sharing Data with pins Blog Post</span><span class="co">](https://posit.co/blog/2023/02/13/announcing-pins-1-1-0/)</span></span>
+<span id="cb19-180"><a href="#cb19-180" aria-hidden="true" tabindex="-1"></a><span class="co"># Check that it doesn't have the new column</span></span>
+<span id="cb19-181"><a href="#cb19-181" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(original_data)</span>
+<span id="cb19-182"><a href="#cb19-182" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-183"><a href="#cb19-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-184"><a href="#cb19-184" aria-hidden="true" tabindex="-1"></a><span class="fu"># 8. References</span></span>
+<span id="cb19-185"><a href="#cb19-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-186"><a href="#cb19-186" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">pins for R Official Website</span><span class="co">](https://pins.rstudio.com/)</span></span>
+<span id="cb19-187"><a href="#cb19-187" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">Getting Started with pins</span><span class="co">](https://pins.rstudio.com/articles/pins.html)</span></span>
+<span id="cb19-188"><a href="#cb19-188" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">Managing and Sharing Data with pins Blog Post</span><span class="co">](https://posit.co/blog/2023/02/13/announcing-pins-1-1-0/)</span></span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
